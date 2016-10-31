@@ -5,7 +5,7 @@
   "description": "Shared Code Library Used by (not)all WanionCane mods!",
   "version": "1.0",
   "mcversion": "${mcversion}",
-  "url": "http://minecraft.curseforge.com/projects/wanion-lib",
+  "url": "http://minecraft.curseforge.com/projects/wanionlib",
   "updateUrl": "",
   "authorList": ["WanionCane"],
   "credits": "",
