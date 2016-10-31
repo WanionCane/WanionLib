@@ -1,0 +1,16 @@
+[
+{
+  "modid": "wanionlib",
+  "name": "WanionLib",
+  "description": "Shared Code Library Used by all WanionCane mods!",
+  "version": "1.0",
+  "mcversion": "${mcversion}",
+  "url": "http://minecraft.curseforge.com/projects/wanion-lib",
+  "updateUrl": "",
+  "authorList": ["WanionCane"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

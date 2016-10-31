@@ -1,0 +1,10 @@
+.gradle/
+build/
+out/
+run/
+server/
+eclipse/
+src/META-INF/
+/*.iws
+/*.ipr
+/*.iml
