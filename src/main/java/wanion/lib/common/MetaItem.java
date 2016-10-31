@@ -25,7 +25,7 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 public final class MetaItem
 {
-	private static final FMLControlledNamespacedRegistry<Item> itemRegistry = GameData.getItemRegistry();
+	public static final FMLControlledNamespacedRegistry<Item> itemRegistry = GameData.getItemRegistry();
 
 	private MetaItem() {}
 
