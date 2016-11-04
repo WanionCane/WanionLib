@@ -82,12 +82,12 @@ public final class RecipeHelper
 			}
 		}
 		final Object[] shape = new Object[objects.length + thingToCharMap.size() * 2];
-		for (int i = 0; i < squareRoot; i++)
+		for (int i = 0; i < objects.length; i++)
 			shape[i] = new String(almostTheShape[i]);
 		int i = 0;
 		for (final Object object : thingToCharMap.keySet()) {
-			shape[squareRoot + (2 * i)] = thingToCharMap.get(object);
-			shape[squareRoot + 1 + (2 * i++)] = (object instanceof Integer) ? keyStackMap.get(object) : object;
+			shape[objects.length + (2 * i)] = thingToCharMap.get(object);
+			shape[objects.length + 1 + (2 * i++)] = (object instanceof Integer) ? keyStackMap.get(object) : object;
 		}
 		return shape;
 	}

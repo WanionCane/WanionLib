@@ -101,7 +101,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 			for (int x = 0; x < width; x++) {
 				final int actualX = offSetX + x;
 				if (matrix.getStackInSlot(actualY * root + actualX) != null) {
-					recipeKey |= 1L << (y * root + x);
+					recipeKey |= 1L << (width * y + x);
 					recipeSize++;
 				}
 			}
