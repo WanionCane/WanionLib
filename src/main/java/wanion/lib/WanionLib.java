@@ -17,9 +17,11 @@ import org.apache.logging.log4j.Logger;
 import wanion.lib.client.ClientTickHandler;
 import wanion.lib.common.Dependencies;
 
+import java.util.Map;
+
 import static wanion.lib.Reference.*;
 
-@Mod(modid = MOD_ID, name = MOD_NAME, version = VERSION, acceptedMinecraftVersions = ACCEPTED_MINECRAFT)
+@Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, acceptedMinecraftVersions = ACCEPTED_MINECRAFT)
 public final class WanionLib
 {
 	@Mod.Instance(MOD_ID)
@@ -54,6 +56,11 @@ public final class WanionLib
 	public void loadComplete(final FMLLoadCompleteEvent event)
 	{
 		dependencies = null;
+	}
+
+	public boolean matchModVersions(final Map<String, String> remoteVersions, final Side side)
+	{
+		return side == Side.CLIENT ? remoteVersions.containsKey(MOD_ID) : !remoteVersions.containsKey(MOD_ID) || remoteVersions.get(MOD_ID).equals(MOD_VERSION);
 	}
 
 	public interface IDependency {}

@@ -83,7 +83,9 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 				final int actualY = offSetY + y;
 				if (actualY < root) {
 					final int actualX = offSetX + x++;
-					if (actualX < root && matrix.getStackInSlot(actualY * root + actualX) != null) {
+					if (actualX < root) {
+						if (matrix.getStackInSlot(actualY * root + actualX) == null)
+							continue;
 						final int xDifference = actualX - (offSetX - 1);
 						final int yDifference = actualY - (offSetY - 1);
 						if (xDifference > width)
@@ -99,7 +101,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 			for (int x = 0; x < width; x++) {
 				final int actualX = offSetX + x;
 				if (matrix.getStackInSlot(actualY * root + actualX) != null) {
-					recipeKey |= 1 << (y * root + x);
+					recipeKey |= 1L << (y * root + x);
 					recipeSize++;
 				}
 			}
