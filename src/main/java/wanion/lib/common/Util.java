@@ -8,7 +8,7 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.common.registry.GameData;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
@@ -39,7 +39,9 @@ public final class Util
 
 	public static String getModName(final ItemStack itemStack)
 	{
-		String name = GameData.getItemRegistry().getNameForObject(itemStack.getItem());
-		return name.substring(0, name.indexOf(58));
+		Item item;
+		if (itemStack == null || (item = itemStack.getItem()) == null)
+			return "";
+		return item.delegate.name().getResourceDomain();
 	}
 }

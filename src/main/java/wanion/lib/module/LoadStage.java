@@ -8,7 +8,7 @@ package wanion.lib.module;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.common.event.*;
+import net.minecraftforge.fml.common.event.*;
 
 import javax.annotation.Nonnull;
 

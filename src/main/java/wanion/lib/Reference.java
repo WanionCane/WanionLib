@@ -12,8 +12,8 @@ public final class Reference
 {
 	public static final String MOD_ID = "wanionlib";
 	public static final String MOD_NAME = "WanionLib";
-	public static final String MOD_VERSION = "1.7.10-1.4";
-	public static final String ACCEPTED_MINECRAFT = "[1.7.10]";
+	public static final String MOD_VERSION = "1.10.2-1.0";
+	public static final String ACCEPTED_MINECRAFT = "[1.10.2]";
 
 	private Reference() {}
 }

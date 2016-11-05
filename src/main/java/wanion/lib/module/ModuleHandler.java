@@ -8,8 +8,8 @@ package wanion.lib.module;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.common.event.FMLStateEvent;
 import gnu.trove.map.hash.THashMap;
+import net.minecraftforge.fml.common.event.FMLStateEvent;
 
 import java.util.HashSet;
 import java.util.Map;
