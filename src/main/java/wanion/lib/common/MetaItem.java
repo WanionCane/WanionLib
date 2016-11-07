@@ -54,6 +54,14 @@ public final class MetaItem
 		return metaItemKey > 0 ? new ItemStack(itemRegistry.getRaw(metaItemKey ^ (metaItemKey & 65536)), 0, metaItemKey >> 16) : null;
 	}
 
+	public static int getCumulative(@Nonnull final ItemStack... itemStacks)
+	{
+		int cumulativeKey = 0;
+		for (final ItemStack itemStack : itemStacks)
+			cumulativeKey += get(itemStack);
+		return cumulativeKey;
+	}
+
 	public static int[] getArray(final Collection<ItemStack> itemStackCollection)
 	{
 		return getList(itemStackCollection).toArray();
