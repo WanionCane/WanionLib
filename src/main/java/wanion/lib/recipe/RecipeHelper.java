@@ -44,9 +44,9 @@ public final class RecipeHelper
 				if (key instanceof Integer)
 					keyStackMap.put((Integer) key, (ItemStack) objects[index]);
 				if (thingToCharMap.containsKey(key))
-					almostTheShape[x][y] = thingToCharMap.get(key);
+					almostTheShape[y][x] = thingToCharMap.get(key);
 				else
-					thingToCharMap.put(key, almostTheShape[x][y] = (char) f++);
+					thingToCharMap.put(key, almostTheShape[y][x] = (char) f++);
 			}
 		}
 		final Object[] shape = new Object[squareRoot + thingToCharMap.size() * 2];
@@ -76,9 +76,9 @@ public final class RecipeHelper
 				if (key instanceof Integer)
 					keyStackMap.put((Integer) key, (ItemStack) inputArray[x]);
 				if (thingToCharMap.containsKey(key))
-					almostTheShape[x][y] = thingToCharMap.get(key);
+					almostTheShape[y][x] = thingToCharMap.get(key);
 				else
-					thingToCharMap.put(key, almostTheShape[x][y] = (char) f++);
+					thingToCharMap.put(key, almostTheShape[y][x] = (char) f++);
 			}
 		}
 		final Object[] shape = new Object[objects.length + thingToCharMap.size() * 2];
