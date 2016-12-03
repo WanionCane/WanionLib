@@ -8,8 +8,10 @@ package wanion.lib.module;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.logging.log4j.Logger;
 import wanion.lib.WanionLib;
+import wanion.lib.common.Dependencies;
 import wanion.lib.common.Instantiator;
 
 import javax.annotation.Nonnull;
@@ -45,7 +47,7 @@ public abstract class AbstractModule
 			final long took = System.nanoTime() - initialTime;
 			for (final Future<String> threadModuleSay : futureOfThreads)
 				logger.info(threadModuleSay.get());
-			logger.info("All " + threadList.size() + " " + moduleName + "s took " + took / 1000000 + "ms to finish. at load stage " + loadStage.name());
+			logger.info("All " + threadList.size() + " " + moduleName + "s took " + took / 1000000 + "ms to finish. at load stage " + WordUtils.capitalizeFully(loadStage.name().replace("_", " ")).replace(" ", ""));
 		} catch (InterruptedException | ExecutionException e) {
 			logger.error("Something really bad happened on " + moduleName + " at load stage " + loadStage.name());
 			e.printStackTrace();

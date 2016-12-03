@@ -39,7 +39,7 @@ public final class ModuleHandler
 
 	public void addModule(final AbstractModule module)
 	{
-		Class<? extends AbstractModule> moduleClass = (module != null) ? module.getClass() : null;
+		final Class<? extends AbstractModule> moduleClass = module != null ? module.getClass() : null;
 		if (moduleClass == null || moduleClasses.contains(moduleClass))
 			return;
 		moduleClasses.add(moduleClass);
