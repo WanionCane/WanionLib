@@ -17,9 +17,9 @@ import java.util.List;
 
 public interface IRecipeResearcher<S extends IRecipe, L extends IRecipe>
 {
-	int getShapedRecipeKey(@Nonnull final IRecipe recipe);
+	int getShapedRecipeKey(@Nonnull final S recipe);
 
-	int getShapelessRecipeKey(@Nonnull final IRecipe recipe);
+	int getShapelessRecipeKey(@Nonnull final L recipe);
 
 	@Nonnull
 	List<Class<? extends S>> getShapedRecipeClasses();
