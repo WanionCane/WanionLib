@@ -8,7 +8,7 @@ package wanion.lib.client;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,7 +27,7 @@ public final class ClientTickHandler implements WanionLib.IDependency
 
 	private ClientTickHandler()
 	{
-		FMLCommonHandler.instance().bus().register(this);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public void registerAnimation(@Nonnull final Animation animation)
