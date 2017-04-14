@@ -73,7 +73,9 @@ public final class RecipeHelper
 				continue;
 			for (int x = 0; x < inputArray.length; x++) {
 				final Object key = inputArray[x] instanceof ItemStack ? MetaItem.get((ItemStack) inputArray[x]) : inputArray[x];
-				if (key instanceof Integer)
+				if (key == null)
+					continue;
+				else if (key instanceof Integer && !keyStackMap.containsKey(key))
 					keyStackMap.put((Integer) key, (ItemStack) inputArray[x]);
 				if (thingToCharMap.containsKey(key))
 					almostTheShape[y][x] = thingToCharMap.get(key);

@@ -56,22 +56,22 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 		}
 	}
 
-	public final ItemStack findMatchingRecipe(final InventoryCrafting matrix)
+	public final R findMatchingRecipe(@Nonnull final InventoryCrafting inventoryCrafting)
 	{
-		final int root = (int) Math.sqrt(matrix.getSizeInventory());
-		int offSetX = 0, offSetY = 0, width = 0, height = 0,recipeSize = 0;
+		final int root = (int) Math.sqrt(inventoryCrafting.getSizeInventory());
+		int offSetX = 0, offSetY = 0, width = 0, height = 0, recipeSize = 0;
 		long recipeKey = 0;
 		boolean foundX = false, foundY = false;
 		for (int x = 0; !foundX && x < root; x++) {
 			for (int y = 0; !foundX && y < root; y++)
-				if (matrix.getStackInSlot(y * root + x) != null)
+				if (inventoryCrafting.getStackInSlot(y * root + x) != null)
 					foundX = true;
 			if (foundX)
 				offSetX = x;
 		}
 		for (int y = 0; !foundY && y < root; y++) {
 			for (int x = 0; x < root; x++) {
-				if (matrix.getStackInSlot(y * root + x) != null)
+				if (inventoryCrafting.getStackInSlot(y * root + x) != null)
 					foundY = true;
 				if (foundY)
 					offSetY = y;
@@ -84,7 +84,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 				if (actualY < root) {
 					final int actualX = offSetX + x++;
 					if (actualX < root) {
-						if (matrix.getStackInSlot(actualY * root + actualX) == null)
+						if (inventoryCrafting.getStackInSlot(actualY * root + actualX) == null)
 							continue;
 						final int xDifference = actualX - (offSetX - 1);
 						final int yDifference = actualY - (offSetY - 1);
@@ -100,31 +100,26 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 			final int actualY = offSetY + y;
 			for (int x = 0; x < width; x++) {
 				final int actualX = offSetX + x;
-				if (matrix.getStackInSlot(actualY * root + actualX) != null) {
+				if (inventoryCrafting.getStackInSlot(actualY * root + actualX) != null) {
 					recipeKey |= 1L << (width * y + x);
 					recipeSize++;
 				}
 			}
 		}
-		ItemStack output = null;
 		final List<R> shapedRecipeList = shapedRecipes.get(recipeKey);
 		if (shapedRecipeList != null) {
 			for (R shapedRecipe : shapedRecipeList) {
-				output = shapedRecipe.recipeMatch(matrix, offSetX, offSetY);
-				if (output != null)
-					break;
+				if (shapedRecipe.recipeMatch(inventoryCrafting, offSetX, offSetY))
+					return shapedRecipe;
 			}
 		}
-		if (output == null) {
-			final List<R> shapelessRecipeList = shapelessRecipes.get(recipeSize);
-			if (shapelessRecipeList != null) {
-				for (R shapelessRecipe : shapelessRecipeList) {
-					output = shapelessRecipe.recipeMatch(matrix, offSetX, offSetY);
-					if (output != null)
-						break;
-				}
+		final List<R> shapelessRecipeList = shapelessRecipes.get(recipeSize);
+		if (shapelessRecipeList != null) {
+			for (R shapelessRecipe : shapelessRecipeList) {
+				if (shapelessRecipe.recipeMatch(inventoryCrafting, offSetX, offSetY))
+					return shapelessRecipe;
 			}
 		}
-		return output;
+		return null;
 	}
 }
