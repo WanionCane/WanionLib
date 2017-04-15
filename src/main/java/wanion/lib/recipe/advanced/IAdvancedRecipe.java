@@ -16,9 +16,7 @@ import javax.annotation.Nonnull;
 
 public interface IAdvancedRecipe extends IRemovable
 {
-	long getRecipeKey();
-
-	int getRecipeSize();
+	short getRecipeKey();
 
 	boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY);
 
