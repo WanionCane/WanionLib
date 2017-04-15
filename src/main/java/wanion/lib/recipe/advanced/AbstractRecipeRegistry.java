@@ -82,7 +82,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 			for (int x = 0; x < width; x++)
 				if (inventoryCrafting.getStackInSlot((offSetY + y) * root + (offSetX + x)) != null)
 					recipeSize++;
-		final List<R> recipeList = recipeMap.containsKey((recipeKey |= (width << 8) + (height << 12))) ? recipeMap.get(recipeKey) : recipeMap.get(recipeSize);
+		final List<R> recipeList = recipeMap.containsKey((recipeKey |= recipeSize | (width << 8) | (height << 12))) ? recipeMap.get(recipeKey) : recipeMap.get(recipeSize);
 		if (recipeList != null)
 			for (R recipe : recipeList)
 				if (recipe.recipeMatch(inventoryCrafting, offSetX, offSetY))
