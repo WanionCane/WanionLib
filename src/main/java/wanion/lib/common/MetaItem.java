@@ -34,8 +34,8 @@ public final class MetaItem
 
 	public static int get(final ItemStack itemStack)
 	{
-		Item item;
-		if (itemStack == null || (item = itemStack.getItem()) == null)
+		final Item item;
+		if (itemStack == null || itemStack == ItemStack.EMPTY || (item = itemStack.getItem()) == null)
 			return 0;
 		final int id = itemRegistry.getId(item);
 		return id > 0 ? item.getDamage(itemStack) == OreDictionary.WILDCARD_VALUE ? id : id | item.getDamage(itemStack) + 1 << 16 : 0;
@@ -51,7 +51,8 @@ public final class MetaItem
 
 	public static ItemStack toItemStack(final int metaItemKey)
 	{
-		return metaItemKey > 0 ? new ItemStack(itemRegistry.getRaw(metaItemKey ^ (metaItemKey & 65536)), 0, metaItemKey >> 16) : null;
+		final Item item = itemRegistry.getRaw(metaItemKey ^ (metaItemKey & 65535));
+		return metaItemKey > 0 && item != null ? new ItemStack(item, 0, metaItemKey >> 16) : null;
 	}
 
 	public static int getCumulative(@Nonnull final ItemStack... itemStacks)
@@ -98,9 +99,10 @@ public final class MetaItem
 	{
 		final TIntIntMap keySizeMap = new TIntIntHashMap();
 		for (int i = startIndex; i < endIndex; i++) {
-			if (itemStacks[i] == null)
+			final ItemStack itemStack = itemStacks[i];
+			if (itemStack == null || itemStack == ItemStack.EMPTY)
 				continue;
-			final int key = get(itemStacks[i]);
+			final int key = get(itemStack);
 			if (keySizeMap.containsKey(key))
 				keySizeMap.put(key, keySizeMap.get(key) + 1);
 			else
@@ -114,13 +116,13 @@ public final class MetaItem
 		final TIntIntMap smartKeySizeMap = new TIntIntHashMap();
 		for (int i = startIndex; i < endIndex; i++) {
 			final ItemStack itemStack = itemStacks[i];
-			if (itemStack == null)
+			if (itemStack == null || itemStack == ItemStack.EMPTY)
 				continue;
 			final int key = get(itemStack);
 			if (smartKeySizeMap.containsKey(key))
-				smartKeySizeMap.put(key, smartKeySizeMap.get(key) + itemStack.stackSize);
+				smartKeySizeMap.put(key, smartKeySizeMap.get(key) + itemStack.getCount());
 			else
-				smartKeySizeMap.put(key, itemStack.stackSize);
+				smartKeySizeMap.put(key, itemStack.getCount());
 		}
 		return smartKeySizeMap;
 	}

@@ -11,6 +11,7 @@ package wanion.lib.recipe;
 import gnu.trove.map.TObjectCharMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TObjectCharHashMap;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import wanion.lib.common.MetaItem;
 
@@ -41,7 +42,9 @@ public final class RecipeHelper
 				if ((done = !(index < objects.length)) || objects[index] == null)
 					continue;
 				final Object key = objects[index] instanceof ItemStack ? MetaItem.get((ItemStack) objects[index]) : objects[index];
-				if (key instanceof Integer)
+				if (key == ItemStack.EMPTY)
+					continue;
+				else if (key instanceof Integer)
 					keyStackMap.put((Integer) key, (ItemStack) objects[index]);
 				if (thingToCharMap.containsKey(key))
 					almostTheShape[y][x] = thingToCharMap.get(key);
@@ -73,7 +76,9 @@ public final class RecipeHelper
 				continue;
 			for (int x = 0; x < inputArray.length; x++) {
 				final Object key = inputArray[x] instanceof ItemStack ? MetaItem.get((ItemStack) inputArray[x]) : inputArray[x];
-				if (key instanceof Integer)
+				if (key == null || key == ItemStack.EMPTY)
+					continue;
+				else if (key instanceof Integer && !keyStackMap.containsKey(key))
 					keyStackMap.put((Integer) key, (ItemStack) inputArray[x]);
 				if (thingToCharMap.containsKey(key))
 					almostTheShape[y][x] = thingToCharMap.get(key);

@@ -71,10 +71,10 @@ public class Dependencies<D>
 	{
 		private final Class<W> dependenceClass;
 
-		protected DependenceWatcher()
-		{
-			this.dependenceClass = (Class<W>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		}
+			protected DependenceWatcher()
+			{
+				this.dependenceClass = (Class<W>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+			}
 
 		@Nonnull
 		public abstract W instantiate();
