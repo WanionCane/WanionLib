@@ -35,7 +35,7 @@ public final class MetaItem
 	public static int get(final ItemStack itemStack)
 	{
 		final Item item;
-		if (itemStack == null || itemStack == ItemStack.EMPTY || (item = itemStack.getItem()) == null)
+		if (itemStack == null || itemStack.isEmpty() || (item = itemStack.getItem()) == null)
 			return 0;
 		final int id = itemRegistry.getId(item);
 		return id > 0 ? item.getDamage(itemStack) == OreDictionary.WILDCARD_VALUE ? id : id | item.getDamage(itemStack) + 1 << 16 : 0;

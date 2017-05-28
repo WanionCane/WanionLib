@@ -42,7 +42,7 @@ public final class RecipeHelper
 				if ((done = !(index < objects.length)) || objects[index] == null)
 					continue;
 				final Object key = objects[index] instanceof ItemStack ? MetaItem.get((ItemStack) objects[index]) : objects[index];
-				if (key == ItemStack.EMPTY)
+				if (key instanceof ItemStack && ((ItemStack) key).isEmpty())
 					continue;
 				else if (key instanceof Integer)
 					keyStackMap.put((Integer) key, (ItemStack) objects[index]);
@@ -76,7 +76,7 @@ public final class RecipeHelper
 				continue;
 			for (int x = 0; x < inputArray.length; x++) {
 				final Object key = inputArray[x] instanceof ItemStack ? MetaItem.get((ItemStack) inputArray[x]) : inputArray[x];
-				if (key == null || key == ItemStack.EMPTY)
+				if (key == null || (key instanceof ItemStack && ((ItemStack) key).isEmpty()))
 					continue;
 				else if (key instanceof Integer && !keyStackMap.containsKey(key))
 					keyStackMap.put((Integer) key, (ItemStack) inputArray[x]);
