@@ -19,23 +19,38 @@ import java.util.List;
 
 public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 {
-	public final TShortObjectMap<List<R>> recipeMap = new TShortObjectHashMap<>();
+	public final TShortObjectMap<List<R>> shapedRecipes = new TShortObjectHashMap<>();
+	public final TShortObjectMap<List<R>> shapelessRecipes = new TShortObjectHashMap<>();
 
 	public final void addRecipe(@Nonnull final R recipe)
 	{
 		final short recipeKey = recipe.getRecipeKey();
-		if (!recipeMap.containsKey(recipeKey))
-			recipeMap.put(recipeKey, new ArrayList<>());
-		recipeMap.get(recipeKey).add(recipe);
+		if (recipeKey != 0) {
+			if (!shapedRecipes.containsKey(recipeKey))
+				shapedRecipes.put(recipeKey, new ArrayList<>());
+			shapedRecipes.get(recipeKey).add(recipe);
+		} else {
+			final short recipeSize = recipe.getRecipeSize();
+			if (!shapelessRecipes.containsKey(recipeSize))
+				shapelessRecipes.put(recipeSize, new ArrayList<>());
+			shapelessRecipes.get(recipeSize).add(recipe);
+		}
 	}
 
 	public final void removeRecipe(@Nullable final R recipe)
 	{
 		if (recipe == null)
 			return;
-		final List<R> recipeList = recipeMap.get(recipe.getRecipeKey());
-		if (recipeList != null)
-			recipeList.remove(recipe);
+		final short recipeKey = recipe.getRecipeKey();
+		if (recipeKey != 0) {
+			final List<R> shapedRecipeList = shapedRecipes.get(recipeKey);
+			if (shapedRecipeList != null)
+				shapedRecipeList.remove(recipe);
+		} else {
+			final List<R> shapelessRecipeList = shapelessRecipes.get(recipe.getRecipeSize());
+			if (shapelessRecipeList != null)
+				shapelessRecipeList.remove(recipe);
+		}
 	}
 
 	public final R findMatchingRecipe(@Nonnull final InventoryCrafting inventoryCrafting)
@@ -82,7 +97,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 			for (int x = 0; x < width; x++)
 				if (inventoryCrafting.getStackInSlot((offSetY + y) * root + (offSetX + x)) != null)
 					recipeSize++;
-		final List<R> recipeList = recipeMap.containsKey((recipeKey |= recipeSize | (width << 8) | (height << 12))) ? recipeMap.get(recipeKey) : recipeMap.get(recipeSize);
+		final List<R> recipeList = shapedRecipes.containsKey((recipeKey |= recipeSize | (width << 8) | (height << 12))) ? shapedRecipes.get(recipeKey) : shapelessRecipes.get(recipeSize);
 		if (recipeList != null)
 			for (R recipe : recipeList)
 				if (recipe.recipeMatch(inventoryCrafting, offSetX, offSetY))

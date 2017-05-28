@@ -18,6 +18,8 @@ public interface IAdvancedRecipe extends IRemovable
 {
 	short getRecipeKey();
 
+	short getRecipeSize();
+
 	boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY);
 
 	@Nonnull
