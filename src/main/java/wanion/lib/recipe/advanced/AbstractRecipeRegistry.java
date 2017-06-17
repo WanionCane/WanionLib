@@ -11,7 +11,6 @@ package wanion.lib.recipe.advanced;
 import gnu.trove.map.TShortObjectMap;
 import gnu.trove.map.hash.TShortObjectHashMap;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,14 +61,14 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 		boolean foundX = false, foundY = false;
 		for (int x = 0; !foundX && x < root; x++) {
 			for (int y = 0; !foundX && y < root; y++)
-				if (inventoryCrafting.getStackInSlot(y * root + x) != ItemStack.EMPTY)
+				if (!inventoryCrafting.getStackInSlot(y * root + x).isEmpty())
 					foundX = true;
 			if (foundX)
 				offSetX = x;
 		}
 		for (int y = 0; !foundY && y < root; y++) {
 			for (int x = 0; x < root; x++) {
-				if (inventoryCrafting.getStackInSlot(y * root + x) != ItemStack.EMPTY)
+				if (!inventoryCrafting.getStackInSlot(y * root + x).isEmpty())
 					foundY = true;
 				if (foundY)
 					offSetY = y;
@@ -82,7 +81,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 				if (actualY < root) {
 					final int actualX = offSetX + x++;
 					if (actualX < root) {
-						if (inventoryCrafting.getStackInSlot(actualY * root + actualX) != ItemStack.EMPTY)
+						if (!inventoryCrafting.getStackInSlot(actualY * root + actualX).isEmpty())
 							continue;
 						final int xDifference = actualX - (offSetX - 1);
 						final int yDifference = actualY - (offSetY - 1);
@@ -96,7 +95,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 		}
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++)
-				if (inventoryCrafting.getStackInSlot((offSetY + y) * root + (offSetX + x)) != ItemStack.EMPTY)
+				if (!inventoryCrafting.getStackInSlot((offSetY + y) * root + (offSetX + x)).isEmpty())
 					recipeSize++;
 		final List<R> recipeList = shapedRecipes.containsKey((recipeKey |= recipeSize | (width << 8) | (height << 12))) ? shapedRecipes.get(recipeKey) : shapelessRecipes.get(recipeSize);
 		if (recipeList != null)

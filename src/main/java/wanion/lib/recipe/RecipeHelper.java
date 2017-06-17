@@ -11,7 +11,6 @@ package wanion.lib.recipe;
 import gnu.trove.map.TObjectCharMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TObjectCharHashMap;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import wanion.lib.common.MetaItem;
 
