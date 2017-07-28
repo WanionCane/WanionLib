@@ -18,8 +18,8 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
@@ -28,7 +28,7 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 public final class MetaItem
 {
-	public static final FMLControlledNamespacedRegistry<Item> itemRegistry = (FMLControlledNamespacedRegistry<Item>) GameRegistry.findRegistry(Item.class);
+	private static final RegistryNamespaced<ResourceLocation, Item> itemRegistry = Item.REGISTRY;
 
 	private MetaItem() {}
 
@@ -37,7 +37,7 @@ public final class MetaItem
 		final Item item;
 		if (itemStack == null || itemStack.isEmpty() || (item = itemStack.getItem()) == null)
 			return 0;
-		final int id = itemRegistry.getId(item);
+		final int id = itemRegistry.getIDForObject(item);
 		return id > 0 ? item.getDamage(itemStack) == OreDictionary.WILDCARD_VALUE ? id : id | item.getDamage(itemStack) + 1 << 16 : 0;
 	}
 
@@ -51,7 +51,7 @@ public final class MetaItem
 
 	public static ItemStack toItemStack(final int metaItemKey)
 	{
-		final Item item = itemRegistry.getRaw(metaItemKey ^ (metaItemKey & 65535));
+		final Item item = itemRegistry.getObjectById(metaItemKey ^ (metaItemKey & 65535));
 		return metaItemKey > 0 && item != null ? new ItemStack(item, 0, metaItemKey >> 16) : null;
 	}
 

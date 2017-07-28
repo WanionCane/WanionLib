@@ -8,17 +8,17 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import minetweaker.MineTweakerAPI;
-import minetweaker.api.item.IIngredient;
-import minetweaker.api.item.IItemStack;
-import minetweaker.api.oredict.IOreDictEntry;
+import crafttweaker.CraftTweakerAPI;
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.oredict.IOreDictEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 @SuppressWarnings("unused")
-public final class MineTweakerHelper
+public final class CraftTweakerHelper
 {
-	private MineTweakerHelper() {}
+	private CraftTweakerHelper() {}
 
 	public static ItemStack toStack(final IItemStack item)
 	{
@@ -26,7 +26,7 @@ public final class MineTweakerHelper
 			return null;
 		final Object internal = item.getInternal();
 		if (internal == null || !(internal instanceof ItemStack))
-			MineTweakerAPI.getLogger().logError("Not a valid item stack: " + item);
+			CraftTweakerAPI.getLogger().logError("Not a valid item stack: " + item);
 		return internal instanceof ItemStack ? (ItemStack) internal : null;
 	}
 
