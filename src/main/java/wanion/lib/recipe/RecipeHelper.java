@@ -30,7 +30,7 @@ public final class RecipeHelper
 	@Nonnull
 	public static Object[] rawShapeToShape(@Nonnull final Object[] objects, final int squareRoot)
 	{
-		int f = 1;
+		int f = 65;
 		final char[][] almostTheShape = new char[squareRoot][squareRoot];
 		final TObjectCharMap<Object> thingToCharMap = new TObjectCharHashMap<>();
 		final Map<Integer, ItemStack> keyStackMap = new THashMap<>();
@@ -38,12 +38,14 @@ public final class RecipeHelper
 		for (int x = 0; x < squareRoot && !done; x++) {
 			for (int y = 0; y < squareRoot && !done; y++) {
 				final int index = y * squareRoot + x;
-				if ((done = !(index < objects.length)) || objects[index] == null)
+				if (done = !(index < objects.length))
 					continue;
-				final Object key = objects[index] instanceof ItemStack ? MetaItem.get((ItemStack) objects[index]) : objects[index];
-				if (key instanceof ItemStack && ((ItemStack) key).isEmpty())
+				final boolean isItemStack = objects[index] instanceof ItemStack;
+				final Object key = isItemStack ? MetaItem.get((ItemStack) objects[index]) : objects[index];
+				if (key == null || (isItemStack && ((ItemStack) objects[index]).isEmpty())) {
+					almostTheShape[y][x] = ' ';
 					continue;
-				else if (key instanceof Integer)
+				} else if (key instanceof Integer)
 					keyStackMap.put((Integer) key, (ItemStack) objects[index]);
 				if (thingToCharMap.containsKey(key))
 					almostTheShape[y][x] = thingToCharMap.get(key);
@@ -65,7 +67,7 @@ public final class RecipeHelper
 	@Nonnull
 	public static Object[] rawShapeToShape(@Nonnull final Object[][] objects, final int squareRoot)
 	{
-		int f = 1;
+		int f = 65;
 		final char[][] almostTheShape = new char[objects.length][squareRoot];
 		final TObjectCharMap<Object> thingToCharMap = new TObjectCharHashMap<>();
 		final Map<Integer, ItemStack> keyStackMap = new THashMap<>();
@@ -74,10 +76,12 @@ public final class RecipeHelper
 			if (inputArray == null)
 				continue;
 			for (int x = 0; x < inputArray.length; x++) {
-				final Object key = inputArray[x] instanceof ItemStack ? MetaItem.get((ItemStack) inputArray[x]) : inputArray[x];
-				if (key == null || (key instanceof ItemStack && ((ItemStack) key).isEmpty()))
+				final boolean isItemStack = inputArray[x] instanceof ItemStack;
+				final Object key = isItemStack ? MetaItem.get((ItemStack) inputArray[x]) : inputArray[x];
+				if (key == null || (isItemStack && ((ItemStack) inputArray[x]).isEmpty())) {
+					almostTheShape[y][x] = ' ';
 					continue;
-				else if (key instanceof Integer && !keyStackMap.containsKey(key))
+				} else if (key instanceof Integer && !keyStackMap.containsKey(key))
 					keyStackMap.put((Integer) key, (ItemStack) inputArray[x]);
 				if (thingToCharMap.containsKey(key))
 					almostTheShape[y][x] = thingToCharMap.get(key);
