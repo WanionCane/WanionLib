@@ -11,7 +11,6 @@ package wanion.lib.module;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.logging.log4j.Logger;
 import wanion.lib.WanionLib;
-import wanion.lib.common.Dependencies;
 import wanion.lib.common.Instantiator;
 
 import javax.annotation.Nonnull;
@@ -54,15 +53,27 @@ public abstract class AbstractModule
 		}
 	}
 
+	@Nonnull
+	public String getModuleName()
+	{
+		return moduleName;
+	}
+
+	@Nonnull
+	public Manager getManager()
+	{
+		return manager;
+	}
+
 	public static class Manager
 	{
-		private final Map<LoadStage, Set<Class<? extends AbstractModuleThread>>> loadStageMap;
+		private final Map<LoadStage, Set<Class<? extends AbstractModuleThread>>> loadStageMap = new EnumMap<>(LoadStage.class);
+		private final Set<Class<? extends AbstractModuleThread>> threadClassSet = new HashSet<>();
 		private final Instantiator<AbstractModuleThread> instantiator;
 
 		public Manager(@Nonnull final Instantiator<AbstractModuleThread> instantiator)
 		{
 			this.instantiator = instantiator;
-			loadStageMap = new EnumMap<>(LoadStage.class);
 			for (final LoadStage loadStage : LoadStage.values())
 				loadStageMap.put(loadStage, new LinkedHashSet<>());
 		}
@@ -71,7 +82,7 @@ public abstract class AbstractModule
 		{
 			final LoadStage loadStage = (moduleThreadClass.isAnnotationPresent(SpecifiedLoadStage.class)) ? moduleThreadClass.getAnnotation(SpecifiedLoadStage.class).stage() : LoadStage.POST_INIT;
 			final Set<Class<? extends AbstractModuleThread>> classSet = loadStageMap.get(loadStage);
-			return !classSet.contains(moduleThreadClass) && classSet.add(moduleThreadClass);
+			return !classSet.contains(moduleThreadClass) && !threadClassSet.contains(moduleThreadClass) && threadClassSet.add(moduleThreadClass) && classSet.add(moduleThreadClass);
 		}
 
 		public boolean isEmpty()
@@ -95,6 +106,11 @@ public abstract class AbstractModule
 				}
 			});
 			return abstractModuleThreads;
+		}
+
+		public boolean containsInstance(@Nonnull Class<? extends AbstractModuleThread> threadClass)
+		{
+			return threadClassSet.contains(threadClass);
 		}
 	}
 }

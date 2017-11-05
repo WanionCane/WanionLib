@@ -24,7 +24,27 @@ public final class Util
 			final Field field = clas.getDeclaredField(name);
 			field.setAccessible(true);
 			return (E) expectedClass.cast(field.get(instance));
-		} catch (Exception e) { e.printStackTrace(); }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, E extends T> E getField(Class clas, String unobfuscatedName, String obfuscatedName, Object instance, Class<T> expectedClass)
+	{
+		try {
+			Field field;
+			try {
+				field = clas.getDeclaredField(obfuscatedName);
+			} catch (Exception e){
+				field = clas.getDeclaredField(unobfuscatedName);
+			}
+			field.setAccessible(true);
+			return (E) expectedClass.cast(field.get(instance));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -34,7 +54,9 @@ public final class Util
 			final Field field = clas.getDeclaredField(name);
 			field.setAccessible(true);
 			field.set(instance, newInstance);
-		} catch (Exception e) { e.printStackTrace(); }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static String getModName(final ItemStack itemStack)

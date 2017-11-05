@@ -11,6 +11,8 @@ package wanion.lib.module;
 import gnu.trove.map.hash.THashMap;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 
+import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +20,7 @@ import java.util.Set;
 public final class ModuleHandler
 {
 	private final Set<Class<? extends AbstractModule>> moduleClasses = new HashSet<>();
+	private final Map<String, AbstractModule> nameModuleMap = new HashMap<>();
 	private final Map<AbstractModule, AbstractModule.Manager> modules = new THashMap<>();
 
 	public void startModules(final FMLStateEvent event)
@@ -43,6 +46,12 @@ public final class ModuleHandler
 		if (moduleClass == null || moduleClasses.contains(moduleClass))
 			return;
 		moduleClasses.add(moduleClass);
+		nameModuleMap.put(module.getModuleName(), module);
 		modules.put(module, null);
+	}
+
+	public AbstractModule getModule(@Nonnull String moduleName)
+	{
+		return nameModuleMap.get(moduleName);
 	}
 }
