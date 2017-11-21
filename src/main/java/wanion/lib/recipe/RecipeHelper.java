@@ -43,14 +43,14 @@ public final class RecipeHelper
 				final boolean isItemStack = objects[index] instanceof ItemStack;
 				final Object key = isItemStack ? MetaItem.get((ItemStack) objects[index]) : objects[index];
 				if (key == null || (isItemStack && ((ItemStack) objects[index]).isEmpty())) {
-					almostTheShape[y][x] = ' ';
+					almostTheShape[x][y] = ' ';
 					continue;
 				} else if (key instanceof Integer)
 					keyStackMap.put((Integer) key, (ItemStack) objects[index]);
 				if (thingToCharMap.containsKey(key))
-					almostTheShape[y][x] = thingToCharMap.get(key);
+					almostTheShape[x][y] = thingToCharMap.get(key);
 				else
-					thingToCharMap.put(key, almostTheShape[y][x] = (char) f++);
+					thingToCharMap.put(key, almostTheShape[x][y] = (char) f++);
 			}
 		}
 		final Object[] shape = new Object[squareRoot + thingToCharMap.size() * 2];
@@ -60,42 +60,6 @@ public final class RecipeHelper
 		for (final Object object : thingToCharMap.keySet()) {
 			shape[squareRoot + (2 * i)] = thingToCharMap.get(object);
 			shape[squareRoot + 1 + (2 * i++)] = (object instanceof Integer) ? keyStackMap.get(object) : object;
-		}
-		return shape;
-	}
-
-	@Nonnull
-	public static Object[] rawShapeToShape(@Nonnull final Object[][] objects, final int squareRoot)
-	{
-		int f = 65;
-		final char[][] almostTheShape = new char[objects.length][squareRoot];
-		final TObjectCharMap<Object> thingToCharMap = new TObjectCharHashMap<>();
-		final Map<Integer, ItemStack> keyStackMap = new THashMap<>();
-		for (int y = 0; y < objects.length; y++) {
-			final Object[] inputArray = objects[y];
-			if (inputArray == null)
-				continue;
-			for (int x = 0; x < inputArray.length; x++) {
-				final boolean isItemStack = inputArray[x] instanceof ItemStack;
-				final Object key = isItemStack ? MetaItem.get((ItemStack) inputArray[x]) : inputArray[x];
-				if (key == null || (isItemStack && ((ItemStack) inputArray[x]).isEmpty())) {
-					almostTheShape[y][x] = ' ';
-					continue;
-				} else if (key instanceof Integer && !keyStackMap.containsKey(key))
-					keyStackMap.put((Integer) key, (ItemStack) inputArray[x]);
-				if (thingToCharMap.containsKey(key))
-					almostTheShape[y][x] = thingToCharMap.get(key);
-				else
-					thingToCharMap.put(key, almostTheShape[y][x] = (char) f++);
-			}
-		}
-		final Object[] shape = new Object[objects.length + thingToCharMap.size() * 2];
-		for (int i = 0; i < objects.length; i++)
-			shape[i] = new String(almostTheShape[i]);
-		int i = 0;
-		for (final Object object : thingToCharMap.keySet()) {
-			shape[objects.length + (2 * i)] = thingToCharMap.get(object);
-			shape[objects.length + 1 + (2 * i++)] = (object instanceof Integer) ? keyStackMap.get(object) : object;
 		}
 		return shape;
 	}
