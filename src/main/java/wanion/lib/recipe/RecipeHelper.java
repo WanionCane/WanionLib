@@ -35,8 +35,8 @@ public final class RecipeHelper
 		final TObjectCharMap<Object> thingToCharMap = new TObjectCharHashMap<>();
 		final Map<Integer, ItemStack> keyStackMap = new THashMap<>();
 		boolean done = false;
-		for (int x = 0; x < squareRoot && !done; x++) {
-			for (int y = 0; y < squareRoot && !done; y++) {
+		for (int y = 0; y < squareRoot && !done; y++) {
+			for (int x = 0; x < squareRoot && !done; x++) {
 				final int index = y * squareRoot + x;
 				if (done = !(index < objects.length))
 					continue;
