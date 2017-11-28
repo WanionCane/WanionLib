@@ -19,24 +19,30 @@ import java.util.Map;
 
 public final class RecipeHelper
 {
-	private RecipeHelper() {}
+	private RecipeHelper() { }
 
 	@Nonnull
-	public static Object[] rawShapeToShape(@Nonnull final Object[] objects)
+	public static RecipeAttributes rawShapeToShape(@Nonnull final Object[] objects)
 	{
-		return rawShapeToShape(objects, 3);
+		final int squareRoot = (int) Math.sqrt(objects.length);
+		int trueRoot = 0;
+		for (int y = 0; y < squareRoot; y++)
+			for (int x = 0; x < squareRoot; x++)
+				if (objects[squareRoot * y + x] != null)
+					trueRoot = x + 1 > trueRoot || y + 1 > trueRoot ? (x > y ? x + 1 : y + 1) : trueRoot;
+		return rawShapeToShape(objects, trueRoot, squareRoot);
 	}
 
 	@Nonnull
-	public static Object[] rawShapeToShape(@Nonnull final Object[] objects, final int squareRoot)
+	public static RecipeAttributes rawShapeToShape(@Nonnull final Object[] objects, final int trueRoot, final int squareRoot)
 	{
 		int f = 65;
-		final char[][] almostTheShape = new char[squareRoot][squareRoot];
+		final char[][] almostTheShape = new char[trueRoot][trueRoot];
 		final TObjectCharMap<Object> thingToCharMap = new TObjectCharHashMap<>();
 		final Map<Integer, ItemStack> keyStackMap = new THashMap<>();
 		boolean done = false;
-		for (int y = 0; y < squareRoot && !done; y++) {
-			for (int x = 0; x < squareRoot && !done; x++) {
+		for (int y = 0; y < trueRoot && !done; y++) {
+			for (int x = 0; x < trueRoot && !done; x++) {
 				final int index = y * squareRoot + x;
 				if (done = !(index < objects.length))
 					continue;
@@ -53,14 +59,17 @@ public final class RecipeHelper
 					thingToCharMap.put(key, almostTheShape[x][y] = (char) f++);
 			}
 		}
-		final Object[] shape = new Object[squareRoot + thingToCharMap.size() * 2];
-		for (int i = 0; i < squareRoot; i++)
-			shape[i] = new String(almostTheShape[i]);
+		final Object[] actualShape = new Object[trueRoot + thingToCharMap.size() * 2];
+		final StringBuilder shape = new StringBuilder();
+		for (int i = 0; i < trueRoot; i++) {
+			actualShape[i] = new String(almostTheShape[i]);
+			shape.append(almostTheShape[i]);
+		}
 		int i = 0;
 		for (final Object object : thingToCharMap.keySet()) {
-			shape[squareRoot + (2 * i)] = thingToCharMap.get(object);
-			shape[squareRoot + 1 + (2 * i++)] = (object instanceof Integer) ? keyStackMap.get(object) : object;
+			actualShape[trueRoot + (2 * i)] = thingToCharMap.get(object);
+			actualShape[trueRoot + 1 + (2 * i++)] = (object instanceof Integer) ? keyStackMap.get(object) : object;
 		}
-		return shape;
+		return new RecipeAttributes(shape.toString(), actualShape);
 	}
 }
