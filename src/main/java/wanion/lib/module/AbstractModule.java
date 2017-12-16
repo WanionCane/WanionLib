@@ -8,6 +8,9 @@ package wanion.lib.module;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.logging.log4j.Logger;
 import wanion.lib.WanionLib;
@@ -40,13 +43,17 @@ public abstract class AbstractModule
 			return;
 		final ExecutorService moduleThreadExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		final Logger logger = WanionLib.getLogger();
+		final ModContainer modContainer = Loader.instance().activeModContainer();
+		if (modContainer == null)
+			throw new RuntimeException("This should never happen.");
+		logger.info(modContainer.getName() + ": Initializing Module: " + moduleName + ", Side: " + WordUtils.capitalizeFully(FMLCommonHandler.instance().getSide().name()));
 		try {
 			final long initialTime = System.nanoTime();
 			final List<Future<String>> futureOfThreads = moduleThreadExecutor.invokeAll(threadList);
 			final long took = System.nanoTime() - initialTime;
 			for (final Future<String> threadModuleSay : futureOfThreads)
 				logger.info(threadModuleSay.get());
-			logger.info("All " + threadList.size() + " " + moduleName + "s took " + took / 1000000 + "ms to finish. at load stage " + WordUtils.capitalizeFully(loadStage.name().replace("_", " ")).replace(" ", ""));
+			logger.info(modContainer.getName() + ": All " + threadList.size() + " " + moduleName + "s took " + took / 1000000 + "ms to finish. at load stage " + WordUtils.capitalizeFully(loadStage.name().replace("_", " ")).replace(" ", ""));
 		} catch (InterruptedException | ExecutionException e) {
 			logger.error("Something really bad happened on " + moduleName + " at load stage " + loadStage.name());
 			e.printStackTrace();
@@ -98,6 +105,8 @@ public abstract class AbstractModule
 		public List<AbstractModuleThread> getInstances(final LoadStage loadStage)
 		{
 			final List<AbstractModuleThread> abstractModuleThreads = new ArrayList<>();
+			if (!loadStageMap.containsKey(loadStage))
+				return null;
 			loadStageMap.get(loadStage).forEach(t -> {
 				try {
 					abstractModuleThreads.add(instantiator.instantiate(t));
