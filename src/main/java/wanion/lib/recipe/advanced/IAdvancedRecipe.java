@@ -10,17 +10,16 @@ package wanion.lib.recipe.advanced;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import wanion.lib.common.IRemovable;
 
 import javax.annotation.Nonnull;
 
-public interface IAdvancedRecipe extends IRemovable
+public interface IAdvancedRecipe
 {
 	short getRecipeKey();
 
 	short getRecipeSize();
 
-	boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY);
+	boolean recipeMatches(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY);
 
 	@Nonnull
 	ItemStack getOutput();

@@ -55,7 +55,7 @@ public abstract class AbstractModule
 				logger.info(threadModuleSay.get());
 			logger.info(modContainer.getName() + ": All " + threadList.size() + " " + moduleName + "s took " + took / 1000000 + "ms to finish. at load stage " + WordUtils.capitalizeFully(loadStage.name().replace("_", " ")).replace(" ", ""));
 		} catch (InterruptedException | ExecutionException e) {
-			logger.error("Something really bad happened on " + moduleName + " at load stage " + loadStage.name());
+			logger.error(modContainer.getName() + "Something really bad happened on " + moduleName + " at load stage " + loadStage.name());
 			e.printStackTrace();
 		}
 	}

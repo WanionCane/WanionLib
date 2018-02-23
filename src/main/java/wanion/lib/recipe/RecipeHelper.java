@@ -49,14 +49,14 @@ public final class RecipeHelper
 				final boolean isItemStack = objects[index] instanceof ItemStack;
 				final Object key = isItemStack ? MetaItem.get((ItemStack) objects[index]) : objects[index];
 				if (key == null || (isItemStack && ((ItemStack) objects[index]).isEmpty())) {
-					almostTheShape[x][y] = ' ';
+					almostTheShape[y][x] = ' ';
 					continue;
 				} else if (key instanceof Integer)
 					keyStackMap.put((Integer) key, (ItemStack) objects[index]);
 				if (thingToCharMap.containsKey(key))
-					almostTheShape[x][y] = thingToCharMap.get(key);
+					almostTheShape[y][x] = thingToCharMap.get(key);
 				else
-					thingToCharMap.put(key, almostTheShape[x][y] = (char) f++);
+					thingToCharMap.put(key, almostTheShape[y][x] = (char) f++);
 			}
 		}
 		final Object[] actualShape = new Object[trueRoot + thingToCharMap.size() * 2];

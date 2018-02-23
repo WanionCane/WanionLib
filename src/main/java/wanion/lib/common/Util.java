@@ -11,7 +11,11 @@ package wanion.lib.common;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class Util
 {
@@ -65,5 +69,21 @@ public final class Util
 		if (itemStack == null || (item = itemStack.getItem()) == null)
 			return "";
 		return item.delegate.name().getResourceDomain();
+	}
+
+	public static <O> void fillArray(@Nonnull final O[] array, @Nonnull final O defaultInstance)
+	{
+		for (int i = 0; i < array.length; i++)
+			array[i] = defaultInstance;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <O> O[] treeDimArrayToTwoDimArray(@Nonnull final O[][] treeDimArray)
+	{
+		final List<O> oList = new ArrayList<>();
+		for (final O[] twoDimArray : treeDimArray)
+			if (twoDimArray != null)
+				oList.addAll(Arrays.asList(twoDimArray));
+		return (O[]) oList.toArray();
 	}
 }

@@ -81,7 +81,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 				if (actualY < root) {
 					final int actualX = offSetX + x++;
 					if (actualX < root) {
-						if (!inventoryCrafting.getStackInSlot(actualY * root + actualX).isEmpty())
+						if (inventoryCrafting.getStackInSlot(actualY * root + actualX).isEmpty())
 							continue;
 						final int xDifference = actualX - (offSetX - 1);
 						final int yDifference = actualY - (offSetY - 1);
@@ -100,7 +100,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 		final List<R> recipeList = shapedRecipes.containsKey((recipeKey |= recipeSize | (width << 8) | (height << 12))) ? shapedRecipes.get(recipeKey) : shapelessRecipes.get(recipeSize);
 		if (recipeList != null)
 			for (R recipe : recipeList)
-				if (recipe.recipeMatch(inventoryCrafting, offSetX, offSetY))
+				if (recipe.recipeMatches(inventoryCrafting, offSetX, offSetY))
 					return recipe;
 		return null;
 	}
