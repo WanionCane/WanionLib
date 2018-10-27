@@ -12,15 +12,25 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public interface IAdvancedRecipe
 {
+	boolean isShaped();
+
 	short getRecipeKey();
 
 	short getRecipeSize();
 
-	boolean recipeMatches(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY);
+	int getWidth();
+
+	int getHeight();
+
+	@Nonnull
+	List<Object> getInputs();
 
 	@Nonnull
 	ItemStack getOutput();
+
+	boolean recipeMatches(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY);
 }
