@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,6 +45,19 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 			recipeList.remove(recipe);
 	}
 
+	@Nullable
+	public final R findRecipeByKeyAndOutput(final short key, @Nonnull final ItemStack output)
+	{
+		final List<R> recipeList = recipes.get(key);
+		if (recipeList == null)
+			return null;
+		for (R recipe : recipeList)
+			if (recipe.getOutput().isItemEqual(output))
+				return recipe;
+		return null;
+	}
+
+	@Nullable
 	public final R findMatchingRecipe(@Nonnull final InventoryCrafting inventoryCrafting)
 	{
 		final int root = (int) Math.sqrt(inventoryCrafting.getSizeInventory());
@@ -96,6 +110,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 		return null;
 	}
 
+	@Nonnull
 	public final List<R> getAllRecipes()
 	{
 		final List<R> allTheRecipes = new ArrayList<>();
