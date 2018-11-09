@@ -1,0 +1,7 @@
+wanionlib.redstone.control=Controle de Redstone
+wanionlib.redstone.control.state.ignored=Ignorar
+wanionlib.redstone.control.state.off=Desligado
+wanionlib.redstone.control.state.on=Ligado
+wanionlib.redstone.control.state.ignored.desc=Irá ignorar sinais de Redstone
+wanionlib.redstone.control.state.off.desc=Apenas funcionará se nenhum sinal de Redstone for Aplicado
+wanionlib.redstone.control.state.on.desc=Apenas funcionará se um sinal de Redstone for Aplicado
