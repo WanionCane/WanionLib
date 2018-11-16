@@ -1,4 +1,4 @@
-package wanion.lib.common.redstone;
+package wanion.lib.common;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -8,9 +8,12 @@ package wanion.lib.common.redstone;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import javax.annotation.Nonnull;
+import net.minecraft.inventory.Slot;
 
-public interface IRedstoneControllableProvider
+import javax.annotation.Nonnull;
+import java.util.List;
+
+public interface ISlotCreator
 {
-	@Nonnull IRedstoneControllable getRedstoneControllable();
+	void create(@Nonnull List<Slot> slotList);
 }

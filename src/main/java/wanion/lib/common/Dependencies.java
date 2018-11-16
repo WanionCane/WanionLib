@@ -12,14 +12,33 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class Dependencies<D>
 {
 	private final Map<Class, D> dependencies = new IdentityHashMap<>();
+	private final Collection<D> instances = Collections.unmodifiableCollection(dependencies.values());
 	private final Map<Class, DependenceWatcher<? extends D>> dependenciesWatchers = new IdentityHashMap<>();
+
+	public Dependencies()
+	{
+	}
+
+	public Dependencies(final D... dependencies)
+	{
+		add(dependencies);
+	}
+
+	public Dependencies(@Nonnull final Collection<D> dependencies)
+	{
+		add(dependencies);
+	}
+
+	public Dependencies(@Nonnull final Dependencies<D> dependencies)
+	{
+		add(dependencies.getInstances());
+	}
 
 	public final <I extends D> void add(final Class<? extends I> typeClass)
 	{
@@ -41,10 +60,37 @@ public class Dependencies<D>
 
 	public final <I extends D> void add(final I instance)
 	{
-		final Class typeClass = instance.getClass();
+		final Class<I> typeClass = instance != null ? (Class<I>) instance.getClass() : null;
 		if (dependencies.containsKey(typeClass))
 			return;
 		dependencies.put(typeClass, instance);
+	}
+
+	public final <I extends D> void add(final I... instances)
+	{
+		for (final I instance : instances)
+			add(instance);
+	}
+
+	public final <I extends D> void add(@Nonnull final Collection<I> instances)
+	{
+		instances.forEach(this::add);
+	}
+
+	public final <I extends D> void forceAdd(@Nonnull final I instance)
+	{
+		dependencies.put(instance.getClass(), instance);
+	}
+
+	public final <I extends D> void forceAdd(@Nonnull final I... instances)
+	{
+		for (final I instance : instances)
+			dependencies.put(instance.getClass(), instance);
+	}
+
+	public final <I extends D> void forceAdd(@Nonnull final Collection<I> instances)
+	{
+		instances.forEach(instance -> dependencies.put(instance.getClass(), instance));
 	}
 
 	public final <I extends D> I get(final Class<I> typeClass)
@@ -56,9 +102,37 @@ public class Dependencies<D>
 		return (I) dependencies.get(typeClass);
 	}
 
+	public final <I extends D> I get(@Nonnull final I instance)
+	{
+		final Class<I> typeClass = (Class<I>) instance.getClass();
+		return get(typeClass);
+	}
+
+	public final Collection<D> getDependencies()
+	{
+		return (Collection<D>) dependencies.keySet();
+	}
+
+	public final Collection<D> getInstances()
+	{
+		return instances;
+	}
+
 	public final boolean contains(final Class<? extends D> typeClass)
 	{
 		return dependencies.containsKey(typeClass);
+	}
+
+	@Nonnull
+	public final <I extends D> List<I> compareContents(@Nonnull final Dependencies<D> dependencies)
+	{
+		if (!getDependencies().equals(dependencies.getDependencies()))
+			return Collections.emptyList();
+		final List<I> differences = new ArrayList<>();
+		for (final D dependency : instances)
+			if (!dependency.equals(dependencies.get(dependency)))
+				differences.add((I) dependency);
+		return differences;
 	}
 
 	public final void subscribe(final DependenceWatcher<? extends D> dependenceWatcher)
@@ -71,10 +145,10 @@ public class Dependencies<D>
 	{
 		private final Class<W> dependenceClass;
 
-			protected DependenceWatcher()
-			{
-				this.dependenceClass = (Class<W>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-			}
+		protected DependenceWatcher()
+		{
+			this.dependenceClass = (Class<W>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+		}
 
 		@Nonnull
 		public abstract W instantiate();

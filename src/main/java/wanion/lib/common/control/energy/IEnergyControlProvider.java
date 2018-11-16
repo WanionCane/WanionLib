@@ -1,4 +1,4 @@
-package wanion.lib.common.redstone;
+package wanion.lib.common.control.energy;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -10,10 +10,8 @@ package wanion.lib.common.redstone;
 
 import javax.annotation.Nonnull;
 
-public interface IRedstoneControllable
+public interface IEnergyControlProvider
 {
 	@Nonnull
-	RedstoneControlState getRedstoneControlState();
-
-	void setRedstoneControlState(@Nonnull final RedstoneControlState redstoneControlState);
+	EnergyControl getEnergyControl();
 }

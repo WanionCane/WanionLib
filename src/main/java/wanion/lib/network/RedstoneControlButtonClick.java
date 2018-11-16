@@ -14,30 +14,28 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.lib.WanionLib;
-import wanion.lib.common.redstone.IRedstoneControllable;
-import wanion.lib.common.redstone.IRedstoneControllableProvider;
-import wanion.lib.common.redstone.RedstoneControlState;
+import wanion.lib.common.control.redstone.IRedstoneControlProvider;
+import wanion.lib.common.control.redstone.RedstoneControl;
 
 public class RedstoneControlButtonClick implements IMessage
 {
 	private boolean leftClick;
+
+	public RedstoneControlButtonClick() {}
 
 	public RedstoneControlButtonClick(final boolean leftClick)
 	{
 		this.leftClick = leftClick;
 	}
 
-	@SuppressWarnings("unused")
-	public RedstoneControlButtonClick() {}
-
 	@Override
-	public void fromBytes(ByteBuf buf)
+	public void fromBytes(final ByteBuf buf)
 	{
 		leftClick = buf.getBoolean(0);
 	}
 
 	@Override
-	public void toBytes(ByteBuf buf)
+	public void toBytes(final ByteBuf buf)
 	{
 		buf.writeBoolean(leftClick);
 	}
@@ -48,12 +46,12 @@ public class RedstoneControlButtonClick implements IMessage
 		public IMessage onMessage(final RedstoneControlButtonClick redstoneControlButtonClick, final MessageContext ctx)
 		{
 			final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-			if (entityPlayer != null && entityPlayer.openContainer instanceof IRedstoneControllableProvider) {
-				final IRedstoneControllable redstoneControllable = ((IRedstoneControllableProvider) entityPlayer.openContainer).getRedstoneControllable();
+			if (entityPlayer != null && entityPlayer.openContainer instanceof IRedstoneControlProvider) {
+				final RedstoneControl redstoneControllable = ((IRedstoneControlProvider) entityPlayer.openContainer).getRedstoneControl();
 				if (redstoneControlButtonClick.leftClick)
-					redstoneControllable.setRedstoneControlState(RedstoneControlState.getNextRedstoneControlState(redstoneControllable.getRedstoneControlState()));
+					redstoneControllable.setRedstoneControlState(RedstoneControl.State.getNextRedstoneControlState(redstoneControllable.getRedstoneControlState()));
 				else
-					redstoneControllable.setRedstoneControlState(RedstoneControlState.getPreviousRedstoneControlState(redstoneControllable.getRedstoneControlState()));
+					redstoneControllable.setRedstoneControlState(RedstoneControl.State.getPreviousRedstoneControlState(redstoneControllable.getRedstoneControlState()));
 			}
 			return null;
 		}
