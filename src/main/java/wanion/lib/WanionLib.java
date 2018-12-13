@@ -8,6 +8,7 @@ package wanion.lib;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
@@ -19,7 +20,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
 import wanion.lib.client.ClientTickHandler;
 import wanion.lib.common.Dependencies;
+import wanion.lib.common.control.ControlsContainer;
+import wanion.lib.common.control.IControl;
+import wanion.lib.network.ControlsSync;
 import wanion.lib.proxy.CommonProxy;
+
+import javax.annotation.Nonnull;
 
 import static wanion.lib.Reference.*;
 

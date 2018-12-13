@@ -10,6 +10,8 @@ package wanion.lib.proxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IThreadListener;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nonnull;
@@ -20,5 +22,11 @@ public final class ClientProxy extends CommonProxy
 	public EntityPlayer getEntityPlayerFromContext(@Nonnull final MessageContext messageContext)
 	{
 		return messageContext.side.isClient() ? Minecraft.getMinecraft().player : super.getEntityPlayerFromContext(messageContext);
+	}
+
+	@Override
+	public IThreadListener getThreadListener()
+	{
+		return Minecraft.getMinecraft();
 	}
 }

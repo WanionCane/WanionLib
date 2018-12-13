@@ -21,9 +21,7 @@ public class Dependencies<D>
 	private final Collection<D> instances = Collections.unmodifiableCollection(dependencies.values());
 	private final Map<Class, DependenceWatcher<? extends D>> dependenciesWatchers = new IdentityHashMap<>();
 
-	public Dependencies()
-	{
-	}
+	public Dependencies() {}
 
 	public Dependencies(final D... dependencies)
 	{

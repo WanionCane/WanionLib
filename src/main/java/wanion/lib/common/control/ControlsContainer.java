@@ -11,9 +11,10 @@ package wanion.lib.common.control;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import wanion.lib.WanionLib;
-import wanion.lib.network.ControlsContainerSync;
+import wanion.lib.network.ControlsSync;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -22,10 +23,12 @@ import java.util.stream.Collectors;
 public abstract class ControlsContainer extends Container implements IControlsProvider
 {
 	private final Controls controls;
+	private final IInventory inventory;
 
-	public ControlsContainer(@Nonnull final Controls controls)
+	public ControlsContainer(@Nonnull final Controls controls, @Nonnull final IInventory inventory)
 	{
 		this.controls = new Controls(controls.getInstances().stream().<IControl>map(IControl::copy).collect(Collectors.toList()));
+		this.inventory = inventory;
 	}
 
 	@Override
@@ -36,7 +39,7 @@ public abstract class ControlsContainer extends Container implements IControlsPr
 			return;
 		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
 		controls.getInstances().forEach(control -> control.writeToNBT(nbtTagCompound));
-		WanionLib.networkWrapper.sendTo(new ControlsContainerSync(nbtTagCompound), (EntityPlayerMP) listener);
+		WanionLib.networkWrapper.sendTo(new ControlsSync(windowId, nbtTagCompound), (EntityPlayerMP) listener);
 	}
 
 	@Override
@@ -50,12 +53,13 @@ public abstract class ControlsContainer extends Container implements IControlsPr
 			controlList.forEach(control -> control.writeToNBT(nbtTagCompound));
 			for (final IContainerListener containerListener : listeners)
 				if (containerListener instanceof EntityPlayerMP)
-					WanionLib.networkWrapper.sendTo(new ControlsContainerSync(nbtTagCompound), (EntityPlayerMP) containerListener);
+					WanionLib.networkWrapper.sendTo(new ControlsSync(windowId, nbtTagCompound), (EntityPlayerMP) containerListener);
 		}
 	}
 
-	public final void sync(@Nonnull final NBTTagCompound nbtTagCompound)
+	public final void syncControls(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		getControls().getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
+		inventory.markDirty();
 	}
 }

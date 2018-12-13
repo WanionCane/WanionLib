@@ -13,43 +13,36 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import wanion.lib.common.control.IControl;
+import wanion.lib.common.control.IControlNameable;
+import wanion.lib.common.control.IState;
+import wanion.lib.common.control.IStateNameable;
+import wanion.lib.common.control.IStateProvider;
 
 import javax.annotation.Nonnull;
 
-public final class RedstoneControl implements IControl<RedstoneControl>
+public final class RedstoneControl implements IStateProvider<RedstoneControl, RedstoneControl.RedstoneState>, IControlNameable
 {
 	private final TileEntity tileEntity;
-	private State state = State.IGNORED;
+	private RedstoneState state = RedstoneState.IGNORED;
 
 	public RedstoneControl(@Nonnull final TileEntity tileEntity)
 	{
 		this.tileEntity = tileEntity;
 	}
 
-	public RedstoneControl(@Nonnull final TileEntity tileEntity, @Nonnull final State state)
+	public RedstoneControl(@Nonnull final TileEntity tileEntity, @Nonnull final RedstoneState state)
 	{
 		this.tileEntity = tileEntity;
-		this.state = state;
-	}
-
-	public State getRedstoneControlState()
-	{
-		return state != null ? state : State.IGNORED;
-	}
-
-	public void setRedstoneControlState(@Nonnull final State state)
-	{
 		this.state = state;
 	}
 
 	@Override
 	public boolean canOperate()
 	{
-		if (state == State.IGNORED)
+		if (state == RedstoneState.IGNORED)
 			return true;
 		final boolean powered = tileEntity.getWorld().isBlockPowered(tileEntity.getPos());
-		return state == State.OFF && !powered || state == State.ON && powered;
+		return state == RedstoneState.OFF && !powered || state == RedstoneState.ON && powered;
 	}
 
 	@Override
@@ -62,7 +55,7 @@ public final class RedstoneControl implements IControl<RedstoneControl>
 	public void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		if (nbtTagCompound.hasKey("RedstoneControl"))
-			state = State.values()[MathHelper.clamp(nbtTagCompound.getInteger("RedstoneControl"), 0, State.values().length - 1)];
+			state = RedstoneState.values()[MathHelper.clamp(nbtTagCompound.getInteger("RedstoneControl"), 0, RedstoneState.values().length - 1)];
 	}
 
 	@Nonnull
@@ -72,54 +65,70 @@ public final class RedstoneControl implements IControl<RedstoneControl>
 		return new RedstoneControl(tileEntity, state);
 	}
 
+	@Nonnull
+	@Override
+	public String getControlName()
+	{
+		return "wanionlib.redstone.control";
+	}
+
+	@Override
+	public RedstoneState getState()
+	{
+		return state;
+	}
+
+	@Override
+	public void setState(@Nonnull final RedstoneState state)
+	{
+		this.state = state;
+	}
+
+	@Override
+	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound, @Nonnull final RedstoneState state)
+	{
+		nbtTagCompound.setInteger("RedstoneControl", state.ordinal());
+	}
+
 	@Override
 	public boolean equals(final Object obj)
 	{
 		return obj == this || (obj instanceof RedstoneControl && this.state == ((RedstoneControl) obj).state);
 	}
 
-	public enum State
+	public enum RedstoneState implements IState<RedstoneState>, IStateNameable
 	{
 		IGNORED,
 		OFF,
 		ON;
 
-		public static State getNextRedstoneControlState(@Nonnull final State state)
+		@Nonnull
+		@Override
+		public RedstoneState getNextState()
 		{
-			final int nextState = state.ordinal() + 1;
-			return nextState > State.values().length - 1 ? State.values()[0] : State.values()[nextState];
-		}
-
-		public static State getPreviousRedstoneControlState(@Nonnull final State state)
-		{
-			final int previousState = state.ordinal() - 1;
-			return previousState >= 0 ? State.values()[previousState] : State.values()[State.values().length - 1];
-		}
-
-		public static Pair<Integer, Integer> getTexturePos(@Nonnull final State state, final boolean hovered)
-		{
-			return new ImmutablePair<>(!hovered ? 0 : 18, 54 + (18 * state.ordinal()));
+			final int nextState = ordinal() + 1;
+			return nextState > values().length - 1 ? values()[0] : values()[nextState];
 		}
 
 		@Nonnull
-		public static State getState(final int state)
+		@Override
+		public RedstoneState getPreviousState()
 		{
-			return State.values()[MathHelper.clamp(state, 0, State.values().length)];
+			final int previousState = ordinal() - 1;
+			return previousState >= 0 ? values()[previousState] : values()[values().length - 1];
 		}
 
-		public static String getRedstoneControlName()
+		@Override
+		public Pair<Integer, Integer> getTexturePos(final boolean hovered)
 		{
-			return "wanionlib.redstone.control";
+			return new ImmutablePair<>(!hovered ? 0 : 18, 54 + (18 * ordinal()));
 		}
 
-		public static String getStateName(@Nonnull final State state)
+		@Nonnull
+		@Override
+		public String getStateName()
 		{
-			return "wanionlib.redstone.control.state." + state.name().toLowerCase();
-		}
-
-		public static String getStateDescription(@Nonnull final State state)
-		{
-			return getStateName(state) + ".desc";
+			return "wanionlib.redstone.control.state." + name().toLowerCase();
 		}
 	}
 }

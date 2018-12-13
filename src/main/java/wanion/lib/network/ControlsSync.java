@@ -9,8 +9,11 @@ package wanion.lib.network;
  */
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,41 +21,43 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.lib.WanionLib;
 import wanion.lib.common.control.ControlsContainer;
 
-public class ControlsContainerSync implements IMessage
+public class ControlsSync implements IMessage
 {
-	//private int windowId;
+	private int windowId;
 	private NBTTagCompound nbtTagCompound;
 
-	public ControlsContainerSync() {}
+	public ControlsSync() {}
 
-	public ControlsContainerSync(final NBTTagCompound nbtTagCompound)
+	public ControlsSync(final int windowId, final NBTTagCompound nbtTagCompound)
 	{
-		//this.windowId = windowId;
+		this.windowId = windowId;
 		this.nbtTagCompound = nbtTagCompound;
 	}
 
 	@Override
 	public void fromBytes(final ByteBuf buf)
 	{
-		//this.windowId = ByteBufUtils.readVarInt(buf, 5);
+		this.windowId = ByteBufUtils.readVarInt(buf, 5);
 		this.nbtTagCompound = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
 	public void toBytes(final ByteBuf buf)
 	{
-		//ByteBufUtils.writeVarInt(buf, windowId, 5);
+		ByteBufUtils.writeVarInt(buf, windowId, 5);
 		ByteBufUtils.writeTag(buf, nbtTagCompound);
 	}
 
-	public static class Handler implements IMessageHandler<ControlsContainerSync, IMessage>
+	public static class Handler implements IMessageHandler<ControlsSync, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final ControlsContainerSync controlsContainerSync, final MessageContext ctx)
+		public IMessage onMessage(final ControlsSync controlsSync, final MessageContext ctx)
 		{
-			final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-			if (entityPlayer != null && entityPlayer.openContainer instanceof ControlsContainer)
-				((ControlsContainer) entityPlayer.openContainer).sync(controlsContainerSync.nbtTagCompound);
+			WanionLib.proxy.getThreadListener().addScheduledTask(() -> {
+				final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
+				if (entityPlayer != null && entityPlayer.openContainer instanceof ControlsContainer && entityPlayer.openContainer.windowId == controlsSync.windowId)
+					((ControlsContainer) entityPlayer.openContainer).syncControls(controlsSync.nbtTagCompound);
+			});
 			return null;
 		}
 	}

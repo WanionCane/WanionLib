@@ -14,11 +14,11 @@ public final class Reference
 {
 	public static final String MOD_ID = "wanionlib";
 	public static final String MOD_NAME = "WanionLib";
-	public static final String MOD_VERSION = "1.12.2-1.9";
+	public static final String MOD_VERSION = "1.12.2-2.0";
 	public static final String ACCEPTED_MINECRAFT = "[1.12,]";
 	public static final String CLIENT_PROXY = "wanion.lib.proxy.ClientProxy";
 	public static final String SERVER_PROXY = "wanion.lib.proxy.CommonProxy";
-	public static final ResourceLocation GUI_TEXTURES = new ResourceLocation(wanion.lib.Reference.MOD_ID, "textures/gui/gui_textures.png");
+	public static final ResourceLocation GUI_TEXTURES = new ResourceLocation(MOD_ID, "textures/gui/gui_textures.png");
 
 	private Reference() {}
 }
