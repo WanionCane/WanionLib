@@ -27,7 +27,7 @@ import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.control.IState;
 import wanion.lib.common.control.IStateNameable;
 import wanion.lib.common.control.IStateProvider;
-import wanion.lib.network.ControlsSync;
+import wanion.lib.network.ControlSync;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -108,6 +108,6 @@ public abstract class ControlButton<C extends IStateProvider<C, S>, S extends IS
 		final S state = stateProvider.getState();
 		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
 		stateProvider.writeToNBT(nbtTagCompound, leftClick ? state.getNextState() : state.getPreviousState());
-		WanionLib.networkWrapper.sendToServer(new ControlsSync(guiContainer.inventorySlots.windowId, nbtTagCompound));
+		WanionLib.networkWrapper.sendToServer(new ControlSync(guiContainer.inventorySlots.windowId, nbtTagCompound));
 	}
 }

@@ -9,26 +9,24 @@ package wanion.lib.network;
  */
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.lib.WanionLib;
-import wanion.lib.common.control.ControlsContainer;
+import wanion.lib.common.control.ControlContainer;
+import wanion.lib.common.matching.IMatchingControllerProvider;
 
-public class ControlsSync implements IMessage
+public class MatchingSync implements IMessage
 {
 	private int windowId;
 	private NBTTagCompound nbtTagCompound;
 
-	public ControlsSync() {}
+	public MatchingSync() {}
 
-	public ControlsSync(final int windowId, final NBTTagCompound nbtTagCompound)
+	public MatchingSync(final int windowId, final NBTTagCompound nbtTagCompound)
 	{
 		this.windowId = windowId;
 		this.nbtTagCompound = nbtTagCompound;
@@ -48,15 +46,15 @@ public class ControlsSync implements IMessage
 		ByteBufUtils.writeTag(buf, nbtTagCompound);
 	}
 
-	public static class Handler implements IMessageHandler<ControlsSync, IMessage>
+	public static class Handler implements IMessageHandler<MatchingSync, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final ControlsSync controlsSync, final MessageContext ctx)
+		public IMessage onMessage(final MatchingSync controlSync, final MessageContext ctx)
 		{
 			WanionLib.proxy.getThreadListener().addScheduledTask(() -> {
 				final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-				if (entityPlayer != null && entityPlayer.openContainer instanceof ControlsContainer && entityPlayer.openContainer.windowId == controlsSync.windowId)
-					((ControlsContainer) entityPlayer.openContainer).syncControls(controlsSync.nbtTagCompound);
+				if (entityPlayer != null && entityPlayer.openContainer.windowId == controlSync.windowId && entityPlayer.openContainer instanceof IMatchingControllerProvider)
+					((IMatchingControllerProvider) entityPlayer.openContainer).getMatchingController().syncMatching(controlSync.nbtTagCompound);
 			});
 			return null;
 		}

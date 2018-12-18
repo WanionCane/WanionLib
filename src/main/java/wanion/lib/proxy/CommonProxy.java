@@ -14,7 +14,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import wanion.lib.WanionLib;
-import wanion.lib.network.ControlsSync;
+import wanion.lib.network.ControlSync;
+import wanion.lib.network.MatchingSync;
 
 import javax.annotation.Nonnull;
 
@@ -23,8 +24,10 @@ public class CommonProxy
 	public final void preInit()
 	{
 		int d = 0;
-		WanionLib.networkWrapper.registerMessage(ControlsSync.Handler.class, ControlsSync.class, d++, Side.SERVER);
-		WanionLib.networkWrapper.registerMessage(ControlsSync.Handler.class, ControlsSync.class, d, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(ControlSync.Handler.class, ControlSync.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(ControlSync.Handler.class, ControlSync.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(MatchingSync.Handler.class, MatchingSync.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(MatchingSync.Handler.class, MatchingSync.class, d, Side.CLIENT);
 	}
 
 	public EntityPlayer getEntityPlayerFromContext(@Nonnull final MessageContext messageContext)

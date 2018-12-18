@@ -1,4 +1,4 @@
-package wanion.lib.common.control;
+package wanion.lib.common.matching;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -10,8 +10,8 @@ package wanion.lib.common.control;
 
 import javax.annotation.Nonnull;
 
-public interface IControlsProvider
+public interface IMatchingControllerProvider
 {
 	@Nonnull
-	Controls getControls();
+	MatchingController getMatchingController();
 }
