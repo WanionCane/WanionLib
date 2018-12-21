@@ -10,7 +10,6 @@ package wanion.lib.common.matching;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import wanion.lib.common.control.IControl;
 import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.matching.matcher.AbstractMatcher;
@@ -18,21 +17,22 @@ import wanion.lib.common.matching.matcher.ItemStackMatcher;
 import wanion.lib.common.matching.matcher.MatcherEnum;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class Matching implements IControl<Matching>, IControlNameable
 {
-	private final NonNullList<ItemStack> itemStacks;
+	private final List<ItemStack> itemStacks;
 	private final int number;
 	private final String stringNumber;
 	private final boolean shouldUseNbt;
 	private AbstractMatcher matcher = new ItemStackMatcher(this);
 
-	public Matching(@Nonnull final NonNullList<ItemStack> itemStacks, final int number)
+	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number)
 	{
 		this(itemStacks, number, false);
 	}
 
-	public Matching(@Nonnull final NonNullList<ItemStack> itemStacks, final int number, final boolean shouldUseNbt)
+	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final boolean shouldUseNbt)
 	{
 		this.itemStacks = itemStacks;
 		this.stringNumber = Integer.toString(this.number = number);
@@ -52,6 +52,11 @@ public class Matching implements IControl<Matching>, IControlNameable
 	public AbstractMatcher getMatcher()
 	{
 		return matcher;
+	}
+
+	public void setMatcher(@Nonnull final AbstractMatcher matcher)
+	{
+		this.matcher = matcher.validate();
 	}
 
 	public ItemStack getStack()
@@ -86,7 +91,7 @@ public class Matching implements IControl<Matching>, IControlNameable
 				final MatcherEnum matcherEnum = MatcherEnum.values()[matchingCompound.getInteger("matcherType")];
 				final AbstractMatcher matcher = matcherEnum.getMatcher(this);
 				matcher.readFromNBT(matchingCompound);
-				this.matcher = matcher.validate();
+				setMatcher(matcher);
 			}
 		}
 	}

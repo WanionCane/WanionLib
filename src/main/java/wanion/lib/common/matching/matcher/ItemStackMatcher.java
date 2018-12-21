@@ -40,13 +40,12 @@ public class ItemStackMatcher extends AbstractMatcher
 	public AbstractMatcher next()
 	{
 		final ItemStack itemStack = getStack();
-		if (!itemStack.getHasSubtypes() && !itemStack.isItemStackDamageable()) {
-			final int[] ores = OreDictionary.getOreIDs(itemStack);
-			return ores.length == 0 ? this : new OreDictMatcher(matching);
-		} else if (itemStack.getHasSubtypes() || itemStack.isItemStackDamageable())
+		if (itemStack.getHasSubtypes() || itemStack.isItemStackDamageable())
 			return new AnyDamageMatcher(matching);
 		else if (matching.shouldUseNbt() && itemStack.hasTagCompound())
-			return null;
+			return new NbtMatcher(matching);
+		else if (OreDictionary.getOreIDs(itemStack).length > 0)
+			return new OreDictMatcher(matching);
 		else return this;
 	}
 
@@ -61,7 +60,14 @@ public class ItemStackMatcher extends AbstractMatcher
 	public String format()
 	{
 		final ItemStack itemStack = getStack();
-		return itemStack.getItemDamage() > 0 ? "<" + itemStack.getItem().getRegistryName() + ":" + itemStack.getItemDamage() + ">" : "<" + itemStack.getItem().getRegistryName() + ">";
+		final StringBuilder formatBuilder = new StringBuilder().append('<');
+		formatBuilder.append(itemStack.getItem().getRegistryName());
+		if (itemStack.getItemDamage() > 0)
+			formatBuilder.append(':').append(itemStack.getItemDamage());
+		formatBuilder.append('>');
+		if (itemStack.getCount() > 1)
+			formatBuilder.append(" * ").append(itemStack.getCount());
+		return formatBuilder.toString();
 	}
 
 	@Override

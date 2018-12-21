@@ -9,7 +9,9 @@ package wanion.lib.common.matching.matcher;
  */
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
+import wanion.lib.common.NBTUtils;
 import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
@@ -54,6 +56,21 @@ public class NbtMatcher extends AbstractMatcher
 	public String format()
 	{
 		final ItemStack itemStack = getStack();
-		return itemStack.getItemDamage() > 0 ? "<" + itemStack.getItem().getRegistryName() + ":" + itemStack.getItemDamage() + ">" : "<" + itemStack.getItem().getRegistryName() + ">";
+		final boolean greaterThanOne = itemStack.getCount() > 1;
+		final StringBuilder formatBuilder = new StringBuilder();
+		if (greaterThanOne)
+			formatBuilder.append('(');
+		formatBuilder.append('<').append(itemStack.getItem().getRegistryName());
+		if (itemStack.getItemDamage() > 0)
+			formatBuilder.append(':').append(itemStack.getItemDamage());
+		formatBuilder.append('>');
+		if (greaterThanOne)
+			formatBuilder.append(" * ").append(itemStack.getCount()).append(')');
+		final NBTTagCompound nbtTagCompound = itemStack.getTagCompound();
+		formatBuilder.append(".withTag(");
+		if (nbtTagCompound != null)
+			formatBuilder.append(NBTUtils.formatNbt(nbtTagCompound));
+		formatBuilder.append(')');
+		return formatBuilder.toString();
 	}
 }

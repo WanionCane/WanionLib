@@ -56,7 +56,11 @@ public class AnyDamageMatcher extends AbstractMatcher
 	public String format()
 	{
 		final ItemStack itemStack = getStack();
-		return "<" + itemStack.getItem().getRegistryName() + ":*>";
+		final StringBuilder formatBuilder = new StringBuilder().append('<');
+		formatBuilder.append(itemStack.getItem().getRegistryName()).append(":*>");
+		if (itemStack.getCount() > 1)
+			formatBuilder.append(" * ").append(itemStack.getCount());
+		return formatBuilder.toString();
 	}
 
 	@Override

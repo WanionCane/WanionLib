@@ -16,8 +16,10 @@ wanionlib.matching.matcher.nbt=NBT
 wanionlib.matching.matcher.ore_dict=Ore Dict:
 
 // Misc
+wanionlib.how-to-use=How to Use:
 wanionlib.problem.singular=Problem
 wanionlib.problem.plural=Problems
 wanionlib.found.singular=Found
 wanionlib.found.plural=Found
 wanionlib.success=Success!
+wanionlib.failure=Failure

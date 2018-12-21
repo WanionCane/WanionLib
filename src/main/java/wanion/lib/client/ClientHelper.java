@@ -28,4 +28,14 @@ public final class ClientHelper
 	{
 		return TextFormatting.GREEN + I18n.format("wanionlib.success");
 	}
+
+	public static String getFailure()
+	{
+		return TextFormatting.RED + I18n.format("wanionlib.failure");
+	}
+
+	public static String getHowToUse()
+	{
+		return TextFormatting.GOLD + I18n.format("wanionlib.how-to-use");
+	}
 }

@@ -13,8 +13,10 @@ wanionlib.matching.desc=Clique com o Direito para Mudar
 wanionlib.matching.matcher.any_damage=Qualquer Dano
 
 // Misc
+wanionlib.how-to-use=Como Usar:
 wanionlib.problem.singular=Problema
 wanionlib.problem.plural=Problemas
 wanionlib.found.singular=Encontrado
 wanionlib.found.plural=Encontrados
 wanionlib.success=Sucesso!
+wanionlib.failure=Falhou
