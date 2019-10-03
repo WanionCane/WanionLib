@@ -53,7 +53,7 @@ public class NbtMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public String format()
+	public String ctFormat()
 	{
 		final ItemStack itemStack = getStack();
 		final boolean greaterThanOne = itemStack.getCount() > 1;

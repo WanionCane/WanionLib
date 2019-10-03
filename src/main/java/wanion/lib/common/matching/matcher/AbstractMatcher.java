@@ -45,7 +45,7 @@ public abstract class AbstractMatcher
 	public abstract boolean matches(@Nonnull ItemStack otherItemStack);
 
 	@Nonnull
-	public abstract String format();
+	public abstract String ctFormat();
 
 	@Nonnull
 	public String getDescription()

@@ -23,3 +23,10 @@ wanionlib.found.singular=Found
 wanionlib.found.plural=Found
 wanionlib.success=Success!
 wanionlib.failure=Failure
+
+// Energy
+wanionlib.consumes=Consumes %1$s FE
+wanionlib.per.operation=per operation
+
+// Recipe
+wanionlib.recipe.clear=Click to Clear Recipe

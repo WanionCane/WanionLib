@@ -20,3 +20,10 @@ wanionlib.found.singular=Encontrado
 wanionlib.found.plural=Encontrados
 wanionlib.success=Sucesso!
 wanionlib.failure=Falhou
+
+// Energy
+wanionlib.consumes=Consome %1$s FE
+wanionlib.peroperation=por operação
+
+// Recipe
+wanionlib.recipe.clear=Clique para Limpar a Receita

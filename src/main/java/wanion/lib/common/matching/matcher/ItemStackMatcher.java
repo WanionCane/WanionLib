@@ -57,7 +57,7 @@ public class ItemStackMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public String format()
+	public String ctFormat()
 	{
 		final ItemStack itemStack = getStack();
 		final StringBuilder formatBuilder = new StringBuilder().append('<');

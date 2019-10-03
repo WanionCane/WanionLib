@@ -76,7 +76,7 @@ public class OreDictMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public String format()
+	public String ctFormat()
 	{
 		return "<ore:" + OreDictionary.getOreName(ores[actualOre]) + ">";
 	}
