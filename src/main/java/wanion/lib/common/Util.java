@@ -10,6 +10,7 @@ package wanion.lib.common;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
@@ -85,5 +86,11 @@ public final class Util
 			if (twoDimArray != null)
 				oList.addAll(Arrays.asList(twoDimArray));
 		return (O[]) oList.toArray();
+	}
+
+	public static ItemStack getStackFromIngredient(final Ingredient ingredient)
+	{
+		final ItemStack[] stacks = ingredient.getMatchingStacks();
+		return stacks.length > 0 ? stacks[0] : ItemStack.EMPTY;
 	}
 }
