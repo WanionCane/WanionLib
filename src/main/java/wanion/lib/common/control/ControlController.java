@@ -11,11 +11,12 @@ package wanion.lib.common.control;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import wanion.lib.common.Dependencies;
+import wanion.lib.common.ISmartNBTSync;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-public final class ControlController extends Dependencies<IControl>
+public final class ControlController extends Dependencies<IControl<?>> implements ISmartNBTSync
 {
 	private final IInventory inventory;
 
@@ -24,13 +25,13 @@ public final class ControlController extends Dependencies<IControl>
 		this.inventory = inventory;
 	}
 
-	public ControlController(@Nonnull final IInventory inventory, final IControl... dependencies)
+	public ControlController(@Nonnull final IInventory inventory, final IControl<?>... dependencies)
 	{
 		super(dependencies);
 		this.inventory = inventory;
 	}
 
-	public ControlController(@Nonnull final IInventory inventory, @Nonnull final Collection<IControl> dependencies)
+	public ControlController(@Nonnull final IInventory inventory, @Nonnull final Collection<IControl<?>> dependencies)
 	{
 		super(dependencies);
 		this.inventory = inventory;
@@ -42,9 +43,13 @@ public final class ControlController extends Dependencies<IControl>
 		this.inventory = inventory;
 	}
 
-	public void syncControl(@Nonnull final NBTTagCompound nbtTagCompound)
+	@Override
+	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
 	{
-		getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
+		final NBTTagCompound controlNBT = smartNBT.getCompoundTag("control");
+		if (controlNBT.hasNoTags())
+			return;
+		getInstances().forEach(control -> control.readFromNBT(controlNBT));
 		inventory.markDirty();
 	}
 }

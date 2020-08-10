@@ -11,6 +11,8 @@ package wanion.lib.common.matching;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
+import net.minecraft.nbt.NBTTagCompound;
+import wanion.lib.common.ISmartNBTSync;
 import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
@@ -29,7 +31,7 @@ public abstract class MatchingContainer extends Container implements IMatchingCo
 	}
 
 	@Override
-	public void addListener(final IContainerListener listener)
+	public void addListener(@Nonnull final IContainerListener listener)
 	{
 		super.addListener(listener);
 		if (!(listener instanceof EntityPlayerMP))
@@ -62,5 +64,11 @@ public abstract class MatchingContainer extends Container implements IMatchingCo
 	public MatchingController getMatchingController()
 	{
 		return matchingInventory.getMatchingController();
+	}
+
+	@Override
+	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
+	{
+		matchingController.smartNBTSync(smartNBT);
 	}
 }

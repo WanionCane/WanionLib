@@ -1,4 +1,4 @@
-package wanion.lib.common.control;
+package wanion.lib.common.field;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -12,22 +12,21 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.nbt.NBTTagCompound;
-import wanion.lib.common.ISmartNBTSync;
 import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public abstract class ControlContainer extends Container implements IControlContainer
+public abstract class FieldContainer extends Container implements IFieldContainer
 {
-	private final ControlController controlController;
-	private final IControlInventory controlInventory;
+	private final FieldController fieldController;
+	private final IFieldInventory fieldInventory;
 
-	public ControlContainer(@Nonnull final IControlInventory controlInventory)
+	public FieldContainer(@Nonnull final IFieldInventory fieldInventory)
 	{
-		this.controlController = new ControlController(controlInventory, controlInventory.getControlController().getInstances().stream().<IControl<?>>map(IControl::copy).collect(Collectors.toList()));
-		this.controlInventory = controlInventory;
+		this.fieldController = new FieldController(fieldInventory, fieldInventory.getFieldController().getInstances().stream().<IField<?>>map(IField::copy).collect(Collectors.toList()));
+		this.fieldInventory = fieldInventory;
 	}
 
 	@Override
@@ -36,28 +35,28 @@ public abstract class ControlContainer extends Container implements IControlCont
 		super.addListener(listener);
 		if (!(listener instanceof EntityPlayerMP))
 			return;
-		NetworkHelper.addControlListener(windowId, this, (EntityPlayerMP) listener);
+		NetworkHelper.addFieldListener(windowId, this, (EntityPlayerMP) listener);
 	}
 
 	@Override
 	public void detectAndSendChanges()
 	{
 		super.detectAndSendChanges();
-		NetworkHelper.detectAndSendControlChanges(windowId, this);
+		NetworkHelper.detectAndSendFieldChanges(windowId, this);
 	}
 
 	@Nonnull
 	@Override
-	public ControlController getControlController()
+	public FieldController getFieldController()
 	{
-		return controlInventory.getControlController();
+		return fieldInventory.getFieldController();
 	}
 
 	@Nonnull
 	@Override
-	public ControlController getContainerControlController()
+	public FieldController getContainerFieldController()
 	{
-		return controlController;
+		return fieldController;
 	}
 
 	@Nonnull
@@ -70,6 +69,12 @@ public abstract class ControlContainer extends Container implements IControlCont
 	@Override
 	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
 	{
-		controlController.smartNBTSync(smartNBT);
+		fieldController.smartNBTSync(smartNBT);
+	}
+
+	@Override
+	public void receiveNBT(@Nonnull NBTTagCompound nbtTagCompound)
+	{
+		fieldController.receiveNBT(nbtTagCompound);
 	}
 }

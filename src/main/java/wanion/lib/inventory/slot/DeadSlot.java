@@ -13,6 +13,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public final class DeadSlot extends Slot
 {
 	public DeadSlot(final IInventory inventory, final int id, final int x, final int y)
@@ -21,13 +23,13 @@ public final class DeadSlot extends Slot
 	}
 
 	@Override
-	public boolean isItemValid(final ItemStack itemStack)
+	public boolean isItemValid(@Nonnull final ItemStack itemStack)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean canTakeStack(final EntityPlayer entityPlayer)
+	public boolean canTakeStack(@Nonnull final EntityPlayer entityPlayer)
 	{
 		return false;
 	}

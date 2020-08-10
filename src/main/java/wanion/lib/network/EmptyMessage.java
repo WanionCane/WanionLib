@@ -35,5 +35,4 @@ public abstract class EmptyMessage implements IMessage
 	{
 		ByteBufUtils.writeVarInt(buf, windowId, 5);
 	}
-
 }

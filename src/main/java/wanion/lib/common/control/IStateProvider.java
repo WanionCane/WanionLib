@@ -12,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nonnull;
 
-public interface IStateProvider<C extends IControl, S extends IState<S>> extends IControl<C>
+public interface IStateProvider<C extends IControl<?>, S extends IState<S>> extends IControl<C>
 {
 	S getState();
 

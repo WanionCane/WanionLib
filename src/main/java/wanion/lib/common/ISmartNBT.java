@@ -1,4 +1,4 @@
-package wanion.lib.common.control;
+package wanion.lib.common;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -8,19 +8,13 @@ package wanion.lib.common.control;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.lib.common.ISmartNBT;
+import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nonnull;
 
-public interface IControl<C extends IControl<?>> extends ISmartNBT
+public interface ISmartNBT
 {
-	default boolean canOperate()
-	{
-		return true;
-	}
+	void writeToNBT(@Nonnull NBTTagCompound smartNBT);
 
-	default void operate() {}
-
-	@Nonnull
-	C copy();
+	void readFromNBT(@Nonnull NBTTagCompound smartNBT);
 }

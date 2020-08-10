@@ -12,13 +12,14 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import wanion.lib.common.ISmartNBTSync;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MatchingController
+public class MatchingController implements ISmartNBTSync
 {
 	private final Int2ObjectMap<Matching> matchingControlMap = new Int2ObjectOpenHashMap<>();
 	private final Collection<Matching> values = matchingControlMap.values();
@@ -75,9 +76,13 @@ public class MatchingController
 		return differences;
 	}
 
-	public void syncMatching(@Nonnull final NBTTagCompound nbtTagCompound)
+	@Override
+	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
 	{
-		matchingControlMap.values().forEach(matchingControl -> matchingControl.readFromNBT(nbtTagCompound));
+		final NBTTagCompound matchingNBT = smartNBT.getCompoundTag("matching");
+		if (matchingNBT.hasNoTags())
+			return;
+		matchingControlMap.values().forEach(matchingControl -> matchingControl.readFromNBT(matchingNBT));
 		inventory.markDirty();
 	}
 }

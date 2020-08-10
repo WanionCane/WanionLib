@@ -11,6 +11,7 @@ package wanion.lib.common;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
+import net.minecraft.nbt.NBTTagCompound;
 import wanion.lib.common.control.ControlController;
 import wanion.lib.common.control.IControl;
 import wanion.lib.common.control.IControlContainer;
@@ -31,13 +32,13 @@ public abstract class ControlMatchingContainer extends Container implements ICon
 
 	public ControlMatchingContainer(@Nonnull final IControlMatchingInventory controlMatchingInventory)
 	{
-		this.controlController = new ControlController(controlMatchingInventory, controlMatchingInventory.getControlController().getInstances().stream().<IControl>map(IControl::copy).collect(Collectors.toList()));
+		this.controlController = new ControlController(controlMatchingInventory, controlMatchingInventory.getControlController().getInstances().stream().<IControl<?>>map(IControl::copy).collect(Collectors.toList()));
 		this.matchingController = new MatchingController(controlMatchingInventory, controlMatchingInventory.getMatchingController().getInstances().stream().map(Matching::copy).collect(Collectors.toList()));
 		this.controlMatchingInventory = controlMatchingInventory;
 	}
 
 	@Override
-	public void addListener(final IContainerListener listener)
+	public void addListener(@Nonnull final IContainerListener listener)
 	{
 		super.addListener(listener);
 		if (!(listener instanceof EntityPlayerMP))
@@ -86,5 +87,13 @@ public abstract class ControlMatchingContainer extends Container implements ICon
 	public Collection<IContainerListener> getListeners()
 	{
 		return listeners;
+	}
+
+	@Override
+	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
+	{
+		controlController.smartNBTSync(smartNBT);
+		matchingController.smartNBTSync(smartNBT);
+		controlMatchingInventory.markDirty();
 	}
 }

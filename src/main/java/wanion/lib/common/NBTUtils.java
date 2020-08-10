@@ -95,7 +95,7 @@ public final class NBTUtils
 						intStringBuilder.deleteCharAt(intStringBuilder.length() - 1);
 					intStringBuilder.append(NEW_LINE);
 				}
-				intStringBuilder.append(Integer.toString(intIterator.next()));
+				intStringBuilder.append(intIterator.next());
 				if (intIterator.hasNext())
 					intStringBuilder.append(", ");
 			}

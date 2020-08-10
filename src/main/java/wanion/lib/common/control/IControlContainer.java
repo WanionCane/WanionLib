@@ -9,10 +9,11 @@ package wanion.lib.common.control;
  */
 
 import wanion.lib.common.IListenerProvider;
+import wanion.lib.common.ISmartNBTSync;
 
 import javax.annotation.Nonnull;
 
-public interface IControlContainer extends IControlControllerProvider, IListenerProvider
+public interface IControlContainer extends IControlControllerProvider, IListenerProvider, ISmartNBTSync
 {
 	@Nonnull
 	ControlController getContainerControlController();

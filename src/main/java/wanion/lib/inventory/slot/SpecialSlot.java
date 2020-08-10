@@ -23,7 +23,7 @@ public class SpecialSlot extends Slot
 	}
 
 	@Override
-	public boolean isItemValid(final ItemStack itemStack)
+	public boolean isItemValid(@Nonnull final ItemStack itemStack)
 	{
 		return false;
 	}

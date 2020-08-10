@@ -74,8 +74,7 @@ public final class Util
 
 	public static <O> void fillArray(@Nonnull final O[] array, @Nonnull final O defaultInstance)
 	{
-		for (int i = 0; i < array.length; i++)
-			array[i] = defaultInstance;
+		Arrays.fill(array, defaultInstance);
 	}
 
 	@SuppressWarnings("unchecked")

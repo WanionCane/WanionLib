@@ -1,4 +1,4 @@
-package wanion.lib.common.control;
+package wanion.lib.common.field;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -8,19 +8,14 @@ package wanion.lib.common.control;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.lib.common.ISmartNBT;
+import wanion.lib.common.IListenerProvider;
+import wanion.lib.common.INBTReceiver;
+import wanion.lib.common.ISmartNBTSync;
 
 import javax.annotation.Nonnull;
 
-public interface IControl<C extends IControl<?>> extends ISmartNBT
+public interface IFieldContainer extends IFieldControllerProvider, IListenerProvider, ISmartNBTSync, INBTReceiver
 {
-	default boolean canOperate()
-	{
-		return true;
-	}
-
-	default void operate() {}
-
 	@Nonnull
-	C copy();
+	FieldController getContainerFieldController();
 }

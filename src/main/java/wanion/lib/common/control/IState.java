@@ -13,7 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface IState<S extends IState>
+public interface IState<S extends IState<?>>
 {
 	@Nonnull
 	S getNextState();

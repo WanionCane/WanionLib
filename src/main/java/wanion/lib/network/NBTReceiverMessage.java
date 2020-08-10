@@ -16,44 +16,44 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.lib.WanionLib;
-import wanion.lib.common.control.IControlControllerProvider;
+import wanion.lib.common.INBTReceiver;
 
-public class ControlSync implements IMessage
+public class NBTReceiverMessage implements IMessage
 {
 	private int windowId;
-	private NBTTagCompound nbtTagCompound;
+	private NBTTagCompound nbtMessaging;
 
-	public ControlSync() {}
+	public NBTReceiverMessage() {}
 
-	public ControlSync(final int windowId, final NBTTagCompound nbtTagCompound)
+	public NBTReceiverMessage(final int windowId, final NBTTagCompound nbtMessaging)
 	{
 		this.windowId = windowId;
-		this.nbtTagCompound = nbtTagCompound;
+		this.nbtMessaging = nbtMessaging;
 	}
 
 	@Override
 	public void fromBytes(final ByteBuf buf)
 	{
 		this.windowId = ByteBufUtils.readVarInt(buf, 5);
-		this.nbtTagCompound = ByteBufUtils.readTag(buf);
+		this.nbtMessaging = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
 	public void toBytes(final ByteBuf buf)
 	{
 		ByteBufUtils.writeVarInt(buf, windowId, 5);
-		ByteBufUtils.writeTag(buf, nbtTagCompound);
+		ByteBufUtils.writeTag(buf, nbtMessaging);
 	}
 
-	public static class Handler implements IMessageHandler<ControlSync, IMessage>
+	public static class Handler implements IMessageHandler<NBTReceiverMessage, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final ControlSync controlSync, final MessageContext ctx)
+		public IMessage onMessage(final NBTReceiverMessage nbtReceiverMessage, final MessageContext ctx)
 		{
 			WanionLib.proxy.getThreadListener().addScheduledTask(() -> {
 				final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-				if (entityPlayer != null && entityPlayer.openContainer.windowId == controlSync.windowId && entityPlayer.openContainer instanceof IControlControllerProvider)
-					((IControlControllerProvider) entityPlayer.openContainer).getControlController().syncControl(controlSync.nbtTagCompound);
+				if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtReceiverMessage.windowId && entityPlayer.openContainer instanceof INBTReceiver)
+					((INBTReceiver) entityPlayer.openContainer).receiveNBT(nbtReceiverMessage.nbtMessaging);
 			});
 			return null;
 		}

@@ -9,13 +9,14 @@ package wanion.lib.proxy;
  */
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import wanion.lib.WanionLib;
-import wanion.lib.network.ControlSync;
-import wanion.lib.network.MatchingSync;
+import wanion.lib.network.*;
 
 import javax.annotation.Nonnull;
 
@@ -24,15 +25,25 @@ public class CommonProxy
 	public final void preInit()
 	{
 		int d = 0;
-		WanionLib.networkWrapper.registerMessage(ControlSync.Handler.class, ControlSync.class, d++, Side.SERVER);
-		WanionLib.networkWrapper.registerMessage(ControlSync.Handler.class, ControlSync.class, d++, Side.CLIENT);
-		WanionLib.networkWrapper.registerMessage(MatchingSync.Handler.class, MatchingSync.class, d++, Side.SERVER);
-		WanionLib.networkWrapper.registerMessage(MatchingSync.Handler.class, MatchingSync.class, d, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d, Side.CLIENT);
 	}
 
 	public EntityPlayer getEntityPlayerFromContext(@Nonnull final MessageContext messageContext)
 	{
 		return messageContext.getServerHandler().player;
+	}
+
+	public final MinecraftServer getMinecraftServer()
+	{
+		return FMLCommonHandler.instance().getMinecraftServerInstance();
+	}
+
+	public final EntityPlayer getPlayerByUsername(String userName)
+	{
+		return getMinecraftServer().getPlayerList().getPlayerByUsername(userName);
 	}
 
 	public final boolean isClient()
