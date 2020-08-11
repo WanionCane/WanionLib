@@ -28,5 +28,5 @@ wanionlib.peroperation=por operação
 // Recipe
 wanionlib.recipe.clear=Clique para Limpar a Receita
 
-// Text Field
-wanionlib.textfield.occupied=Você não pode usar esse campo enquanto %1$s estiver usando.
+// Field
+wanionlib.field.occupied=Você não pode usar esse campo enquanto %1$s estiver usando.

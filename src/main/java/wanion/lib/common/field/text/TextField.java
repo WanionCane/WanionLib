@@ -78,7 +78,7 @@ public class TextField implements IField<TextField>
 	@Override
 	public String getHoveringText(@Nonnull final EntityPlayer player)
 	{
-		return this.player != null && this.player != player ? I18n.format("wanionlib.textfield.occupied", this.player.getName()) : null;
+		return this.player != null && this.player != player ? I18n.format("wanionlib.field.occupied", this.player.getName()) : null;
 	}
 
 	@Override
