@@ -37,7 +37,7 @@ public interface IField<F extends IField<?>> extends ISmartNBT, INBTReceiver
 	default void update() {}
 
 	@SideOnly(Side.CLIENT)
-	default String getHoveringText()
+	default String getHoveringText(@Nonnull EntityPlayer player)
 	{
 		return null;
 	}

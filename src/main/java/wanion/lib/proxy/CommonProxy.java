@@ -27,6 +27,8 @@ public class CommonProxy
 		int d = 0;
 		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(NBTReceiverMessage.Handler.class, NBTReceiverMessage.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(NBTReceiverMessage.Handler.class, NBTReceiverMessage.class, d++, Side.CLIENT);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d, Side.CLIENT);
 	}
