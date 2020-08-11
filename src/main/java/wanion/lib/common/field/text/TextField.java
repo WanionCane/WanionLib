@@ -8,6 +8,7 @@ package wanion.lib.common.field.text;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -75,9 +76,9 @@ public class TextField implements IField<TextField>
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public String getHoveringText()
+	public String getHoveringText(@Nonnull final EntityPlayer player)
 	{
-		return null;
+		return this.player != null && this.player != player ? I18n.format("wanionlib.textfield.occupied", this.player.getName()) : null;
 	}
 
 	@Override
