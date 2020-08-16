@@ -13,10 +13,13 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.entity.player.EntityPlayer;
+import wanion.lib.client.gui.interaction.WGInteraction;
+import wanion.lib.client.gui.interaction.WGMouseInteraction;
 
 import javax.annotation.Nonnull;
 
-// WG == Wanion GUI
+// WG = Wanion GUI
 public interface IWGElement
 {
 	int getX();
@@ -27,26 +30,32 @@ public interface IWGElement
 
 	int getHeight();
 
-	boolean enabled();
+	@Nonnull
+	EntityPlayer getEntityPlayer();
 
-	void interact(@Nonnull WGPlayer wgPlayer);
+	@Nonnull
+	GuiContainer getGuiContainer();
 
-	void draw(@Nonnull WGPlayer wgPlayer);
+	boolean isEnabled();
 
-	default void drawForegroundLayer(@Nonnull WGPlayer wgPlayer) {}
+	default void interaction(@Nonnull WGInteraction wgPlayer) {}
+
+	void draw(@Nonnull WGMouseInteraction wgPlayer);
+
+	default void drawForegroundLayer(@Nonnull WGMouseInteraction wgPlayer) {}
 
 	default void setEnabled(boolean enabled) {}
 
 	default void playPressSound(@Nonnull final SoundHandler soundHandler) {}
 
-	default int getTooltipX(@Nonnull final GuiContainer guiContainer, final int mouseX)
+	default int getTooltipX(@Nonnull final WGMouseInteraction mouseInteraction)
 	{
-		return mouseX - guiContainer.getGuiLeft();
+		return mouseInteraction.getMouseX() - mouseInteraction.guiContainer.getGuiLeft();
 	}
 
-	default int getTooltipY(@Nonnull final GuiContainer guiContainer, final int mouseY)
+	default int getTooltipY(@Nonnull final WGMouseInteraction mouseInteraction)
 	{
-		return mouseY - guiContainer.getGuiTop();
+		return mouseInteraction.getMouseX() - mouseInteraction.guiContainer.getGuiTop();
 	}
 
 	default TextureManager getTextureManager()

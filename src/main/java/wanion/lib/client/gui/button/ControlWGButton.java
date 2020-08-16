@@ -13,6 +13,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -20,7 +21,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import wanion.lib.WanionLib;
-import wanion.lib.client.gui.WGPlayer;
+import wanion.lib.client.gui.interaction.WGInteraction;
+import wanion.lib.client.gui.interaction.WGMouseInteraction;
 import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.control.IState;
 import wanion.lib.common.control.IStateNameable;
@@ -32,33 +34,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class ControlButton<C extends IStateProvider<C, S>, S extends IState<S>> extends WGButton
+public class ControlWGButton<C extends IStateProvider<C, S>, S extends IState<S>> extends WGButton
 {
-	protected final GuiContainer guiContainer;
 	protected final C stateProvider;
 	protected final ResourceLocation resourceLocation;
 	protected int lineWidth = 0;
 
-	public ControlButton(@Nonnull final GuiContainer guiContainer, @Nonnull final C stateProvider, @Nonnull final ResourceLocation resourceLocation, final int x, final int y)
+	public ControlWGButton(@Nonnull final GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, @Nonnull final C stateProvider, @Nonnull final ResourceLocation resourceLocation, final int x, final int y)
 	{
-		this(guiContainer, stateProvider, resourceLocation, x, y, 18, 18);
+		this(guiContainer, entityPlayer, stateProvider, resourceLocation, x, y, 18, 18);
 	}
 
-	public ControlButton(@Nonnull final GuiContainer guiContainer, @Nonnull final C stateProvider, @Nonnull final ResourceLocation resourceLocation, final int x, final int y, final int widthIn, final int heightIn)
+	public ControlWGButton(@Nonnull final GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, @Nonnull final C stateProvider, @Nonnull final ResourceLocation resourceLocation, final int x, final int y, final int widthIn, final int heightIn)
 	{
-		super(x,y, widthIn, heightIn);
-		this.guiContainer = guiContainer;
+		super(guiContainer, entityPlayer, x,y, widthIn, heightIn);
 		this.stateProvider = stateProvider;
 		this.resourceLocation = resourceLocation;
 	}
 
 	@Override
-	public void draw(@Nonnull final WGPlayer player)
+	public void draw(@Nonnull final WGMouseInteraction mouseInteraction)
 	{
-		if (!this.enabled())
+		if (!this.isEnabled())
 			return;
 		final S state = stateProvider.getState();
-		boolean hovered = player.getMouseX() >= x && player.getMouseY() >= y && player.getMouseX() < x + width && player.getMouseY() < y + height;
+		boolean hovered = mouseInteraction.isHovering(x, y, width, height);
 		final Pair<Integer, Integer> texturePos = state.getTexturePos(hovered);
 		if (texturePos == null)
 			return;
@@ -68,7 +68,7 @@ public class ControlButton<C extends IStateProvider<C, S>, S extends IState<S>> 
 	}
 
 	@Override
-	public void drawForegroundLayer(@Nonnull final WGPlayer wgPlayer)
+	public void drawForegroundLayer(@Nonnull final WGMouseInteraction mouseInteraction)
 	{
 		final FontRenderer fontRenderer = getFontRenderer();
 		final List<String> description = new ArrayList<>();
@@ -86,16 +86,18 @@ public class ControlButton<C extends IStateProvider<C, S>, S extends IState<S>> 
 			if (lineWidth > this.lineWidth)
 				this.lineWidth = lineWidth;
 		}
-		guiContainer.drawHoveringText(description, getTooltipX(guiContainer, mouseX), getTooltipY(guiContainer, mouseY));
+		guiContainer.drawHoveringText(description, getTooltipX(mouseInteraction), getTooltipY(mouseInteraction));
 	}
 
 	@Override
-	public void interact(@Nonnull final WGPlayer wgPlayer)
+	public void interaction(@Nonnull final WGInteraction interaction)
 	{
+		if (!(interaction instanceof WGMouseInteraction))
+			return;
 		playPressSound(guiContainer.mc.getSoundHandler());
 		final S state = stateProvider.getState();
 		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
-		stateProvider.writeToNBT(nbtTagCompound, leftClick ? state.getNextState() : state.getPreviousState());
+		stateProvider.writeToNBT(nbtTagCompound, ((WGMouseInteraction) interaction).getMouseButton() == 0 ? state.getNextState() : state.getPreviousState());
 		WanionLib.networkWrapper.sendToServer(new SmartNBTSync(guiContainer.inventorySlots.windowId, nbtTagCompound));
 	}
 }

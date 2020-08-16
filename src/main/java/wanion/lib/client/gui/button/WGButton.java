@@ -8,20 +8,28 @@ package wanion.lib.client.gui.button;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
 import wanion.lib.client.gui.IWGElement;
+
+import javax.annotation.Nonnull;
 
 public abstract class WGButton implements IWGElement
 {
+	protected final EntityPlayer entityPlayer;
+	protected final GuiContainer guiContainer;
 	protected final int x, y, width, height;
-	private boolean enabled;
+	protected boolean enabled;
 
-	public WGButton(final int x, final int y, final int width, final int height)
+	public WGButton(@Nonnull final GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, final int x, final int y, final int width, final int height)
 	{
-		this(x, y, width, height, true);
+		this(guiContainer, entityPlayer, x, y, width, height, true);
 	}
 
-	public WGButton(final int x, final int y, final int width, final int height, final boolean enabled)
+	public WGButton(@Nonnull final GuiContainer guiContainer, final EntityPlayer entityPlayer, final int x, final int y, final int width, final int height, final boolean enabled)
 	{
+		this.guiContainer = guiContainer;
+		this.entityPlayer = entityPlayer;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -54,7 +62,21 @@ public abstract class WGButton implements IWGElement
 	}
 
 	@Override
-	public boolean enabled()
+	@Nonnull
+	public EntityPlayer getEntityPlayer()
+	{
+		return entityPlayer;
+	}
+
+	@Nonnull
+	@Override
+	public GuiContainer getGuiContainer()
+	{
+		return guiContainer;
+	}
+
+	@Override
+	public boolean isEnabled()
 	{
 		return enabled;
 	}
