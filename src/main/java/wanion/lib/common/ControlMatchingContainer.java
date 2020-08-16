@@ -8,6 +8,7 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -53,6 +54,12 @@ public abstract class ControlMatchingContainer extends Container implements ICon
 		super.detectAndSendChanges();
 		NetworkHelper.detectAndSendControlChanges(windowId, this);
 		NetworkHelper.detectAndSendMatchingChanges(windowId, this);
+	}
+
+	@Override
+	public boolean canInteractWith(@Nonnull final EntityPlayer playerIn)
+	{
+		return controlMatchingInventory.isUsableByPlayer(playerIn);
 	}
 
 	@Nonnull

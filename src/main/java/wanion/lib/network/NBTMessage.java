@@ -16,16 +16,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.lib.WanionLib;
-import wanion.lib.common.INBTReceiver;
+import wanion.lib.common.INBTMessage;
 
-public class NBTReceiverMessage implements IMessage
+public class NBTMessage implements IMessage
 {
 	private int windowId;
 	private NBTTagCompound nbtMessaging;
 
-	public NBTReceiverMessage() {}
+	public NBTMessage() {}
 
-	public NBTReceiverMessage(final int windowId, final NBTTagCompound nbtMessaging)
+	public NBTMessage(final int windowId, final NBTTagCompound nbtMessaging)
 	{
 		this.windowId = windowId;
 		this.nbtMessaging = nbtMessaging;
@@ -45,15 +45,15 @@ public class NBTReceiverMessage implements IMessage
 		ByteBufUtils.writeTag(buf, nbtMessaging);
 	}
 
-	public static class Handler implements IMessageHandler<NBTReceiverMessage, IMessage>
+	public static class Handler implements IMessageHandler<NBTMessage, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final NBTReceiverMessage nbtReceiverMessage, final MessageContext ctx)
+		public IMessage onMessage(final NBTMessage nbtMessage, final MessageContext ctx)
 		{
 			WanionLib.proxy.getThreadListener().addScheduledTask(() -> {
 				final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-				if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtReceiverMessage.windowId && entityPlayer.openContainer instanceof INBTReceiver)
-					((INBTReceiver) entityPlayer.openContainer).receiveNBT(nbtReceiverMessage.nbtMessaging);
+				if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.windowId && entityPlayer.openContainer instanceof INBTMessage)
+					((INBTMessage) entityPlayer.openContainer).receiveNBT(nbtMessage.nbtMessaging);
 			});
 			return null;
 		}

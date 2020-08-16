@@ -12,7 +12,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.Reference;
-import wanion.lib.client.button.ControlButton;
+import wanion.lib.client.gui.button.ControlButton;
 
 import javax.annotation.Nonnull;
 

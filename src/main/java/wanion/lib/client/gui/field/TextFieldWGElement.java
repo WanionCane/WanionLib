@@ -1,4 +1,4 @@
-package wanion.lib.common.control;
+package wanion.lib.client.gui.field;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -8,19 +8,7 @@ package wanion.lib.common.control;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.lib.common.ISmartNBT;
-
-import javax.annotation.Nonnull;
-
-public interface IControl<C extends IControl<C>> extends ISmartNBT
+public class TextFieldWGElement extends WGField<TextFieldWGElement>
 {
-	default boolean canOperate()
-	{
-		return true;
-	}
 
-	default void operate() {}
-
-	@Nonnull
-	C copy();
 }

@@ -9,12 +9,12 @@ package wanion.lib.proxy;
  */
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import wanion.lib.WanionLib;
 import wanion.lib.network.*;
 
@@ -27,8 +27,8 @@ public class CommonProxy
 		int d = 0;
 		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.CLIENT);
-		WanionLib.networkWrapper.registerMessage(NBTReceiverMessage.Handler.class, NBTReceiverMessage.class, d++, Side.SERVER);
-		WanionLib.networkWrapper.registerMessage(NBTReceiverMessage.Handler.class, NBTReceiverMessage.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(NBTMessage.Handler.class, NBTMessage.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(NBTMessage.Handler.class, NBTMessage.class, d++, Side.CLIENT);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d, Side.CLIENT);
 	}
@@ -43,7 +43,7 @@ public class CommonProxy
 		return FMLCommonHandler.instance().getMinecraftServerInstance();
 	}
 
-	public final EntityPlayer getPlayerByUsername(String userName)
+	public final EntityPlayerMP getPlayerByUsername(String userName)
 	{
 		return getMinecraftServer().getPlayerList().getPlayerByUsername(userName);
 	}

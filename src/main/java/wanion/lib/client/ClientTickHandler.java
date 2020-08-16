@@ -20,6 +20,8 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+// correct way to get an instance:
+//		WanionLib.getDependencies().get(ClientTickHandler.class);
 @SideOnly(Side.CLIENT)
 public final class ClientTickHandler implements WanionLib.IDependency
 {

@@ -9,11 +9,12 @@ package wanion.lib.common.field.text;
  */
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.WanionLib;
+import wanion.lib.common.INBTMessage;
 import wanion.lib.common.field.IField;
 
 import javax.annotation.Nonnull;
@@ -22,7 +23,7 @@ public class TextField implements IField<TextField>
 {
 	private final String fieldName;
 	private String content;
-	private EntityPlayer player;
+	private EntityPlayerMP player;
 
 	public TextField(@Nonnull final String fieldName)
 	{
@@ -34,7 +35,7 @@ public class TextField implements IField<TextField>
 		this(fieldName, content, null);
 	}
 
-	public TextField(@Nonnull final String fieldName, @Nonnull final String content, final EntityPlayer player)
+	public TextField(@Nonnull final String fieldName, @Nonnull final String content, final EntityPlayerMP player)
 	{
 		this.fieldName = fieldName;
 		this.content = content;
@@ -56,19 +57,19 @@ public class TextField implements IField<TextField>
 	}
 
 	@Override
-	public boolean canInteractWith(@Nonnull final EntityPlayer player)
+	public boolean canInteractWith(@Nonnull final EntityPlayerMP player)
 	{
 		return this.player == null || this.player == player;
 	}
 
 	@Override
-	public void startInteraction(@Nonnull final EntityPlayer player)
+	public void startInteraction(@Nonnull final EntityPlayerMP player)
 	{
 		this.player = player;
 	}
 
 	@Override
-	public void endInteraction(@Nonnull final EntityPlayer player)
+	public void endInteraction(@Nonnull final EntityPlayerMP player)
 	{
 		if (player == this.player)
 			this.player = null;
@@ -76,7 +77,7 @@ public class TextField implements IField<TextField>
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public String getHoveringText(@Nonnull final EntityPlayer player)
+	public String getHoveringText(@Nonnull final EntityPlayerMP player)
 	{
 		return this.player != null && this.player != player ? I18n.format("wanionlib.field.occupied", this.player.getName()) : null;
 	}
@@ -100,9 +101,7 @@ public class TextField implements IField<TextField>
 	{
 		if (fieldUpdate.hasNoTags())
 			return;
-		final EntityPlayer updatePlayer = fieldUpdate.hasKey("player") ? WanionLib.proxy.getPlayerByUsername(fieldUpdate.getString("player")) : null;
-		if (updatePlayer == null)
-			return;
+		final EntityPlayerMP updatePlayer = WanionLib.proxy.getPlayerByUsername(fieldUpdate.getString("player"));
 		final boolean interacting = fieldUpdate.getBoolean("interacting");
 		if (this.player == null && interacting)
 			startInteraction(updatePlayer);
@@ -111,5 +110,20 @@ public class TextField implements IField<TextField>
 		final String content = fieldUpdate.hasKey("content") ? fieldUpdate.getString("content") : null;
 		if (content != null)
 			this.content = content;
+	}
+
+	public void sendTextFieldNBT(final int windowId, @Nonnull final EntityPlayerMP entityPlayer, boolean interacting)
+	{
+		sendTextFieldNBT(windowId, entityPlayer, interacting, null);
+	}
+
+	public void sendTextFieldNBT(final int windowId, @Nonnull final EntityPlayerMP entityPlayer, boolean interacting, final String content)
+	{
+		final NBTTagCompound textFieldNBT = new NBTTagCompound();
+		textFieldNBT.setString("player", entityPlayer.getName());
+		textFieldNBT.setBoolean("interacting", interacting);
+		if (content != null)
+			textFieldNBT.setString("content", content);
+		INBTMessage.sendNBT(windowId, textFieldNBT);
 	}
 }

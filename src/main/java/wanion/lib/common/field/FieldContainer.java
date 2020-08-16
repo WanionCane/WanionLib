@@ -8,6 +8,7 @@ package wanion.lib.common.field;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -45,6 +46,12 @@ public abstract class FieldContainer extends Container implements IFieldContaine
 		NetworkHelper.detectAndSendFieldChanges(windowId, this);
 	}
 
+	@Override
+	public boolean canInteractWith(@Nonnull EntityPlayer playerIn)
+	{
+		return fieldInventory.isUsableByPlayer(playerIn);
+	}
+
 	@Nonnull
 	@Override
 	public FieldController getFieldController()
@@ -67,13 +74,13 @@ public abstract class FieldContainer extends Container implements IFieldContaine
 	}
 
 	@Override
-	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
+	public void smartNBTSync(@Nonnull final NBTTagCompound smartNBT)
 	{
 		fieldController.smartNBTSync(smartNBT);
 	}
 
 	@Override
-	public void receiveNBT(@Nonnull NBTTagCompound nbtTagCompound)
+	public void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		fieldController.receiveNBT(nbtTagCompound);
 	}

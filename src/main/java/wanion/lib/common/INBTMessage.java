@@ -9,10 +9,17 @@ package wanion.lib.common;
  */
 
 import net.minecraft.nbt.NBTTagCompound;
+import wanion.lib.WanionLib;
+import wanion.lib.network.NBTMessage;
 
 import javax.annotation.Nonnull;
 
-public interface INBTReceiver
+public interface INBTMessage
 {
+	static void sendNBT(final int windowId, @Nonnull final NBTTagCompound nbtTagCompound)
+	{
+		WanionLib.networkWrapper.sendToServer(new NBTMessage(windowId, nbtTagCompound));
+	}
+
 	void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound);
 }

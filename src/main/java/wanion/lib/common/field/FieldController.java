@@ -11,7 +11,7 @@ package wanion.lib.common.field;
 import gnu.trove.map.hash.THashMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
-import wanion.lib.common.INBTReceiver;
+import wanion.lib.common.INBTMessage;
 import wanion.lib.common.ISmartNBTSync;
 
 import javax.annotation.Nonnull;
@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class FieldController implements ISmartNBTSync, INBTReceiver
+public class FieldController implements ISmartNBTSync, INBTMessage
 {
 	private final Map<String, IField<?>> fieldControlMap = new THashMap<>();
 	private final Collection<IField<?>> values = fieldControlMap.values();

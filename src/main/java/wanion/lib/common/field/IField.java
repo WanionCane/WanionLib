@@ -9,15 +9,15 @@ package wanion.lib.common.field;
  */
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.lib.common.INBTReceiver;
+import wanion.lib.common.INBTMessage;
 import wanion.lib.common.ISmartNBT;
 
 import javax.annotation.Nonnull;
 
-public interface IField<F extends IField<?>> extends ISmartNBT, INBTReceiver
+public interface IField<F extends IField<F>> extends ISmartNBT, INBTMessage
 {
 	@Nonnull
 	String getFieldName();
@@ -25,19 +25,19 @@ public interface IField<F extends IField<?>> extends ISmartNBT, INBTReceiver
 	@Nonnull
 	F copy();
 
-	default boolean canInteractWith(@Nonnull EntityPlayer player)
+	default boolean canInteractWith(@Nonnull EntityPlayerMP player)
 	{
 		return true;
 	}
 
-	default void startInteraction(@Nonnull EntityPlayer player) {}
+	default void startInteraction(@Nonnull EntityPlayerMP player) {}
 
-	default void endInteraction(@Nonnull EntityPlayer player) {}
+	default void endInteraction(@Nonnull EntityPlayerMP player) {}
 
 	default void update() {}
 
 	@SideOnly(Side.CLIENT)
-	default String getHoveringText(@Nonnull EntityPlayer player)
+	default String getHoveringText(@Nonnull EntityPlayerMP player)
 	{
 		return null;
 	}

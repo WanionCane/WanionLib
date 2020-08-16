@@ -1,4 +1,4 @@
-package wanion.lib.common;
+package wanion.lib.client;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).

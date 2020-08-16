@@ -8,6 +8,7 @@ package wanion.lib.common.control;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -46,6 +47,12 @@ public abstract class ControlContainer extends Container implements IControlCont
 		NetworkHelper.detectAndSendControlChanges(windowId, this);
 	}
 
+	@Override
+	public boolean canInteractWith(@Nonnull EntityPlayer playerIn)
+	{
+		return controlInventory.isUsableByPlayer(playerIn);
+	}
+
 	@Nonnull
 	@Override
 	public ControlController getControlController()
@@ -68,7 +75,7 @@ public abstract class ControlContainer extends Container implements IControlCont
 	}
 
 	@Override
-	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
+	public void smartNBTSync(@Nonnull final NBTTagCompound smartNBT)
 	{
 		controlController.smartNBTSync(smartNBT);
 	}

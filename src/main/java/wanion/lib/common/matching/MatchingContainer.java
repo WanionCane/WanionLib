@@ -8,11 +8,11 @@ package wanion.lib.common.matching;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.nbt.NBTTagCompound;
-import wanion.lib.common.ISmartNBTSync;
 import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
@@ -46,6 +46,12 @@ public abstract class MatchingContainer extends Container implements IMatchingCo
 		NetworkHelper.detectAndSendMatchingChanges(windowId, this);
 	}
 
+	@Override
+	public boolean canInteractWith(@Nonnull EntityPlayer playerIn)
+	{
+		return matchingInventory.isUsableByPlayer(playerIn);
+	}
+
 	@Nonnull
 	@Override
 	public MatchingController getContainerMatchingController()
@@ -67,7 +73,7 @@ public abstract class MatchingContainer extends Container implements IMatchingCo
 	}
 
 	@Override
-	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
+	public void smartNBTSync(@Nonnull final NBTTagCompound smartNBT)
 	{
 		matchingController.smartNBTSync(smartNBT);
 	}
