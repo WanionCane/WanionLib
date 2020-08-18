@@ -10,6 +10,7 @@ package wanion.lib.client.gui.interaction;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import wanion.lib.client.gui.IWGElement;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +36,11 @@ public abstract class WGInteraction
 	public int getMouseY()
 	{
 		return mouseY;
+	}
+
+	public boolean isHovering(@Nonnull final IWGElement iwgElement)
+	{
+		return mouseX >= iwgElement.getX() && mouseY >= iwgElement.getY() && mouseX < iwgElement.getX() + iwgElement.getWidth() && mouseY < iwgElement.getY() + iwgElement.getHeight();
 	}
 
 	public boolean isHovering(final int x, final int y, final int width, final int height)

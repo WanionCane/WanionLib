@@ -10,15 +10,18 @@ package wanion.lib.common.control.redstone;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import wanion.lib.Reference;
 import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.control.IState;
 import wanion.lib.common.control.IStateNameable;
 import wanion.lib.common.control.IStateProvider;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class RedstoneControl implements IStateProvider<RedstoneControl, RedstoneControl.RedstoneState>, IControlNameable
 {
@@ -116,6 +119,12 @@ public final class RedstoneControl implements IStateProvider<RedstoneControl, Re
 		{
 			final int previousState = ordinal() - 1;
 			return previousState >= 0 ? values()[previousState] : values()[values().length - 1];
+		}
+
+		@Override
+		public ResourceLocation getTextureResourceLocation()
+		{
+			return Reference.GUI_TEXTURES;
 		}
 
 		@Override

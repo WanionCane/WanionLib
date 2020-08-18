@@ -8,7 +8,6 @@ package wanion.lib.client.gui.button;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -37,7 +36,6 @@ import java.util.List;
 public class ControlWGButton<C extends IStateProvider<C, S>, S extends IState<S>> extends WGButton
 {
 	protected final C stateProvider;
-	protected final ResourceLocation resourceLocation;
 	protected int lineWidth = 0;
 
 	public ControlWGButton(@Nonnull final GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, @Nonnull final C stateProvider, @Nonnull final ResourceLocation resourceLocation, final int x, final int y)
@@ -49,7 +47,6 @@ public class ControlWGButton<C extends IStateProvider<C, S>, S extends IState<S>
 	{
 		super(guiContainer, entityPlayer, x,y, widthIn, heightIn);
 		this.stateProvider = stateProvider;
-		this.resourceLocation = resourceLocation;
 	}
 
 	@Override
@@ -58,11 +55,11 @@ public class ControlWGButton<C extends IStateProvider<C, S>, S extends IState<S>
 		if (!this.isEnabled())
 			return;
 		final S state = stateProvider.getState();
-		boolean hovered = mouseInteraction.isHovering(x, y, width, height);
-		final Pair<Integer, Integer> texturePos = state.getTexturePos(hovered);
-		if (texturePos == null)
+		final ResourceLocation textureResourceLocation = state.getTextureResourceLocation();
+		final Pair<Integer, Integer> texturePos = state.getTexturePos(mouseInteraction.isHovering(this));
+		if (textureResourceLocation == null || texturePos == null)
 			return;
-		getTextureManager().bindTexture(resourceLocation);
+		getTextureManager().bindTexture(textureResourceLocation);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(x, y, texturePos.getLeft(), texturePos.getRight(), width, height, 128, 128);
 	}
@@ -70,7 +67,8 @@ public class ControlWGButton<C extends IStateProvider<C, S>, S extends IState<S>
 	@Override
 	public void drawForegroundLayer(@Nonnull final WGMouseInteraction mouseInteraction)
 	{
-		final FontRenderer fontRenderer = getFontRenderer();
+		if (!mouseInteraction.isHovering(this))
+			return;
 		final List<String> description = new ArrayList<>();
 		final S state = stateProvider.getState();
 		if (stateProvider instanceof IControlNameable)
@@ -82,7 +80,7 @@ public class ControlWGButton<C extends IStateProvider<C, S>, S extends IState<S>
 		}
 		this.lineWidth = 0;
 		for (final String line : description) {
-			final int lineWidth = fontRenderer.getStringWidth(line);
+			final int lineWidth = getFontRenderer().getStringWidth(line);
 			if (lineWidth > this.lineWidth)
 				this.lineWidth = lineWidth;
 		}
@@ -94,10 +92,12 @@ public class ControlWGButton<C extends IStateProvider<C, S>, S extends IState<S>
 	{
 		if (!(interaction instanceof WGMouseInteraction))
 			return;
-		playPressSound(guiContainer.mc.getSoundHandler());
+		playPressSound();
 		final S state = stateProvider.getState();
 		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
-		stateProvider.writeToNBT(nbtTagCompound, ((WGMouseInteraction) interaction).getMouseButton() == 0 ? state.getNextState() : state.getPreviousState());
+		final NBTTagCompound controlNBT = new NBTTagCompound();
+		nbtTagCompound.setTag("control", controlNBT);
+		stateProvider.writeToNBT(controlNBT, ((WGMouseInteraction) interaction).getMouseButton() == 0 ? state.getNextState() : state.getPreviousState());
 		WanionLib.networkWrapper.sendToServer(new SmartNBTSync(guiContainer.inventorySlots.windowId, nbtTagCompound));
 	}
 }

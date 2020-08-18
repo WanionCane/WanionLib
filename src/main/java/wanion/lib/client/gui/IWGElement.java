@@ -9,11 +9,14 @@ package wanion.lib.client.gui;
  */
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import wanion.lib.client.gui.interaction.WGInteraction;
 import wanion.lib.client.gui.interaction.WGMouseInteraction;
 
@@ -24,7 +27,11 @@ public interface IWGElement
 {
 	int getX();
 
+	default void setX(final int x) {}
+
 	int getY();
+
+	default void setY(final int y) {}
 
 	int getWidth();
 
@@ -38,15 +45,13 @@ public interface IWGElement
 
 	boolean isEnabled();
 
-	default void interaction(@Nonnull WGInteraction wgPlayer) {}
+	default void interaction(@Nonnull final WGInteraction wgPlayer) {}
 
-	void draw(@Nonnull WGMouseInteraction wgPlayer);
+	void draw(@Nonnull final WGMouseInteraction wgPlayer);
 
-	default void drawForegroundLayer(@Nonnull WGMouseInteraction wgPlayer) {}
+	default void drawForegroundLayer(@Nonnull final WGMouseInteraction wgPlayer) {}
 
-	default void setEnabled(boolean enabled) {}
-
-	default void playPressSound(@Nonnull final SoundHandler soundHandler) {}
+	default void setEnabled(final boolean enabled) {}
 
 	default int getTooltipX(@Nonnull final WGMouseInteraction mouseInteraction)
 	{
@@ -58,6 +63,11 @@ public interface IWGElement
 		return mouseInteraction.getMouseX() - mouseInteraction.guiContainer.getGuiTop();
 	}
 
+	default SoundHandler getSoundHandler()
+	{
+		return Minecraft.getMinecraft().getSoundHandler();
+	}
+
 	default TextureManager getTextureManager()
 	{
 		return Minecraft.getMinecraft().getTextureManager();
@@ -66,5 +76,15 @@ public interface IWGElement
 	default FontRenderer getFontRenderer()
 	{
 		return Minecraft.getMinecraft().fontRenderer;
+	}
+
+	default void playPressSound()
+	{
+		getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+	}
+
+	default void playPressSound(@Nonnull final ISound sound)
+	{
+		getSoundHandler().playSound(sound);
 	}
 }

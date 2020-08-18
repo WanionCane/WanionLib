@@ -8,6 +8,7 @@ package wanion.lib.common.control;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -20,6 +21,9 @@ public interface IState<S extends IState<?>>
 
 	@Nonnull
 	S getPreviousState();
+
+	@Nullable
+	ResourceLocation getTextureResourceLocation();
 
 	@Nullable
 	default Pair<Integer, Integer> getTexturePos(boolean hovered)

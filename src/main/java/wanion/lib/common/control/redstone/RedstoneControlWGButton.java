@@ -21,9 +21,9 @@ import javax.annotation.Nonnull;
 @SideOnly(Side.CLIENT)
 public final class RedstoneControlWGButton extends ControlWGButton<RedstoneControl, RedstoneControl.RedstoneState>
 {
-	public RedstoneControlWGButton(@Nonnull final GuiContainer guiContainer, @Nonnull EntityPlayer entityPlayer, final int x, final int y, @Nonnull final RedstoneControl control, int buttonId)
+	public RedstoneControlWGButton(@Nonnull final GuiContainer guiContainer, @Nonnull EntityPlayer entityPlayer, final int x, final int y, @Nonnull final RedstoneControl redStoneControl)
 	{
-		super(guiContainer, entityPlayer, control, Reference.GUI_TEXTURES, x, y, 18, 18);
+		super(guiContainer, entityPlayer, redStoneControl, Reference.GUI_TEXTURES, x, y, 18, 18);
 	}
 
 	@Override
