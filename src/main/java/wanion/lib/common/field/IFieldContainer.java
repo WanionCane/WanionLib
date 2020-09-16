@@ -10,11 +10,11 @@ package wanion.lib.common.field;
 
 import wanion.lib.common.IListenerProvider;
 import wanion.lib.common.INBTMessage;
-import wanion.lib.common.ISmartNBTSync;
+import wanion.lib.common.ISmartNBT;
 
 import javax.annotation.Nonnull;
 
-public interface IFieldContainer extends IFieldControllerProvider, IListenerProvider, ISmartNBTSync, INBTMessage
+public interface IFieldContainer extends IFieldControllerProvider, IListenerProvider, ISmartNBT, INBTMessage
 {
 	@Nonnull
 	FieldController getContainerFieldController();

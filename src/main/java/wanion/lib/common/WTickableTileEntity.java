@@ -8,7 +8,6 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-public class FieldMatchingContainer
-{
+import net.minecraft.util.ITickable;
 
-}
+public abstract class WTickableTileEntity extends WTileEntity implements ITickable {}

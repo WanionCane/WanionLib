@@ -16,7 +16,7 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 public class FixedSizeList<E> extends AbstractList<E>
 {
-	private static final int DEFAULT_CAPACITY = 64;
+	public static final int DEFAULT_CAPACITY = 64;
 	private final E[] allTheData;
 	private final int capacity;
 	private int size;
@@ -96,7 +96,6 @@ public class FixedSizeList<E> extends AbstractList<E>
 		return Arrays.copyOf(allTheData, size);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void clear()
 	{

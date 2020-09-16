@@ -8,12 +8,10 @@ package wanion.lib.common.control.redstone;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.lib.Reference;
-import wanion.lib.client.gui.interaction.WGMouseInteraction;
+import wanion.lib.client.gui.WGContainer;
+import wanion.lib.client.gui.interaction.WGInteraction;
 import wanion.lib.client.gui.button.ControlWGButton;
 
 import javax.annotation.Nonnull;
@@ -21,20 +19,20 @@ import javax.annotation.Nonnull;
 @SideOnly(Side.CLIENT)
 public final class RedstoneControlWGButton extends ControlWGButton<RedstoneControl, RedstoneControl.RedstoneState>
 {
-	public RedstoneControlWGButton(@Nonnull final GuiContainer guiContainer, @Nonnull EntityPlayer entityPlayer, final int x, final int y, @Nonnull final RedstoneControl redStoneControl)
+	public RedstoneControlWGButton(@Nonnull final RedstoneControl redStoneControl, @Nonnull final WGContainer<?> wgContainer, final int x, final int y)
 	{
-		super(guiContainer, entityPlayer, redStoneControl, Reference.GUI_TEXTURES, x, y, 18, 18);
+		super(redStoneControl, wgContainer, x, y);
 	}
 
 	@Override
-	public int getTooltipX(@Nonnull final WGMouseInteraction mouseInteraction)
+	public int getTooltipX(@Nonnull final WGInteraction wgInteraction)
 	{
-		return mouseInteraction.getMouseX() - (lineWidth / 2) - 12 - mouseInteraction.guiContainer.getGuiLeft();
+		return wgInteraction.getMouseX() - (lineWidth / 2) - 12 - wgInteraction.WGContainer.getGuiLeft();
 	}
 
 	@Override
-	public int getTooltipY(@Nonnull final WGMouseInteraction mouseInteraction)
+	public int getTooltipY(@Nonnull final WGInteraction wgInteraction)
 	{
-		return mouseInteraction.getMouseY() - 20 - mouseInteraction.guiContainer.getGuiTop();
+		return wgInteraction.getMouseY() - 20 - wgInteraction.WGContainer.getGuiTop();
 	}
 }

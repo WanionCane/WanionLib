@@ -10,11 +10,12 @@ package wanion.lib.common.matching.matcher;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import wanion.lib.common.ICopyable;
 import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
-public class ItemStackMatcher extends AbstractMatcher
+public class ItemStackMatcher extends AbstractMatcher<ItemStackMatcher>
 {
 	public ItemStackMatcher(@Nonnull final Matching matching)
 	{
@@ -30,14 +31,14 @@ public class ItemStackMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public AbstractMatcher validate()
+	public AbstractMatcher<?> validate()
 	{
 		return this;
 	}
 
 	@Nonnull
 	@Override
-	public AbstractMatcher next()
+	public AbstractMatcher<?> next()
 	{
 		final ItemStack itemStack = getStack();
 		if (itemStack.getHasSubtypes() || itemStack.isItemStackDamageable())
@@ -73,6 +74,13 @@ public class ItemStackMatcher extends AbstractMatcher
 	@Override
 	public boolean equals(final Object obj)
 	{
-		return obj == this || obj instanceof ItemStackMatcher;
+		return obj instanceof ItemStackMatcher;
+	}
+
+	@Nonnull
+	@Override
+	public ItemStackMatcher copy()
+	{
+		return new ItemStackMatcher(matching);
 	}
 }

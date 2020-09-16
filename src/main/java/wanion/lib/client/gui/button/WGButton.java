@@ -8,82 +8,27 @@ package wanion.lib.client.gui.button;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
-import wanion.lib.client.gui.IWGElement;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import wanion.lib.client.gui.WGContainer;
+import wanion.lib.client.gui.WGElement;
 
 import javax.annotation.Nonnull;
 
-public abstract class WGButton implements IWGElement
+@SideOnly(Side.CLIENT)
+public abstract class WGButton extends WGElement
 {
-	protected final EntityPlayer entityPlayer;
-	protected final GuiContainer guiContainer;
-	protected final int x, y, width, height;
-	protected boolean enabled;
+	protected final WGContainer<?> wgContainer;
 
-	public WGButton(@Nonnull final GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, final int x, final int y, final int width, final int height)
+	public WGButton(@Nonnull final WGContainer<?> wgContainer, final int x, final int y, final int width, final int height)
 	{
-		this(guiContainer, entityPlayer, x, y, width, height, true);
+		this(wgContainer, x, y, width, height, true);
 	}
 
-	public WGButton(@Nonnull final GuiContainer guiContainer, final EntityPlayer entityPlayer, final int x, final int y, final int width, final int height, final boolean enabled)
+	public WGButton(@Nonnull final WGContainer<?> wgContainer, final int x, final int y, final int width, final int height, final boolean enabled)
 	{
-		this.guiContainer = guiContainer;
-		this.entityPlayer = entityPlayer;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.enabled = enabled;
-	}
-
-	@Override
-	public int getX()
-	{
-		return x;
-	}
-
-	@Override
-	public int getY()
-	{
-		return y;
-	}
-
-	@Override
-	public int getWidth()
-	{
-		return width;
-	}
-
-	@Override
-	public int getHeight()
-	{
-		return height;
-	}
-
-	@Override
-	@Nonnull
-	public EntityPlayer getEntityPlayer()
-	{
-		return entityPlayer;
-	}
-
-	@Nonnull
-	@Override
-	public GuiContainer getGuiContainer()
-	{
-		return guiContainer;
-	}
-
-	@Override
-	public boolean isEnabled()
-	{
-		return enabled;
-	}
-
-	@Override
-	public void setEnabled(final boolean enabled)
-	{
+		super(wgContainer, x, y, width, height);
+		this.wgContainer = wgContainer;
 		this.enabled = enabled;
 	}
 }

@@ -25,8 +25,8 @@ public class CommonProxy
 	public final void preInit()
 	{
 		int d = 0;
-		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.SERVER);
-		WanionLib.networkWrapper.registerMessage(SmartNBTSync.Handler.class, SmartNBTSync.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(SmartNBTMessage.Handler.class, SmartNBTMessage.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(SmartNBTMessage.Handler.class, SmartNBTMessage.class, d++, Side.CLIENT);
 		WanionLib.networkWrapper.registerMessage(NBTMessage.Handler.class, NBTMessage.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(NBTMessage.Handler.class, NBTMessage.class, d++, Side.CLIENT);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d++, Side.SERVER);
@@ -55,11 +55,11 @@ public class CommonProxy
 
 	public final boolean isServer()
 	{
-		return FMLCommonHandler.instance().getEffectiveSide().isServer();
+		return !isClient();
 	}
 
 	public IThreadListener getThreadListener()
 	{
-		return FMLCommonHandler.instance().getMinecraftServerInstance();
+		return getMinecraftServer();
 	}
 }

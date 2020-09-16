@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public abstract class ControlMatchingContainer extends Container implements IControlContainer, IMatchingContainer
+public class ControlMatchingContainer extends Container implements IControlContainer, IMatchingContainer
 {
 	private final ControlController controlController;
 	private final MatchingController matchingController;
@@ -97,10 +97,10 @@ public abstract class ControlMatchingContainer extends Container implements ICon
 	}
 
 	@Override
-	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
+	public void readNBT(@Nonnull NBTTagCompound smartNBT)
 	{
-		controlController.smartNBTSync(smartNBT);
-		matchingController.smartNBTSync(smartNBT);
+		controlController.readNBT(smartNBT);
+		matchingController.readNBT(smartNBT);
 		controlMatchingInventory.markDirty();
 	}
 }

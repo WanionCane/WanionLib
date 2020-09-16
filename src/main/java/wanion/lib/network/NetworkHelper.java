@@ -11,6 +11,7 @@ package wanion.lib.network;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import wanion.lib.WanionLib;
 import wanion.lib.common.control.IControl;
 import wanion.lib.common.control.IControlContainer;
@@ -33,10 +34,10 @@ public class NetworkHelper
 	public static void addControlListener(final int windowId, @Nonnull final IControlControllerProvider controlControllerProvider, @Nonnull final EntityPlayerMP entityPlayerMP)
 	{
 		final NBTTagCompound smartNBT = new NBTTagCompound();
-		final NBTTagCompound controlNBT = new NBTTagCompound();
-		smartNBT.setTag("control", controlNBT);
-		controlControllerProvider.getControlController().getInstances().forEach(control -> control.writeToNBT(controlNBT));
-		WanionLib.networkWrapper.sendTo(new SmartNBTSync(windowId, smartNBT), entityPlayerMP);
+		final NBTTagList controlTagList = new NBTTagList();
+		smartNBT.setTag("control", controlTagList);
+		controlControllerProvider.getControlController().getInstances().forEach(control -> controlTagList.appendTag(control.writeNBT()));
+		WanionLib.networkWrapper.sendTo(new SmartNBTMessage(windowId, smartNBT), entityPlayerMP);
 	}
 
 	public static void detectAndSendControlChanges(final int windowId, @Nonnull final IControlContainer controlContainer)
@@ -45,22 +46,22 @@ public class NetworkHelper
 		if (!controlList.isEmpty()) {
 			controlContainer.getContainerControlController().forceAdd(controlList.stream().<IControl<?>>map(IControl::copy).collect(Collectors.toList()));
 			final NBTTagCompound smartNBT = new NBTTagCompound();
-			final NBTTagCompound controlNBT = new NBTTagCompound();
-			smartNBT.setTag("control", controlNBT);
-			controlList.forEach(control -> control.writeToNBT(controlNBT));
+			final NBTTagList controlTagList = new NBTTagList();
+			smartNBT.setTag("control", controlTagList);
+			controlList.forEach(control -> controlTagList.appendTag(control.writeNBT()));
 			for (final IContainerListener containerListener : controlContainer.getListeners())
 				if (containerListener instanceof EntityPlayerMP)
-					WanionLib.networkWrapper.sendTo(new SmartNBTSync(windowId, smartNBT), (EntityPlayerMP) containerListener);
+					WanionLib.networkWrapper.sendTo(new SmartNBTMessage(windowId, smartNBT), (EntityPlayerMP) containerListener);
 		}
 	}
 
 	public static void addFieldListener(final int windowId, @Nonnull final IFieldControllerProvider fieldControllerProvider, @Nonnull final EntityPlayerMP entityPlayerMP)
 	{
 		final NBTTagCompound smartNBT = new NBTTagCompound();
-		final NBTTagCompound fieldNBT = new NBTTagCompound();
-		smartNBT.setTag("field", fieldNBT);
-		fieldControllerProvider.getFieldController().getInstances().forEach(field -> field.writeToNBT(fieldNBT));
-		WanionLib.networkWrapper.sendTo(new SmartNBTSync(windowId, smartNBT), entityPlayerMP);
+		final NBTTagList fieldTagList = new NBTTagList();
+		smartNBT.setTag("field", fieldTagList);
+		fieldControllerProvider.getFieldController().getInstances().forEach(field -> fieldTagList.appendTag(field.writeNBT()));
+		WanionLib.networkWrapper.sendTo(new SmartNBTMessage(windowId, smartNBT), entityPlayerMP);
 	}
 
 	public static void detectAndSendFieldChanges(final int windowId, @Nonnull final IFieldContainer fieldContainer)
@@ -69,22 +70,22 @@ public class NetworkHelper
 		if (!fieldList.isEmpty()) {
 			fieldList.stream().map(IField::copy).collect(Collectors.toList()).forEach(fieldContainer.getContainerFieldController()::add);
 			final NBTTagCompound smartNBT = new NBTTagCompound();
-			final NBTTagCompound fieldNBT = new NBTTagCompound();
-			smartNBT.setTag("field", fieldNBT);
-			fieldList.forEach(field -> field.writeToNBT(fieldNBT));
+			final NBTTagList fieldTag = new NBTTagList();
+			smartNBT.setTag("field", fieldTag);
+			fieldList.forEach(field -> fieldTag.appendTag(field.writeNBT()));
 			for (final IContainerListener containerListener : fieldContainer.getListeners())
 				if (containerListener instanceof EntityPlayerMP)
-					WanionLib.networkWrapper.sendTo(new SmartNBTSync(windowId, smartNBT), (EntityPlayerMP) containerListener);
+					WanionLib.networkWrapper.sendTo(new SmartNBTMessage(windowId, smartNBT), (EntityPlayerMP) containerListener);
 		}
 	}
 
 	public static void addMatchingListener(final int windowId, @Nonnull final IMatchingControllerProvider matchingControllerProvider, @Nonnull final EntityPlayerMP entityPlayerMP)
 	{
 		final NBTTagCompound smartNBT = new NBTTagCompound();
-		final NBTTagCompound matchingNBT = new NBTTagCompound();
-		smartNBT.setTag("matching", matchingNBT);
-		matchingControllerProvider.getMatchingController().getInstances().forEach(control -> control.writeToNBT(matchingNBT));
-		WanionLib.networkWrapper.sendTo(new SmartNBTSync(windowId, smartNBT), entityPlayerMP);
+		final NBTTagList fieldTagList = new NBTTagList();
+		smartNBT.setTag("matching", fieldTagList);
+		matchingControllerProvider.getMatchingController().getInstances().forEach(matching -> fieldTagList.appendTag(matching.writeNBT()));
+		WanionLib.networkWrapper.sendTo(new SmartNBTMessage(windowId, smartNBT), entityPlayerMP);
 	}
 
 	public static void detectAndSendMatchingChanges(final int windowId, @Nonnull final IMatchingContainer matchingContainer)
@@ -93,12 +94,12 @@ public class NetworkHelper
 		if (!matchingList.isEmpty()) {
 			matchingList.stream().map(Matching::copy).collect(Collectors.toList()).forEach(matchingContainer.getContainerMatchingController()::add);
 			final NBTTagCompound smartNBT = new NBTTagCompound();
-			final NBTTagCompound matchingNBT = new NBTTagCompound();
-			smartNBT.setTag("matching", matchingNBT);
-			matchingList.forEach(control -> control.writeToNBT(matchingNBT));
+			final NBTTagList matchingTag = new NBTTagList();
+			smartNBT.setTag("matching", matchingTag);
+			matchingList.forEach(matching -> matchingTag.appendTag(matching.writeNBT()));
 			for (final IContainerListener containerListener : matchingContainer.getListeners())
 				if (containerListener instanceof EntityPlayerMP)
-					WanionLib.networkWrapper.sendTo(new SmartNBTSync(windowId, smartNBT), (EntityPlayerMP) containerListener);
+					WanionLib.networkWrapper.sendTo(new SmartNBTMessage(windowId, smartNBT), (EntityPlayerMP) containerListener);
 		}
 	}
 }

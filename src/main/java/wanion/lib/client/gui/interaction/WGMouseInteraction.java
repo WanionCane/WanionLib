@@ -8,19 +8,28 @@ package wanion.lib.client.gui.interaction;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
+import wanion.lib.client.gui.WGContainer;
 
 import javax.annotation.Nonnull;
 
+@SideOnly(Side.CLIENT)
 public class WGMouseInteraction extends WGInteraction
 {
 	private final int mouseButton;
 
-	public WGMouseInteraction(@Nonnull final GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, final int mouseX, int mouseY, int mouseButton)
+	public WGMouseInteraction(@Nonnull final WGContainer<?> WGContainer, final int mouseX, int mouseY, int mouseButton)
 	{
-		super(guiContainer, entityPlayer, mouseX, mouseY);
+		super(WGContainer, mouseX, mouseY);
 		this.mouseButton = mouseButton;
+	}
+
+	public WGMouseInteraction(@Nonnull final WGContainer<?> WGContainer)
+	{
+		super(WGContainer);
+		this.mouseButton = Mouse.getEventButton();
 	}
 
 	public int getMouseButton()

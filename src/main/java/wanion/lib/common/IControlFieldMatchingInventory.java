@@ -8,11 +8,8 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.nbt.NBTTagCompound;
+import wanion.lib.common.control.IControlInventory;
+import wanion.lib.common.field.IFieldInventory;
+import wanion.lib.common.matching.IMatchingInventory;
 
-import javax.annotation.Nonnull;
-
-public interface ISmartNBTSync
-{
-	void smartNBTSync(@Nonnull NBTTagCompound smartNBT);
-}
+public interface IControlFieldMatchingInventory extends IControlInventory, IFieldInventory, IMatchingInventory {}

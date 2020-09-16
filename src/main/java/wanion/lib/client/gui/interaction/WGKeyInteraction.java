@@ -8,19 +8,43 @@ package wanion.lib.client.gui.interaction;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
+import wanion.lib.client.gui.WGContainer;
 
 import javax.annotation.Nonnull;
 
+@SideOnly(Side.CLIENT)
 public final class WGKeyInteraction extends WGInteraction
 {
+	private final char key;
 	private final int keyCode;
 
-	public WGKeyInteraction(@Nonnull GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, final int mouseX, int mouseY, final int keyCode)
+	public WGKeyInteraction(@Nonnull final WGContainer<?> WGContainer, final int mouseX, int mouseY, final char key, final int keyCode)
 	{
-		super(guiContainer, entityPlayer, mouseX, mouseY);
+		super(WGContainer, mouseX, mouseY);
+		this.key = key;
 		this.keyCode = keyCode;
+	}
+
+	public WGKeyInteraction(@Nonnull final WGContainer<?> WGContainer, final char key, final int keyCode)
+	{
+		super(WGContainer);
+		this.key = key;
+		this.keyCode = keyCode;
+	}
+
+	public WGKeyInteraction(@Nonnull final WGContainer<?> WGContainer)
+	{
+		super(WGContainer);
+		this.key = Keyboard.getEventCharacter();
+		this.keyCode = Keyboard.getEventKey();
+	}
+
+	public char getKey()
+	{
+		return key;
 	}
 
 	public int getKeyCode()

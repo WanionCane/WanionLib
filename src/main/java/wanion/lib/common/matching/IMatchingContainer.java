@@ -9,11 +9,11 @@ package wanion.lib.common.matching;
  */
 
 import wanion.lib.common.IListenerProvider;
-import wanion.lib.common.ISmartNBTSync;
+import wanion.lib.common.ISmartNBT;
 
 import javax.annotation.Nonnull;
 
-public interface IMatchingContainer extends IMatchingControllerProvider, IListenerProvider, ISmartNBTSync
+public interface IMatchingContainer extends IMatchingControllerProvider, IListenerProvider, ISmartNBT
 {
 	@Nonnull
 	MatchingController getContainerMatchingController();

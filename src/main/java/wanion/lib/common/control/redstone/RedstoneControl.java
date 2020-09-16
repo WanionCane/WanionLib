@@ -48,14 +48,17 @@ public final class RedstoneControl implements IStateProvider<RedstoneControl, Re
 		return state == RedstoneState.OFF && !powered || state == RedstoneState.ON && powered;
 	}
 
+	@Nonnull
 	@Override
-	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public NBTTagCompound writeNBT()
 	{
-		nbtTagCompound.setInteger("RedstoneControl", state.ordinal());
+		final NBTTagCompound redstoneControlNBT = new NBTTagCompound();
+		redstoneControlNBT.setInteger("RedstoneControl", state.ordinal());
+		return redstoneControlNBT;
 	}
 
 	@Override
-	public void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		if (nbtTagCompound.hasKey("RedstoneControl"))
 			state = RedstoneState.values()[MathHelper.clamp(nbtTagCompound.getInteger("RedstoneControl"), 0, RedstoneState.values().length - 1)];

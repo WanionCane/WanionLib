@@ -8,7 +8,10 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-public class ControlFieldContainer
-{
+import javax.annotation.Nonnull;
 
+public interface ICopyable<C extends ICopyable<C>>
+{
+	@Nonnull
+	C copy();
 }

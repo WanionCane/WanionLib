@@ -8,11 +8,10 @@ package wanion.lib.common.control;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import wanion.lib.common.ICopyable;
 import wanion.lib.common.ISmartNBT;
 
-import javax.annotation.Nonnull;
-
-public interface IControl<C extends IControl<C>> extends ISmartNBT
+public interface IControl<C extends IControl<C>> extends ISmartNBT, ICopyable<C>
 {
 	default boolean canOperate()
 	{
@@ -20,7 +19,4 @@ public interface IControl<C extends IControl<C>> extends ISmartNBT
 	}
 
 	default void operate() {}
-
-	@Nonnull
-	C copy();
 }

@@ -8,6 +8,8 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import wanion.lib.WanionLib;
 import wanion.lib.network.NBTMessage;
@@ -16,9 +18,14 @@ import javax.annotation.Nonnull;
 
 public interface INBTMessage
 {
-	static void sendNBT(final int windowId, @Nonnull final NBTTagCompound nbtTagCompound)
+	static void sendNBT(@Nonnull final Container container, @Nonnull final NBTTagCompound nbtTagCompound)
 	{
-		WanionLib.networkWrapper.sendToServer(new NBTMessage(windowId, nbtTagCompound));
+		WanionLib.networkWrapper.sendToServer(new NBTMessage(container.windowId, nbtTagCompound));
+	}
+
+	static void sendNBT(@Nonnull final Container container, @Nonnull final NBTTagCompound nbtTagCompound, @Nonnull final EntityPlayerMP entityPlayerMP)
+	{
+		WanionLib.networkWrapper.sendTo(new NBTMessage(container.windowId, nbtTagCompound), entityPlayerMP);
 	}
 
 	void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound);

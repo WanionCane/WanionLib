@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public abstract class FieldContainer extends Container implements IFieldContainer
+public  class FieldContainer extends Container implements IFieldContainer
 {
 	private final FieldController fieldController;
 	private final IFieldInventory fieldInventory;
@@ -74,14 +74,15 @@ public abstract class FieldContainer extends Container implements IFieldContaine
 	}
 
 	@Override
-	public void smartNBTSync(@Nonnull final NBTTagCompound smartNBT)
-	{
-		fieldController.smartNBTSync(smartNBT);
-	}
-
-	@Override
 	public void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		fieldController.receiveNBT(nbtTagCompound);
+	}
+
+	@Override
+	public void readNBT(@Nonnull NBTTagCompound smartNBT)
+	{
+		fieldController.readNBT(smartNBT);
+		fieldInventory.markDirty();
 	}
 }

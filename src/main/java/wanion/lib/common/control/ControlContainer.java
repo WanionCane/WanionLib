@@ -13,14 +13,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.nbt.NBTTagCompound;
-import wanion.lib.common.ISmartNBTSync;
 import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public abstract class ControlContainer extends Container implements IControlContainer
+public class ControlContainer extends Container implements IControlContainer
 {
 	private final ControlController controlController;
 	private final IControlInventory controlInventory;
@@ -75,8 +74,9 @@ public abstract class ControlContainer extends Container implements IControlCont
 	}
 
 	@Override
-	public void smartNBTSync(@Nonnull final NBTTagCompound smartNBT)
+	public void readNBT(@Nonnull NBTTagCompound smartNBT)
 	{
-		controlController.smartNBTSync(smartNBT);
+		controlController.readNBT(smartNBT);
+		controlInventory.markDirty();
 	}
 }

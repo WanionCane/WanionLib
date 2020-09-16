@@ -17,7 +17,7 @@ import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
-public class OreDictMatcher extends AbstractMatcher
+public class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 {
 	private final int[] ores = !matching.getStack().isEmpty() ? OreDictionary.getOreIDs(getStack()) : new int[0];
 	private int actualOre = 0;
@@ -27,14 +27,17 @@ public class OreDictMatcher extends AbstractMatcher
 		super(matching);
 	}
 
+	@Nonnull
 	@Override
-	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public NBTTagCompound writeNBT()
 	{
-		nbtTagCompound.setInteger("actualOre", actualOre);
+		final NBTTagCompound matchingNbt = super.writeNBT();
+		matchingNbt.setInteger("actualOre", actualOre);
+		return matchingNbt;
 	}
 
 	@Override
-	public void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		actualOre = nbtTagCompound.getInteger("actualOre");
 	}
@@ -48,14 +51,14 @@ public class OreDictMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public AbstractMatcher validate()
+	public AbstractMatcher<?> validate()
 	{
 		return ores.length > 0 && actualOre < ores.length ? this : new ItemStackMatcher(matching);
 	}
 
 	@Nonnull
 	@Override
-	public AbstractMatcher next()
+	public AbstractMatcher<?> next()
 	{
 		return ++actualOre < ores.length ? this : new ItemStackMatcher(matching);
 	}
@@ -104,5 +107,14 @@ public class OreDictMatcher extends AbstractMatcher
 			if (ore == actualOre)
 				return true;
 		return false;
+	}
+
+	@Nonnull
+	@Override
+	public OreDictMatcher copy()
+	{
+		final OreDictMatcher nOreDictMatcher = new OreDictMatcher(matching);
+		nOreDictMatcher.readNBT(writeNBT());
+		return nOreDictMatcher;
 	}
 }

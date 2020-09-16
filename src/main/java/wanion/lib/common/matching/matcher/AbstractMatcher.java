@@ -11,11 +11,13 @@ package wanion.lib.common.matching.matcher;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import wanion.lib.common.ICopyable;
+import wanion.lib.common.ISmartNBT;
 import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractMatcher
+public abstract class AbstractMatcher<M extends AbstractMatcher<M>> implements ISmartNBT, ICopyable<M>
 {
 	protected Matching matching;
 
@@ -29,18 +31,21 @@ public abstract class AbstractMatcher
 		return matching.getStack();
 	}
 
-	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound) {}
+	@Nonnull
+	@Override
+	public NBTTagCompound writeNBT() { return new NBTTagCompound();	}
 
-	public void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound) {}
+	@Override
+	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound) {}
 
 	@Nonnull
 	public abstract MatcherEnum getMatcherEnum();
 
 	@Nonnull
-	public abstract AbstractMatcher validate();
+	public abstract AbstractMatcher<?> validate();
 
 	@Nonnull
-	public abstract AbstractMatcher next();
+	public abstract AbstractMatcher<?> next();
 
 	public abstract boolean matches(@Nonnull ItemStack otherItemStack);
 

@@ -16,17 +16,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.lib.WanionLib;
-import wanion.lib.common.ISmartNBTSync;
-import wanion.lib.common.field.IFieldControllerProvider;
+import wanion.lib.common.ISmartNBT;
 
-public final class SmartNBTSync implements IMessage
+public final class SmartNBTMessage implements IMessage
 {
 	private int windowId;
 	private NBTTagCompound nbtTagCompound;
 
-	public SmartNBTSync() {}
+	public SmartNBTMessage() {}
 
-	public SmartNBTSync(final int windowId, final NBTTagCompound nbtTagCompound)
+	public SmartNBTMessage(final int windowId, final NBTTagCompound nbtTagCompound)
 	{
 		this.windowId = windowId;
 		this.nbtTagCompound = nbtTagCompound;
@@ -46,15 +45,15 @@ public final class SmartNBTSync implements IMessage
 		ByteBufUtils.writeTag(buf, nbtTagCompound);
 	}
 
-	public static class Handler implements IMessageHandler<SmartNBTSync, IMessage>
+	public static class Handler implements IMessageHandler<SmartNBTMessage, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final SmartNBTSync smartNBT, final MessageContext ctx)
+		public IMessage onMessage(final SmartNBTMessage smartNBT, final MessageContext ctx)
 		{
 			WanionLib.proxy.getThreadListener().addScheduledTask(() -> {
 				final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-				if (entityPlayer != null && entityPlayer.openContainer.windowId == smartNBT.windowId && entityPlayer.openContainer instanceof ISmartNBTSync)
-					((ISmartNBTSync) entityPlayer.openContainer).smartNBTSync(smartNBT.nbtTagCompound);
+				if (entityPlayer != null && entityPlayer.openContainer.windowId == smartNBT.windowId && entityPlayer.openContainer instanceof ISmartNBT)
+					((ISmartNBT) entityPlayer.openContainer).readNBT(smartNBT.nbtTagCompound);
 			});
 			return null;
 		}

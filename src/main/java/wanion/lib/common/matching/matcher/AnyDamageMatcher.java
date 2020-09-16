@@ -14,7 +14,7 @@ import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
-public class AnyDamageMatcher extends AbstractMatcher
+public class AnyDamageMatcher extends AbstractMatcher<AnyDamageMatcher>
 {
 	public AnyDamageMatcher(@Nonnull final Matching matching)
 	{
@@ -30,7 +30,7 @@ public class AnyDamageMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public AbstractMatcher validate()
+	public AbstractMatcher<?> validate()
 	{
 		final ItemStack itemStack = getStack();
 		return itemStack.getHasSubtypes() || itemStack.isItemStackDamageable() ? this : new ItemStackMatcher(matching);
@@ -38,7 +38,7 @@ public class AnyDamageMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public AbstractMatcher next()
+	public AbstractMatcher<?> next()
 	{
 		final ItemStack itemStack = getStack();
 		return matching.shouldUseNbt() && itemStack.hasTagCompound() ? new NbtMatcher(matching) : OreDictionary.getOreIDs(itemStack).length > 0 ? new OreDictMatcher(matching) : new ItemStackMatcher(matching);
@@ -66,6 +66,13 @@ public class AnyDamageMatcher extends AbstractMatcher
 	@Override
 	public boolean equals(final Object obj)
 	{
-		return obj == this || obj instanceof AnyDamageMatcher;
+		return obj instanceof AnyDamageMatcher;
+	}
+
+	@Nonnull
+	@Override
+	public AnyDamageMatcher copy()
+	{
+		return new AnyDamageMatcher(matching);
 	}
 }

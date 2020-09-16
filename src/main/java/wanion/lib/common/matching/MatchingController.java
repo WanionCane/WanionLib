@@ -12,14 +12,18 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
-import wanion.lib.common.ISmartNBTSync;
+import net.minecraft.nbt.NBTTagList;
+import wanion.lib.common.IController;
+import wanion.lib.common.ICopyable;
+import wanion.lib.common.ISmartNBT;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class MatchingController implements ISmartNBTSync
+public class MatchingController implements IController<MatchingController, Matching>, ISmartNBT, ICopyable<MatchingController>
 {
 	private final Int2ObjectMap<Matching> matchingControlMap = new Int2ObjectOpenHashMap<>();
 	private final Collection<Matching> values = matchingControlMap.values();
@@ -33,8 +37,7 @@ public class MatchingController implements ISmartNBTSync
 	public MatchingController(@Nonnull final IInventory inventory, final Matching... matchings)
 	{
 		this(inventory);
-		for (final Matching matching : matchings)
-			add(matching);
+		add(matchings);
 	}
 
 	public MatchingController(@Nonnull final IInventory inventory, @Nonnull final List<Matching> matchingList)
@@ -49,9 +52,10 @@ public class MatchingController implements ISmartNBTSync
 		matchingControlMap.putAll(matchingMap);
 	}
 
-	public void add(@Nonnull final Matching matching)
+	public void add(@Nonnull final Matching... matchings)
 	{
-		matchingControlMap.put(matching.hashCode(), matching);
+		for (final Matching matching : matchings)
+			matchingControlMap.put(matching.hashCode(), matching);
 	}
 
 	public Collection<Matching> getInstances()
@@ -65,6 +69,7 @@ public class MatchingController implements ISmartNBTSync
 	}
 
 	@Nonnull
+	@Override
 	public List<Matching> compareContents(@Nonnull final MatchingController otherMatchingController)
 	{
 		final List<Matching> differences = new ArrayList<>();
@@ -76,13 +81,36 @@ public class MatchingController implements ISmartNBTSync
 		return differences;
 	}
 
+	@Nonnull
 	@Override
-	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
+	public NBTTagCompound writeNBT()
 	{
-		final NBTTagCompound matchingNBT = smartNBT.getCompoundTag("matching");
-		if (matchingNBT.hasNoTags())
+		final NBTTagCompound matchingNBT = new NBTTagCompound();
+		final NBTTagList matchingTagList = new NBTTagList();
+		matchingNBT.setTag("matching", matchingTagList);
+		values.forEach(matching -> matchingTagList.appendTag(matching.writeNBT()));
+		return matchingNBT;
+	}
+
+	@Override
+	public void readNBT(@Nonnull NBTTagCompound smartNBT)
+	{
+		final NBTTagList matchingTagList = smartNBT.getTagList("matching", 10);
+		if (matchingTagList.hasNoTags())
 			return;
-		matchingControlMap.values().forEach(matchingControl -> matchingControl.readFromNBT(matchingNBT));
+		for (int i = 0; i < matchingTagList.tagCount(); i++) {
+			final NBTTagCompound matchingTag = matchingTagList.getCompoundTagAt(i);
+			final Matching matching = matchingControlMap.get(matchingTag.getInteger("number"));
+			if (matching != null)
+				matching.readNBT(matchingTag);
+		}
 		inventory.markDirty();
+	}
+
+	@Nonnull
+	@Override
+	public MatchingController copy()
+	{
+		return new MatchingController(inventory, values.stream().map(Matching::copy).collect(Collectors.toList()));
 	}
 }

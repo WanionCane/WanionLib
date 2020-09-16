@@ -8,7 +8,11 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-public interface IClickAction
+import javax.annotation.Nonnull;
+import java.util.List;
+
+public interface IController<C, O>
 {
-	void action(final boolean leftClick);
+    @Nonnull
+    List<O> compareContents(@Nonnull final C otherController);
 }

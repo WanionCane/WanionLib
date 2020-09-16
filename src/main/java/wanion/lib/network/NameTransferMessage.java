@@ -20,6 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.WanionLib;
 import wanion.lib.common.INameAcceptorContainer;
 
+import javax.annotation.Nonnull;
+
 public class NameTransferMessage implements IMessage
 {
 	private int windowId;
@@ -48,7 +50,7 @@ public class NameTransferMessage implements IMessage
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void sendToServer(final Container container, final String name)
+	public static void sendToServer(@Nonnull final Container container, final String name)
 	{
 		WanionLib.networkWrapper.sendToServer(new NameTransferMessage(container.windowId, name));
 	}

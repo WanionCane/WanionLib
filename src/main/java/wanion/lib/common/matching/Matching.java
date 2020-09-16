@@ -10,7 +10,8 @@ package wanion.lib.common.matching;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import wanion.lib.common.control.IControl;
+import wanion.lib.common.ICopyable;
+import wanion.lib.common.ISmartNBT;
 import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.matching.matcher.AbstractMatcher;
 import wanion.lib.common.matching.matcher.ItemStackMatcher;
@@ -19,13 +20,13 @@ import wanion.lib.common.matching.matcher.MatcherEnum;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class Matching implements IControl<Matching>, IControlNameable
+public class Matching implements ISmartNBT, ICopyable<Matching>, IControlNameable
 {
 	private final List<ItemStack> itemStacks;
 	private final int number;
 	private final String stringNumber;
 	private final boolean shouldUseNbt;
-	private AbstractMatcher matcher = new ItemStackMatcher(this);
+	private AbstractMatcher<?> matcher = new ItemStackMatcher(this);
 
 	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number)
 	{
@@ -39,6 +40,14 @@ public class Matching implements IControl<Matching>, IControlNameable
 		this.shouldUseNbt = shouldUseNbt;
 	}
 
+	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final boolean shouldUseNbt, @Nonnull NBTTagCompound tagToRead)
+	{
+		this.itemStacks = itemStacks;
+		this.stringNumber = Integer.toString(this.number = number);
+		this.shouldUseNbt = shouldUseNbt;
+		readNBT(tagToRead);
+	}
+
 	public void resetMatcher()
 	{
 		this.matcher = new ItemStackMatcher(this);
@@ -49,12 +58,12 @@ public class Matching implements IControl<Matching>, IControlNameable
 		this.matcher = matcher.next();
 	}
 
-	public AbstractMatcher getMatcher()
+	public AbstractMatcher<?> getMatcher()
 	{
 		return matcher;
 	}
 
-	public void setMatcher(@Nonnull final AbstractMatcher matcher)
+	public void setMatcher(@Nonnull final AbstractMatcher<?> matcher)
 	{
 		this.matcher = matcher.validate();
 	}
@@ -69,42 +78,31 @@ public class Matching implements IControl<Matching>, IControlNameable
 		return shouldUseNbt;
 	}
 
+	@Nonnull
 	@Override
-	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public NBTTagCompound writeNBT()
 	{
-		if (!nbtTagCompound.hasKey("Matching"))
-			nbtTagCompound.setTag("Matching", new NBTTagCompound());
-		final NBTTagCompound subCompound = nbtTagCompound.getCompoundTag("Matching");
-		final NBTTagCompound matchingCompound = new NBTTagCompound();
-		matchingCompound.setInteger("matcherType", matcher.getMatcherEnum().ordinal());
-		matcher.writeToNBT(matchingCompound);
-		subCompound.setTag(stringNumber, matchingCompound);
+		final NBTTagCompound matcherNBT = new NBTTagCompound();
+		matcherNBT.setInteger("number", number);
+		matcherNBT.setInteger("matcherType", matcher.getMatcherEnum().ordinal());
+		matcherNBT.setTag("matcher", matcher.writeNBT());
+		return matcherNBT;
 	}
 
 	@Override
-	public void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
-		if (nbtTagCompound.hasKey("Matching")) {
-			final NBTTagCompound subCompound = nbtTagCompound.getCompoundTag("Matching");
-			if (subCompound.hasKey(stringNumber)) {
-				final NBTTagCompound matchingCompound = subCompound.getCompoundTag(stringNumber);
-				final MatcherEnum matcherEnum = MatcherEnum.values()[matchingCompound.getInteger("matcherType")];
-				final AbstractMatcher matcher = matcherEnum.getMatcher(this);
-				matcher.readFromNBT(matchingCompound);
-				setMatcher(matcher);
-			}
-		}
+		final MatcherEnum matcherEnum = MatcherEnum.values()[nbtTagCompound.getInteger("matcherType")];
+		final AbstractMatcher<?> matcher = matcherEnum.getMatcher(this);
+		matcher.readNBT(nbtTagCompound.getCompoundTag("matcher"));
+		setMatcher(matcher);
 	}
 
 	@Nonnull
 	@Override
 	public Matching copy()
 	{
-		final Matching matching = new Matching(itemStacks, number);
-		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
-		this.writeToNBT(nbtTagCompound);
-		matching.readFromNBT(nbtTagCompound);
-		return matching;
+		return new Matching(itemStacks, number, shouldUseNbt, writeNBT());
 	}
 
 	@Nonnull

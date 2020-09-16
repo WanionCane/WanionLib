@@ -16,7 +16,7 @@ import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
-public class NbtMatcher extends AbstractMatcher
+public class NbtMatcher extends AbstractMatcher<NbtMatcher>
 {
 	public NbtMatcher(@Nonnull final Matching matching)
 	{
@@ -32,14 +32,14 @@ public class NbtMatcher extends AbstractMatcher
 
 	@Nonnull
 	@Override
-	public AbstractMatcher validate()
+	public AbstractMatcher<?> validate()
 	{
 		return getStack().hasTagCompound() ? this : new ItemStackMatcher(matching);
 	}
 
 	@Nonnull
 	@Override
-	public AbstractMatcher next()
+	public AbstractMatcher<?> next()
 	{
 		return OreDictionary.getOreIDs(getStack()).length > 0 ? new OreDictMatcher(matching) : new ItemStackMatcher(matching);
 	}
@@ -67,10 +67,15 @@ public class NbtMatcher extends AbstractMatcher
 		if (greaterThanOne)
 			formatBuilder.append(" * ").append(itemStack.getCount()).append(')');
 		final NBTTagCompound nbtTagCompound = itemStack.getTagCompound();
-		formatBuilder.append(".withTag(");
 		if (nbtTagCompound != null)
-			formatBuilder.append(NBTUtils.formatNbt(nbtTagCompound));
-		formatBuilder.append(')');
+			formatBuilder.append(".withTag(").append(NBTUtils.formatNbt(nbtTagCompound)).append(')');
 		return formatBuilder.toString();
+	}
+
+	@Nonnull
+	@Override
+	public NbtMatcher copy()
+	{
+		return new NbtMatcher(matching);
 	}
 }

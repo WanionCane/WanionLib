@@ -11,16 +11,20 @@ package wanion.lib.common.field;
 import gnu.trove.map.hash.THashMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import wanion.lib.common.IController;
+import wanion.lib.common.ICopyable;
 import wanion.lib.common.INBTMessage;
-import wanion.lib.common.ISmartNBTSync;
+import wanion.lib.common.ISmartNBT;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class FieldController implements ISmartNBTSync, INBTMessage
+public class FieldController implements IController<FieldController, IField<?>>, ISmartNBT, ICopyable<FieldController>, INBTMessage
 {
 	private final Map<String, IField<?>> fieldControlMap = new THashMap<>();
 	private final Collection<IField<?>> values = fieldControlMap.values();
@@ -34,14 +38,13 @@ public class FieldController implements ISmartNBTSync, INBTMessage
 	public FieldController(@Nonnull final IInventory inventory, final IField<?>... fields)
 	{
 		this(inventory);
-		for (final IField<?> field : fields)
-			add(field);
+		add(fields);
 	}
 
-	public FieldController(@Nonnull final IInventory inventory, @Nonnull final List<IField	<?>> matchingList)
+	public FieldController(@Nonnull final IInventory inventory, @Nonnull final List<IField<?>> fieldList)
 	{
 		this(inventory);
-		matchingList.forEach(this::add);
+		fieldList.forEach(this::add);
 	}
 
 	public FieldController(@Nonnull final IInventory inventory, @Nonnull final Map<String, IField<?>> fieldMap)
@@ -50,9 +53,10 @@ public class FieldController implements ISmartNBTSync, INBTMessage
 		fieldControlMap.putAll(fieldMap);
 	}
 
-	public void add(@Nonnull final IField<?> field)
+	public void add(@Nonnull final IField<?>... fields)
 	{
-		fieldControlMap.put(field.getFieldName(), field);
+		for (final IField<?> field : fields)
+			fieldControlMap.put(field.getFieldName(), field);
 	}
 
 	public Collection<IField<?>> getInstances()
@@ -60,12 +64,13 @@ public class FieldController implements ISmartNBTSync, INBTMessage
 		return values;
 	}
 
-	public IField<?> getField(@Nonnull final String nane)
+	public IField<?> getField(@Nonnull final String name)
 	{
-		return fieldControlMap.get(nane);
+		return fieldControlMap.get(name);
 	}
 
 	@Nonnull
+	@Override
 	public List<IField<?>> compareContents(@Nonnull final FieldController otherFieldController)
 	{
 		final List<IField<?>> differences = new ArrayList<>();
@@ -77,30 +82,49 @@ public class FieldController implements ISmartNBTSync, INBTMessage
 		return differences;
 	}
 
-	@Override
-	public void smartNBTSync(@Nonnull NBTTagCompound smartNBT)
-	{
-		final NBTTagCompound fieldNBT = smartNBT.getCompoundTag("field");
-		if (fieldNBT.hasNoTags())
-			return;
-		fieldControlMap.values().forEach(field -> field.readFromNBT(fieldNBT));
-		inventory.markDirty();
-	}
-
-	public NBTTagCompound formatFieldNBT(@Nonnull final IField<?> field)
+	@Nonnull
+	public NBTTagCompound writeNBT()
 	{
 		final NBTTagCompound fieldNBT = new NBTTagCompound();
-		fieldNBT.setString("fieldName", field.getFieldName());
+		final NBTTagList fieldTagList = new NBTTagList();
+		fieldNBT.setTag("field", fieldTagList);
+		values.forEach(field -> fieldTagList.appendTag(field.writeNBT()));
 		return fieldNBT;
 	}
 
 	@Override
+	public void readNBT(@Nonnull NBTTagCompound smartNBT)
+	{
+		final NBTTagList fieldTagList = smartNBT.getTagList("field", 10);
+		if (fieldTagList.hasNoTags())
+			return;
+		for (int i = 0; i < fieldTagList.tagCount(); i++) {
+			final NBTTagCompound fieldTag = fieldTagList.getCompoundTagAt(i);
+			final IField<?> field = fieldControlMap.get(fieldTag.getString("fieldName"));
+			if (field != null)
+				field.readNBT(fieldTag);
+		}
+		inventory.markDirty();
+	}
+
+	@Nonnull
+	@Override
+	public FieldController copy()
+	{
+		return new FieldController(inventory, values.stream().<IField<?>>map(IField::copy).collect(Collectors.toList()));
+	}
+
+	@Override
+
 	public void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		final String fieldName = nbtTagCompound.hasKey("fieldName") ? nbtTagCompound.getString("fieldName") : null;
 		final IField<?> field = fieldName != null ? fieldControlMap.get(fieldName) : null;
-		if (field != null)
+		if (field != null) {
 			field.receiveNBT(nbtTagCompound.getCompoundTag(fieldName));
-		inventory.markDirty();
+			inventory.markDirty();
+		}
 	}
+
+
 }

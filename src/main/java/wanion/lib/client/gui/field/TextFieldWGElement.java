@@ -8,7 +8,30 @@ package wanion.lib.client.gui.field;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-public class TextFieldWGElement extends WGField<TextFieldWGElement>
-{
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import wanion.lib.client.gui.WGContainer;
+import wanion.lib.client.gui.interaction.WGInteraction;
+import wanion.lib.common.field.text.TextField;
 
+import javax.annotation.Nonnull;
+
+@SideOnly(Side.CLIENT)
+public class TextFieldWGElement extends WGField<TextField>
+{
+	private final TextField textField;
+
+	public TextFieldWGElement(@Nonnull final TextField textField, @Nonnull final WGContainer<?> wgContainer, int x, int y, int width, int height)
+	{
+		super(textField, wgContainer, x, y, width, height);
+		this.textField = textField;
+	}
+
+	@Override
+	public void draw(@Nonnull final WGInteraction wgInteraction)
+	{
+		//GuiTextField;
+		//getField()
+	}
 }

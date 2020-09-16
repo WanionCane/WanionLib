@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public abstract class MatchingContainer extends Container implements IMatchingContainer
+public class MatchingContainer extends Container implements IMatchingContainer
 {
 	private final MatchingController matchingController;
 	private final IMatchingInventory matchingInventory;
@@ -73,8 +73,9 @@ public abstract class MatchingContainer extends Container implements IMatchingCo
 	}
 
 	@Override
-	public void smartNBTSync(@Nonnull final NBTTagCompound smartNBT)
+	public void readNBT(@Nonnull NBTTagCompound smartNBT)
 	{
-		matchingController.smartNBTSync(smartNBT);
+		matchingController.readNBT(smartNBT);
+		matchingInventory.markDirty();
 	}
 }

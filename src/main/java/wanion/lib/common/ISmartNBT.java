@@ -14,7 +14,11 @@ import javax.annotation.Nonnull;
 
 public interface ISmartNBT
 {
-	void writeToNBT(@Nonnull NBTTagCompound smartNBT);
+	@Nonnull
+	default NBTTagCompound writeNBT()
+	{
+		return new NBTTagCompound();
+	}
 
-	void readFromNBT(@Nonnull NBTTagCompound smartNBT);
+	void readNBT(@Nonnull NBTTagCompound smartNBT);
 }

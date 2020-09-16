@@ -17,19 +17,19 @@ import javax.annotation.Nonnull;
 public class EnergyControl implements IEnergyStorage, IControl<EnergyControl>
 {
 	private final int capacity;
-	private final int baseEnergyUsage;
+	private int energyUsage;
 	private int energy;
 
-	public EnergyControl(final int capacity, final int baseEnergyUsage)
+	public EnergyControl(final int capacity, final int energyUsage)
 	{
-		this(capacity, baseEnergyUsage, 0);
+		this(capacity, energyUsage, 0);
 	}
 
-	public EnergyControl(final int capacity, final int baseEnergyUsage, final int energy)
+	public EnergyControl(final int capacity, final int energyUsage, final int energy)
 	{
 		//this(capacity, baseEnergyUsage, null);
 		this.capacity = capacity;
-		this.baseEnergyUsage = baseEnergyUsage;
+		this.energyUsage = energyUsage;
 		this.energy = energy;
 	}
 
@@ -52,6 +52,16 @@ public class EnergyControl implements IEnergyStorage, IControl<EnergyControl>
 		if (!simulate)
 			energy += energyReceived;
 		return energyReceived;
+	}
+
+	public int getEnergyUsage()
+	{
+		return energyUsage;
+	}
+
+	public void setEnergyUsage(final int energyUsage)
+	{
+		this.energyUsage = energyUsage;
 	}
 
 	@Override
@@ -97,23 +107,26 @@ public class EnergyControl implements IEnergyStorage, IControl<EnergyControl>
 	@Override
 	public boolean canOperate()
 	{
-		return getEnergyStored() >= baseEnergyUsage;
+		return getEnergyStored() >= energyUsage;
 	}
 
 	@Override
 	public void operate()
 	{
-		useEnergy(baseEnergyUsage);
+		useEnergy(energyUsage);
 	}
 
+	@Nonnull
 	@Override
-	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public NBTTagCompound writeNBT()
 	{
+		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
 		nbtTagCompound.setInteger("Energy", energy);
+		return nbtTagCompound;
 	}
 
 	@Override
-	public void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		if (nbtTagCompound.hasKey("Energy"))
 			setEnergyStored(nbtTagCompound.getInteger("Energy"));
@@ -123,7 +136,7 @@ public class EnergyControl implements IEnergyStorage, IControl<EnergyControl>
 	@Override
 	public EnergyControl copy()
 	{
-		return new EnergyControl(capacity, baseEnergyUsage, energy);
+		return new EnergyControl(capacity, energyUsage, energy);
 	}
 
 	@Override

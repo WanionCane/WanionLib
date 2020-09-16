@@ -8,24 +8,36 @@ package wanion.lib.client.gui.interaction;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
-import wanion.lib.client.gui.IWGElement;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
+import wanion.lib.client.gui.WGContainer;
+import wanion.lib.client.gui.WGElement;
 
 import javax.annotation.Nonnull;
 
-public abstract class WGInteraction
+@SideOnly(Side.CLIENT)
+public class WGInteraction
 {
-	public final GuiContainer guiContainer;
+	public final WGContainer<?> WGContainer;
 	public final EntityPlayer entityPlayer;
 	private final int mouseX, mouseY;
 
-	public WGInteraction(@Nonnull final GuiContainer guiContainer, @Nonnull final EntityPlayer entityPlayer, final int mouseX, int mouseY)
+	public WGInteraction(@Nonnull final WGContainer<?> WGContainer, final int mouseX, int mouseY)
 	{
-		this.guiContainer = guiContainer;
-		this.entityPlayer = entityPlayer;
+		this.WGContainer = WGContainer;
+		this.entityPlayer = WGContainer.getEntityPlayer();
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
+	}
+
+	public WGInteraction(@Nonnull final WGContainer<?> WGContainer)
+	{
+		this.WGContainer = WGContainer;
+		this.entityPlayer = WGContainer.getEntityPlayer();
+		this.mouseX =  Mouse.getEventX() * this.WGContainer.width / this.WGContainer.mc.displayWidth;
+		this.mouseY = this.WGContainer.height - Mouse.getEventY() * this.WGContainer.height / this.WGContainer.mc.displayHeight - 1;
 	}
 
 	public int getMouseX()
@@ -38,9 +50,9 @@ public abstract class WGInteraction
 		return mouseY;
 	}
 
-	public boolean isHovering(@Nonnull final IWGElement iwgElement)
+	public boolean isHovering(@Nonnull final WGElement wgElement)
 	{
-		return mouseX >= iwgElement.getX() && mouseY >= iwgElement.getY() && mouseX < iwgElement.getX() + iwgElement.getWidth() && mouseY < iwgElement.getY() + iwgElement.getHeight();
+		return mouseX >= wgElement.getX() && mouseY >= wgElement.getY() && mouseX < wgElement.getX() + wgElement.getWidth() && mouseY < wgElement.getY() + wgElement.getHeight();
 	}
 
 	public boolean isHovering(final int x, final int y, final int width, final int height)

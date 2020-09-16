@@ -17,9 +17,9 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class Dependencies<D>
 {
-	private final Map<Class, D> dependencies = new IdentityHashMap<>();
+	private final Map<Class<? extends D>, D> dependencies = new IdentityHashMap<>();
 	private final Collection<D> instances = Collections.unmodifiableCollection(dependencies.values());
-	private final Map<Class, DependenceWatcher<? extends D>> dependenciesWatchers = new IdentityHashMap<>();
+	private final Map<Class<? extends D>, DependenceWatcher<? extends D>> dependenciesWatchers = new IdentityHashMap<>();
 
 	public Dependencies() {}
 
@@ -48,7 +48,7 @@ public class Dependencies<D>
 			return;
 		}
 		try {
-			final Constructor constructor = typeClass.getDeclaredConstructor();
+			final Constructor<?> constructor = typeClass.getDeclaredConstructor();
 			constructor.setAccessible(true);
 			add((I) constructor.newInstance());
 		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -77,18 +77,18 @@ public class Dependencies<D>
 
 	public final <I extends D> void forceAdd(@Nonnull final I instance)
 	{
-		dependencies.put(instance.getClass(), instance);
+		dependencies.put((Class<? extends D>) instance.getClass(), instance);
 	}
 
 	public final <I extends D> void forceAdd(@Nonnull final I... instances)
 	{
 		for (final I instance : instances)
-			dependencies.put(instance.getClass(), instance);
+			dependencies.put((Class<? extends D>)instance.getClass(), instance);
 	}
 
 	public final <I extends D> void forceAdd(@Nonnull final Collection<I> instances)
 	{
-		instances.forEach(instance -> dependencies.put(instance.getClass(), instance));
+		instances.forEach(instance -> dependencies.put((Class<? extends D>) instance.getClass(), instance));
 	}
 
 	public final <I extends D> I get(final Class<I> typeClass)

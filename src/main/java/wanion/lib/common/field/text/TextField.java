@@ -11,13 +11,16 @@ package wanion.lib.common.field.text;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.WanionLib;
 import wanion.lib.common.INBTMessage;
 import wanion.lib.common.field.IField;
+import wanion.lib.network.SmartNBTMessage;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class TextField implements IField<TextField>
 {
@@ -82,18 +85,23 @@ public class TextField implements IField<TextField>
 		return this.player != null && this.player != player ? I18n.format("wanionlib.field.occupied", this.player.getName()) : null;
 	}
 
+	@Nonnull
 	@Override
-	public void writeToNBT(@Nonnull final NBTTagCompound smartNBT)
+	public NBTTagCompound writeNBT()
 	{
-		smartNBT.setString(fieldName, content);
-		smartNBT.setString("player", player.getName());
+		final NBTTagCompound fieldNBT = new NBTTagCompound();
+		fieldNBT.setString("fieldName", fieldName);
+		fieldNBT.setString("content", content);
+		if (player != null)
+			fieldNBT.setString("player", player.getName());
+		return fieldNBT;
 	}
 
 	@Override
-	public void readFromNBT(@Nonnull final NBTTagCompound smartNBT)
+	public void readNBT(@Nonnull final NBTTagCompound smartNBT)
 	{
-		this.content = smartNBT.getString(fieldName);
-		this.player = WanionLib.proxy.getPlayerByUsername(smartNBT.getString("player"));
+		this.content = smartNBT.getString("content");
+		this.player = smartNBT.hasKey("player") ? WanionLib.proxy.getPlayerByUsername(smartNBT.getString("player")) : null;
 	}
 
 	@Override
@@ -112,18 +120,53 @@ public class TextField implements IField<TextField>
 			this.content = content;
 	}
 
-	public void sendTextFieldNBT(final int windowId, @Nonnull final EntityPlayerMP entityPlayer, boolean interacting)
+	@Override
+	public boolean equals(Object obj)
 	{
-		sendTextFieldNBT(windowId, entityPlayer, interacting, null);
+		return obj instanceof TextField && fieldName.equals(((TextField) obj).fieldName) && content.equals(((TextField) obj).content) && Objects.equals(this.player, ((TextField) obj).player);
 	}
 
-	public void sendTextFieldNBT(final int windowId, @Nonnull final EntityPlayerMP entityPlayer, boolean interacting, final String content)
+	@Nonnull
+	public String getContent()
 	{
+		return this.content;
+	}
+
+	public void setContent(@Nonnull final String content)
+	{
+		this.content = content;
+	}
+
+	public final boolean isEmpty()
+	{
+		return content.isEmpty();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void sendUpdateToServer(final int windowId)
+	{
+		final NBTTagCompound smartNBT = new NBTTagCompound();
+		final NBTTagList fieldTagList = new NBTTagList();
+		fieldTagList.appendTag(writeNBT());
+		smartNBT.setTag("field", fieldTagList);
+		WanionLib.networkWrapper.sendToServer(new SmartNBTMessage(windowId, smartNBT));
+	}
+
+	public void sendTextFieldNBT(@Nonnull final EntityPlayerMP entityPlayer, boolean interacting)
+	{
+		sendTextFieldNBT(entityPlayer, interacting, null);
+	}
+
+	public void sendTextFieldNBT(@Nonnull final EntityPlayerMP entityPlayer, boolean interacting, final String content)
+	{
+		if (WanionLib.proxy.isServer())
+			return;
 		final NBTTagCompound textFieldNBT = new NBTTagCompound();
+		textFieldNBT.setString("fieldName", fieldName);
 		textFieldNBT.setString("player", entityPlayer.getName());
 		textFieldNBT.setBoolean("interacting", interacting);
 		if (content != null)
 			textFieldNBT.setString("content", content);
-		INBTMessage.sendNBT(windowId, textFieldNBT);
+		INBTMessage.sendNBT(entityPlayer.inventoryContainer, textFieldNBT);
 	}
 }
