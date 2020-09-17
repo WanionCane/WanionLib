@@ -43,6 +43,6 @@ public final class ClientTickHandler implements WanionLib.IDependency
 
 	public static ClientTickHandler getInstance()
 	{
-		return WanionLib.getDependencies().get(ClientTickHandler.class);
+		return WanionLib.getClientTickHandler();
 	}
 }

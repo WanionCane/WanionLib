@@ -9,13 +9,15 @@ package wanion.lib.common.field;
  */
 
 import gnu.trove.map.hash.THashMap;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import wanion.lib.common.IController;
 import wanion.lib.common.ICopyable;
 import wanion.lib.common.INBTMessage;
-import wanion.lib.common.ISmartNBT;
+import wanion.lib.common.WContainer;
+import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FieldController implements IController<FieldController, IField<?>>, ISmartNBT, ICopyable<FieldController>, INBTMessage
+public class FieldController implements IController<FieldController, IField<?>>, ICopyable<FieldController>, INBTMessage
 {
 	private final Map<String, IField<?>> fieldControlMap = new THashMap<>();
 	private final Collection<IField<?>> values = fieldControlMap.values();
@@ -80,6 +82,18 @@ public class FieldController implements IController<FieldController, IField<?>>,
 				differences.add(field);
 		}
 		return differences;
+	}
+
+	@Override
+	public void addListener(final int windowId,  @Nonnull final WContainer<?> wContainer, @Nonnull final EntityPlayerMP entityPlayerMP)
+	{
+		NetworkHelper.addFieldListener(windowId, wContainer, entityPlayerMP);
+	}
+
+	@Override
+	public void detectAndSendChanges(final int windowId, @Nonnull final WContainer<?> wContainer)
+	{
+		NetworkHelper.detectAndSendFieldChanges(windowId, wContainer);
 	}
 
 	@Nonnull

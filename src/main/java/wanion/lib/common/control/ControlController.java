@@ -8,20 +8,22 @@ package wanion.lib.common.control;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import wanion.lib.common.Dependencies;
 import wanion.lib.common.IController;
 import wanion.lib.common.ICopyable;
-import wanion.lib.common.ISmartNBT;
+import wanion.lib.common.WContainer;
+import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class ControlController extends Dependencies<IControl<?>> implements IController<ControlController, IControl<?>>, ISmartNBT, ICopyable<ControlController>
+public final class ControlController extends Dependencies<IControl<?>> implements IController<ControlController, IControl<?>>, ICopyable<ControlController>
 {
 	private final IInventory inventory;
 
@@ -52,6 +54,18 @@ public final class ControlController extends Dependencies<IControl<?>> implement
 	public List<IControl<?>> compareContents(@Nonnull final ControlController otherController)
 	{
 		return super.compareContents(otherController);
+	}
+
+	@Override
+	public void addListener(final int windowId,  @Nonnull final WContainer<?> wContainer, @Nonnull final EntityPlayerMP entityPlayerMP)
+	{
+		NetworkHelper.addControlListener(windowId, wContainer, entityPlayerMP);
+	}
+
+	@Override
+	public void detectAndSendChanges(final int windowId, @Nonnull final WContainer<?> wContainer)
+	{
+		NetworkHelper.detectAndSendControlChanges(windowId, wContainer);
 	}
 
 	@Nonnull

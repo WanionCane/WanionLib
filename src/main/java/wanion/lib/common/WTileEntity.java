@@ -18,25 +18,20 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import wanion.lib.common.control.ControlController;
-import wanion.lib.common.field.FieldController;
-import wanion.lib.common.matching.MatchingController;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public abstract class WTileEntity extends TileEntity implements ISidedInventory
 {
-    private final Dependencies<IController<?, ?>> controllers = new Dependencies<>();
-    private final boolean hasControls, hasFields, hasMatchings;
+    private final Dependencies<IController<?, ?>> controllerHandler = new Dependencies<>();
+    private final Collection<IController<?, ?>> controllers = controllerHandler.getInstances();
     private String customName = null;
     protected final NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
     public WTileEntity()
     {
         init();
-        hasControls = hasController(ControlController.class);
-        hasFields = hasController(FieldController.class);
-        hasMatchings = hasController(MatchingController.class);
     }
 
     public abstract void init();
@@ -46,27 +41,17 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
 
     public final <A extends IController<?, ?>> A getController(@Nonnull final Class<A> aClass)
     {
-        return controllers.get(aClass);
+        return controllerHandler.get(aClass);
+    }
+
+    public final Collection<IController<?, ?>> getControllers()
+    {
+        return controllers;
     }
 
     public final <A extends IController<?, ?>> boolean hasController(@Nonnull final Class<A> aClass)
     {
-        return controllers.contains(aClass);
-    }
-
-    public boolean hasControls()
-    {
-        return hasControls;
-    }
-
-    public boolean hasFields()
-    {
-        return hasFields;
-    }
-
-    public boolean hasMatchings()
-    {
-        return hasMatchings;
+        return controllerHandler.contains(aClass);
     }
 
     @Override
@@ -76,12 +61,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
         final NBTTagCompound displayTag = nbtTagCompound.getCompoundTag("display");
         if (displayTag.hasKey("Name"))
             this.customName = displayTag.getString("Name");
-        if (hasControls)
-            getController(ControlController.class).readNBT(nbtTagCompound);
-        if (hasFields)
-            getController(FieldController.class).readNBT(nbtTagCompound);
-        if (hasMatchings)
-            getController(MatchingController.class).readNBT(nbtTagCompound);
+        controllers.forEach(controller -> controller.readNBT(nbtTagCompound));
         final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
         if (nbtTagList.hasNoTags())
             return;
@@ -106,12 +86,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             nameNBT.setString("Name", customName);
             nbtTagCompound.setTag("display", nameNBT);
         }
-        if (hasControls)
-            nbtTagCompound.merge(getController(ControlController.class).writeNBT());
-        if (hasFields)
-            nbtTagCompound.merge(getController(FieldController.class).writeNBT());
-        if (hasMatchings)
-            nbtTagCompound.merge(getController(MatchingController.class).writeNBT());
+        controllers.forEach(controller -> nbtTagCompound.merge(controller.writeNBT()));
         final NBTTagList nbtTagList = new NBTTagList();
         final int max = getSizeInventory();
         for (int i = 0; i < max; i++) {
@@ -133,7 +108,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
     }
 
     @Nonnull
-    public ITextComponent getDisplayName()
+    public final ITextComponent getDisplayName()
     {
         return new TextComponentTranslation(getName());
     }

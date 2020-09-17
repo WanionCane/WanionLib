@@ -10,12 +10,15 @@ package wanion.lib.common.matching;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import wanion.lib.common.IController;
 import wanion.lib.common.ICopyable;
 import wanion.lib.common.ISmartNBT;
+import wanion.lib.common.WContainer;
+import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MatchingController implements IController<MatchingController, Matching>, ISmartNBT, ICopyable<MatchingController>
+public class MatchingController implements IController<MatchingController, Matching>, ICopyable<MatchingController>
 {
 	private final Int2ObjectMap<Matching> matchingControlMap = new Int2ObjectOpenHashMap<>();
 	private final Collection<Matching> values = matchingControlMap.values();
@@ -79,6 +82,18 @@ public class MatchingController implements IController<MatchingController, Match
 				differences.add(matching);
 		}
 		return differences;
+	}
+
+	@Override
+	public void addListener(final int windowId,  @Nonnull final WContainer<?> wContainer, @Nonnull final EntityPlayerMP entityPlayerMP)
+	{
+		NetworkHelper.addMatchingListener(windowId, wContainer, entityPlayerMP);
+	}
+
+	@Override
+	public void detectAndSendChanges(final int windowId, @Nonnull final WContainer<?> wContainer)
+	{
+		NetworkHelper.detectAndSendMatchingChanges(windowId, wContainer);
 	}
 
 	@Nonnull

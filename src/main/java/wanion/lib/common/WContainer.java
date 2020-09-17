@@ -19,26 +19,20 @@ import wanion.lib.common.field.FieldController;
 import wanion.lib.common.field.IFieldContainer;
 import wanion.lib.common.matching.IMatchingContainer;
 import wanion.lib.common.matching.MatchingController;
-import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
 public class WContainer<T extends WTileEntity> extends Container implements IControlContainer, IFieldContainer, IMatchingContainer
 {
-    private final Dependencies<IController<?, ?>> controllers = new Dependencies<>();
+    private final Dependencies<IController<?, ?>> controllerHandler = new Dependencies<>();
+    private final Collection<IController<?, ?>> controllers = controllerHandler.getInstances();
     private final T wTileEntity;
-    private final boolean hasControls, hasFields, hasMatchings;
 
     public WContainer(@Nonnull final T wTileEntity)
     {
         this.wTileEntity = wTileEntity;
-        if (hasControls = wTileEntity.hasControls())
-            controllers.add(wTileEntity.getController(ControlController.class).copy());
-        if (hasFields = wTileEntity.hasFields())
-            controllers.add(wTileEntity.getController(FieldController.class).copy());
-        if (hasMatchings = wTileEntity.hasMatchings())
-            controllers.add(wTileEntity.getController(MatchingController.class).copy());
+        wTileEntity.getControllers().forEach(controller -> controllerHandler.add((IController<?, ?>) controller.copy()));
     }
 
     public final T getTile()
@@ -57,24 +51,14 @@ public class WContainer<T extends WTileEntity> extends Container implements ICon
         super.addListener(listener);
         if (!(listener instanceof EntityPlayerMP))
             return;
-        if (hasControls)
-            NetworkHelper.addControlListener(windowId, this, (EntityPlayerMP) listener);
-        if (hasFields)
-            NetworkHelper.addFieldListener(windowId, this, (EntityPlayerMP) listener);
-        if (hasMatchings)
-            NetworkHelper.addMatchingListener(windowId, this, (EntityPlayerMP) listener);
+        controllers.forEach(controller -> controller.addListener(windowId, this, (EntityPlayerMP) listener));
     }
 
     @Override
     public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
-        if (hasControls)
-            NetworkHelper.detectAndSendControlChanges(windowId, this);
-        if (hasFields)
-            NetworkHelper.detectAndSendFieldChanges(windowId, this);
-        if (hasMatchings)
-            NetworkHelper.detectAndSendMatchingChanges(windowId, this);
+        controllers.forEach(controller -> controller.detectAndSendChanges(windowId, this));
     }
 
     @Override
@@ -87,21 +71,21 @@ public class WContainer<T extends WTileEntity> extends Container implements ICon
     @Override
     public final ControlController getContainerControlController()
     {
-        return controllers.get(ControlController.class);
+        return controllerHandler.get(ControlController.class);
     }
 
     @Nonnull
     @Override
     public final FieldController getContainerFieldController()
     {
-        return controllers.get(FieldController.class);
+        return controllerHandler.get(FieldController.class);
     }
 
     @Nonnull
     @Override
     public final MatchingController getContainerMatchingController()
     {
-        return controllers.get(MatchingController.class);
+        return controllerHandler.get(MatchingController.class);
     }
 
     @Override
@@ -113,12 +97,7 @@ public class WContainer<T extends WTileEntity> extends Container implements ICon
     @Override
     public final void readNBT(@Nonnull final NBTTagCompound smartNBT)
     {
-        if (hasControls)
-            getContainerControlController().readNBT(smartNBT);
-        if (hasFields)
-            getContainerFieldController().readNBT(smartNBT);
-        if (hasMatchings)
-            getContainerMatchingController().readNBT(smartNBT);
+        controllers.forEach(controller -> controller.readNBT(smartNBT));
         wTileEntity.markDirty();
     }
 

@@ -8,11 +8,17 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.entity.player.EntityPlayerMP;
+
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public interface IController<C, O>
+public interface IController<C extends ICopyable<C>, O> extends ICopyable<C>, ISmartNBT
 {
     @Nonnull
     List<O> compareContents(@Nonnull final C otherController);
+
+    void addListener(final int windowId, @Nonnull final WContainer<?> wContainer, @Nonnull final EntityPlayerMP entityPlayerMP);
+
+    void detectAndSendChanges(final int windowId, @Nonnull final WContainer<?> wContainer);
 }

@@ -9,6 +9,7 @@ package wanion.lib.client.gui;
  */
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,6 +52,18 @@ public abstract class WGContainer<T extends WTileEntity> extends GuiContainer
 	}
 
 	@Nonnull
+	public WContainer<T> getContainer()
+	{
+		return wContainer;
+	}
+
+	@Nonnull
+	public T getTile()
+	{
+		return wContainer.getTile();
+	}
+
+	@Nonnull
 	public EntityPlayer getEntityPlayer()
 	{
 		return Minecraft.getMinecraft().player;
@@ -59,9 +72,11 @@ public abstract class WGContainer<T extends WTileEntity> extends GuiContainer
 	@Override
 	public void drawScreen(final int mouseX, final int mouseY, final float partialTicks)
 	{
+		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
 		getEnabledElements().forEach(element -> element.draw(interaction));
+		this.renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override
@@ -78,14 +93,11 @@ public abstract class WGContainer<T extends WTileEntity> extends GuiContainer
 	{
 		fontRenderer.drawString(I18n.format(wContainer.getTileName()), 7, 7, 0x404040);
 		fontRenderer.drawString(I18n.format("container.inventory"), firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11, 0x404040);
-		/*
-		if (super.isPointInRegion(xSize - 25, ySize - 83, 18, 54, mouseX, mouseY)) {
-			final EnergyControl energyControl = tileEntityAutoBiggerCraftingTable.energyControl;
-			drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", tileEntityAutoBiggerCraftingTable.powerConsumption), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")), mouseX - guiLeft, mouseY - guiTop);
-		}
-		*/
 		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
 		getEnabledElements().forEach(element -> element.drawForegroundLayer(interaction));
+		for (final GuiButton guibutton : this.buttonList)
+			if (guibutton.isMouseOver())
+				guibutton.drawButtonForegroundLayer(mouseX, mouseY);
 	}
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException
