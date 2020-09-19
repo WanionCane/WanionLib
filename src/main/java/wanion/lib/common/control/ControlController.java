@@ -80,7 +80,19 @@ public final class ControlController extends Dependencies<IControl<?>> implement
 	}
 
 	@Override
-	public void readNBT(@Nonnull NBTTagCompound smartNBT)
+	public void afterWriteNBT(@Nonnull final NBTTagCompound smartNBT)
+	{
+		final NBTTagList controlTagList = smartNBT.getTagList("control", 10);
+		if (controlTagList.hasNoTags())
+			return;
+		getInstances().forEach(control -> {
+			for (int i = 0; i < controlTagList.tagCount(); i++)
+				control.afterWriteNBT(controlTagList.getCompoundTagAt(i));
+		});
+	}
+
+	@Override
+	public void readNBT(@Nonnull final NBTTagCompound smartNBT)
 	{
 		final NBTTagList controlTagList = smartNBT.getTagList("control", 10);
 		if (controlTagList.hasNoTags())

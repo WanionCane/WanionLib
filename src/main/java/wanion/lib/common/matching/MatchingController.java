@@ -18,6 +18,7 @@ import wanion.lib.common.IController;
 import wanion.lib.common.ICopyable;
 import wanion.lib.common.ISmartNBT;
 import wanion.lib.common.WContainer;
+import wanion.lib.common.field.IField;
 import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
@@ -108,7 +109,21 @@ public class MatchingController implements IController<MatchingController, Match
 	}
 
 	@Override
-	public void readNBT(@Nonnull NBTTagCompound smartNBT)
+	public void afterWriteNBT(@Nonnull final NBTTagCompound smartNBT)
+	{
+		final NBTTagList matchingTagList = smartNBT.getTagList("matching", 10);
+		if (matchingTagList.hasNoTags())
+			return;
+		for (int i = 0; i < matchingTagList.tagCount(); i++) {
+			final NBTTagCompound matchingTag = matchingTagList.getCompoundTagAt(i);
+			final Matching matching = matchingControlMap.get(matchingTag.getInteger("number"));
+			if (matching != null)
+				matching.afterWriteNBT(matchingTag);
+		}
+	}
+
+	@Override
+	public void readNBT(@Nonnull final NBTTagCompound smartNBT)
 	{
 		final NBTTagList matchingTagList = smartNBT.getTagList("matching", 10);
 		if (matchingTagList.hasNoTags())

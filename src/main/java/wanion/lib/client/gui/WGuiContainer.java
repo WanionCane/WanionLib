@@ -14,6 +14,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,8 +22,13 @@ import org.lwjgl.opengl.GL11;
 import wanion.lib.client.gui.interaction.WGInteraction;
 import wanion.lib.client.gui.interaction.WGKeyInteraction;
 import wanion.lib.client.gui.interaction.WGMouseInteraction;
-import wanion.lib.common.WContainer;
-import wanion.lib.common.WTileEntity;
+import wanion.lib.common.*;
+import wanion.lib.common.control.ControlController;
+import wanion.lib.common.control.IControl;
+import wanion.lib.common.field.FieldController;
+import wanion.lib.common.field.IField;
+import wanion.lib.common.matching.Matching;
+import wanion.lib.common.matching.MatchingController;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -32,23 +38,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SideOnly(Side.CLIENT)
-public abstract class WGContainer<T extends WTileEntity> extends GuiContainer
+public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer implements INBTMessage
 {
 	private final ResourceLocation guiTextureLocation;
 	private final WContainer<T> wContainer;
-	private final List<WGElement> iwgElements = new ArrayList<>();
+	private final List<WElement> wElements = new ArrayList<>();
 	protected final Slot firstPlayerSlot = inventorySlots.getSlot(inventorySlots.inventorySlots.size() - 36);
 
-	public WGContainer(@Nonnull final WContainer<T> wContainer, @Nonnull final ResourceLocation guiTextureLocation)
+	public WGuiContainer(@Nonnull final WContainer<T> wContainer, @Nonnull final ResourceLocation guiTextureLocation)
 	{
 		super(wContainer);
-		this.guiTextureLocation = guiTextureLocation;
 		this.wContainer = wContainer;
+		this.guiTextureLocation = guiTextureLocation;
 	}
 
-	public void addElement(@Nonnull final WGElement element)
+	public void addElement(@Nonnull final WElement element)
 	{
-		iwgElements.add(element);
+		wElements.add(element);
 	}
 
 	@Nonnull
@@ -63,6 +69,29 @@ public abstract class WGContainer<T extends WTileEntity> extends GuiContainer
 		return wContainer.getTile();
 	}
 
+	public final <C extends IController<?, ?>> C getController(@Nonnull final Class<C> aClass)
+	{
+		return getTile().getController(aClass);
+	}
+
+	@Nonnull
+	public <C extends IControl<C>> IControl<C> getControl(@Nonnull final Class<C> cClass)
+	{
+		return getController(ControlController.class).get(cClass);
+	}
+
+	@Nonnull
+	public IField<?> getField(@Nonnull final String fieldName)
+	{
+		return getController(FieldController.class).getField(fieldName);
+	}
+
+	@Nonnull
+	public Matching getMatching(final int matchingNumber)
+	{
+		return getController(MatchingController.class).getMatching(matchingNumber);
+	}
+
 	@Nonnull
 	public EntityPlayer getEntityPlayer()
 	{
@@ -75,6 +104,8 @@ public abstract class WGContainer<T extends WTileEntity> extends GuiContainer
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
+		// I couldn't find a better place for the line below =(
+		getUpdatableElements().forEach(IUpdatable::update);
 		getEnabledElements().forEach(element -> element.draw(interaction));
 		this.renderHoveredToolTip(mouseX, mouseY);
 	}
@@ -100,28 +131,48 @@ public abstract class WGContainer<T extends WTileEntity> extends GuiContainer
 				guibutton.drawButtonForegroundLayer(mouseX, mouseY);
 	}
 	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException
+	protected void keyTyped(final char typedChar, final int keyCode) throws IOException
 	{
 		final WGKeyInteraction keyInteraction = new WGKeyInteraction(this);
-		getInteractableElements(keyInteraction).forEach(element -> element.interaction(keyInteraction));
-		super.keyTyped(typedChar, keyCode);
+		if (interact(keyInteraction))
+			super.keyTyped(typedChar, keyCode);
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+	protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException
 	{
 		final WGMouseInteraction mouseInteraction = new WGMouseInteraction(this);
-		getInteractableElements(mouseInteraction).forEach(element -> element.interaction(mouseInteraction));
-		super.mouseClicked(mouseX, mouseY, mouseButton);
+		if (interact(mouseInteraction))
+			super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
-	private Collection<WGElement> getEnabledElements()
+	private boolean interact(@Nonnull final WGInteraction wgInteraction)
 	{
-		return iwgElements.stream().filter(WGElement::isEnabled).collect(Collectors.toList());
+		for (final WElement element : getInteractableElements(wgInteraction)) {
+			if (wgInteraction.proceed())
+				element.interaction(wgInteraction);
+		}
+		return wgInteraction.proceed();
 	}
 
-	private Collection<WGElement> getInteractableElements(@Nonnull final WGInteraction wgInteraction)
+	private Collection<WElement> getEnabledElements()
 	{
-		return iwgElements.stream().filter(element -> element.isEnabled() && element.canInteractWith(wgInteraction)).collect(Collectors.toList());
+		return wElements.stream().filter(WElement::isEnabled).collect(Collectors.toList());
+	}
+
+	private Collection<WElement> getInteractableElements(@Nonnull final WGInteraction wgInteraction)
+	{
+		return wElements.stream().filter(element -> element.isEnabled() && element.canInteractWith(wgInteraction)).collect(Collectors.toList());
+	}
+
+	private Collection<IUpdatable> getUpdatableElements()
+	{
+		return wElements.stream().filter(IUpdatable.class::isInstance).map(IUpdatable.class::cast).collect(Collectors.toList());
+	}
+
+	@Override
+	public void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	{
+		wElements.stream().filter(INBTMessage.class::isInstance).forEach(element -> ((INBTMessage)element).receiveNBT(nbtTagCompound));
 	}
 }

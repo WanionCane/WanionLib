@@ -107,7 +107,21 @@ public class FieldController implements IController<FieldController, IField<?>>,
 	}
 
 	@Override
-	public void readNBT(@Nonnull NBTTagCompound smartNBT)
+	public void afterWriteNBT(@Nonnull final NBTTagCompound smartNBT)
+	{
+		final NBTTagList fieldTagList = smartNBT.getTagList("field", 10);
+		if (fieldTagList.hasNoTags())
+			return;
+		for (int i = 0; i < fieldTagList.tagCount(); i++) {
+			final NBTTagCompound fieldTag = fieldTagList.getCompoundTagAt(i);
+			final IField<?> field = fieldControlMap.get(fieldTag.getString("fieldName"));
+			if (field != null)
+				field.afterWriteNBT(fieldTag);
+		}
+	}
+
+	@Override
+	public void readNBT(@Nonnull final NBTTagCompound smartNBT)
 	{
 		final NBTTagList fieldTagList = smartNBT.getTagList("field", 10);
 		if (fieldTagList.hasNoTags())

@@ -11,7 +11,7 @@ package wanion.lib.client.gui.interaction;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
-import wanion.lib.client.gui.WGContainer;
+import wanion.lib.client.gui.WGuiContainer;
 
 import javax.annotation.Nonnull;
 
@@ -21,23 +21,23 @@ public final class WGKeyInteraction extends WGInteraction
 	private final char key;
 	private final int keyCode;
 
-	public WGKeyInteraction(@Nonnull final WGContainer<?> WGContainer, final int mouseX, int mouseY, final char key, final int keyCode)
+	public WGKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY, final char key, final int keyCode)
 	{
-		super(WGContainer, mouseX, mouseY);
+		super(wGuiContainer, mouseX, mouseY);
 		this.key = key;
 		this.keyCode = keyCode;
 	}
 
-	public WGKeyInteraction(@Nonnull final WGContainer<?> WGContainer, final char key, final int keyCode)
+	public WGKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final char key, final int keyCode)
 	{
-		super(WGContainer);
+		super(wGuiContainer);
 		this.key = key;
 		this.keyCode = keyCode;
 	}
 
-	public WGKeyInteraction(@Nonnull final WGContainer<?> WGContainer)
+	public WGKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
 	{
-		super(WGContainer);
+		super(wGuiContainer);
 		this.key = Keyboard.getEventCharacter();
 		this.keyCode = Keyboard.getEventKey();
 	}

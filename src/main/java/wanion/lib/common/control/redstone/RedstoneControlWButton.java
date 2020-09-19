@@ -10,29 +10,29 @@ package wanion.lib.common.control.redstone;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.lib.client.gui.WGContainer;
+import wanion.lib.client.gui.WGuiContainer;
 import wanion.lib.client.gui.interaction.WGInteraction;
-import wanion.lib.client.gui.button.ControlWGButton;
+import wanion.lib.client.gui.button.ControlWButton;
 
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public final class RedstoneControlWGButton extends ControlWGButton<RedstoneControl, RedstoneControl.RedstoneState>
+public final class RedstoneControlWButton extends ControlWButton<RedstoneControl, RedstoneControl.RedstoneState>
 {
-	public RedstoneControlWGButton(@Nonnull final RedstoneControl redStoneControl, @Nonnull final WGContainer<?> wgContainer, final int x, final int y)
+	public RedstoneControlWButton(@Nonnull final RedstoneControl redStoneControl, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
 	{
-		super(redStoneControl, wgContainer, x, y);
+		super(redStoneControl, wGuiContainer, x, y);
 	}
 
 	@Override
 	public int getTooltipX(@Nonnull final WGInteraction wgInteraction)
 	{
-		return wgInteraction.getMouseX() - (lineWidth / 2) - 12 - wgInteraction.WGContainer.getGuiLeft();
+		return wgInteraction.getMouseX() - (lineWidth / 2) - 12 - wGuiContainer.getGuiLeft();
 	}
 
 	@Override
 	public int getTooltipY(@Nonnull final WGInteraction wgInteraction)
 	{
-		return wgInteraction.getMouseY() - 20 - wgInteraction.WGContainer.getGuiTop();
+		return wgInteraction.getMouseY() - 20 - wGuiContainer.getGuiTop();
 	}
 }

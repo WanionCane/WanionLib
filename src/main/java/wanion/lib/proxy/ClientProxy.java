@@ -9,10 +9,13 @@ package wanion.lib.proxy;
  */
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import wanion.lib.WanionLib;
+import wanion.lib.common.INBTMessage;
+import wanion.lib.network.NBTMessage;
 
 import javax.annotation.Nonnull;
 
@@ -28,5 +31,13 @@ public final class ClientProxy extends CommonProxy
 	public IThreadListener getThreadListener()
 	{
 		return Minecraft.getMinecraft();
+	}
+
+	@Override
+	public void receiveNBTMessage(final NBTMessage nbtMessage, final MessageContext ctx)
+	{
+		final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
+		if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.getWindowId() && entityPlayer.openContainer instanceof INBTMessage && entityPlayer instanceof EntityPlayerSP && Minecraft.getMinecraft().currentScreen instanceof INBTMessage)
+			((INBTMessage) Minecraft.getMinecraft().currentScreen).receiveNBT(nbtMessage.getNbtMessage());
 	}
 }

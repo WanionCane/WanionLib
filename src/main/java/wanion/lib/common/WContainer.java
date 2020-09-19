@@ -23,7 +23,7 @@ import wanion.lib.common.matching.MatchingController;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-public class WContainer<T extends WTileEntity> extends Container implements IControlContainer, IFieldContainer, IMatchingContainer
+public abstract class WContainer<T extends WTileEntity> extends Container implements IControlContainer, IFieldContainer, IMatchingContainer
 {
     private final Dependencies<IController<?, ?>> controllerHandler = new Dependencies<>();
     private final Collection<IController<?, ?>> controllers = controllerHandler.getInstances();
@@ -67,27 +67,6 @@ public class WContainer<T extends WTileEntity> extends Container implements ICon
         return wTileEntity.isUsableByPlayer(playerIn);
     }
 
-    @Nonnull
-    @Override
-    public final ControlController getContainerControlController()
-    {
-        return controllerHandler.get(ControlController.class);
-    }
-
-    @Nonnull
-    @Override
-    public final FieldController getContainerFieldController()
-    {
-        return controllerHandler.get(FieldController.class);
-    }
-
-    @Nonnull
-    @Override
-    public final MatchingController getContainerMatchingController()
-    {
-        return controllerHandler.get(MatchingController.class);
-    }
-
     @Override
     public final Collection<IContainerListener> getListeners()
     {
@@ -95,16 +74,25 @@ public class WContainer<T extends WTileEntity> extends Container implements ICon
     }
 
     @Override
+    public void onContainerClosed(@Nonnull final EntityPlayer playerIn)
+    {
+        super.onContainerClosed(playerIn);
+        if (!wTileEntity.hasController(FieldController.class))
+            return;
+        wTileEntity.getController(FieldController.class).getInstances().forEach(field -> field.endInteraction(playerIn));
+    }
+
+    @Override
     public final void readNBT(@Nonnull final NBTTagCompound smartNBT)
     {
-        controllers.forEach(controller -> controller.readNBT(smartNBT));
+        wTileEntity.getControllers().forEach(controller -> controller.readNBT(smartNBT));
         wTileEntity.markDirty();
     }
 
     @Override
     public final void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
     {
-        getContainerFieldController().readNBT(nbtTagCompound);
+        getFieldController().readNBT(nbtTagCompound);
         wTileEntity.markDirty();
     }
 
@@ -117,6 +105,13 @@ public class WContainer<T extends WTileEntity> extends Container implements ICon
 
     @Nonnull
     @Override
+    public final ControlController getContainerControlController()
+    {
+        return controllerHandler.get(ControlController.class);
+    }
+
+    @Nonnull
+    @Override
     public final FieldController getFieldController()
     {
         return wTileEntity.getController(FieldController.class);
@@ -124,8 +119,22 @@ public class WContainer<T extends WTileEntity> extends Container implements ICon
 
     @Nonnull
     @Override
+    public final FieldController getContainerFieldController()
+    {
+        return controllerHandler.get(FieldController.class);
+    }
+
+    @Nonnull
+    @Override
     public final MatchingController getMatchingController()
     {
         return wTileEntity.getController(MatchingController.class);
+    }
+
+    @Nonnull
+    @Override
+    public final MatchingController getContainerMatchingController()
+    {
+        return controllerHandler.get(MatchingController.class);
     }
 }

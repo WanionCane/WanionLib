@@ -12,32 +12,42 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
-import wanion.lib.client.gui.WGContainer;
-import wanion.lib.client.gui.WGElement;
+import wanion.lib.client.gui.WGuiContainer;
+import wanion.lib.client.gui.WElement;
 
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
 public class WGInteraction
 {
-	public final WGContainer<?> WGContainer;
-	public final EntityPlayer entityPlayer;
+	private final WGuiContainer<?> wGuiContainer;
+	private final EntityPlayer entityPlayer;
 	private final int mouseX, mouseY;
+	private boolean proceed = true;
 
-	public WGInteraction(@Nonnull final WGContainer<?> WGContainer, final int mouseX, int mouseY)
+	public WGInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
 	{
-		this.WGContainer = WGContainer;
-		this.entityPlayer = WGContainer.getEntityPlayer();
+		this(wGuiContainer,Mouse.getEventX() * wGuiContainer.width / wGuiContainer.mc.displayWidth,  wGuiContainer.height - Mouse.getEventY() * wGuiContainer.height / wGuiContainer.mc.displayHeight - 1);
+	}
+
+	public WGInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY)
+	{
+		this.wGuiContainer = wGuiContainer;
+		this.entityPlayer = wGuiContainer.getEntityPlayer();
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 	}
 
-	public WGInteraction(@Nonnull final WGContainer<?> WGContainer)
+	@Nonnull
+	public WGuiContainer<?> getContainer()
 	{
-		this.WGContainer = WGContainer;
-		this.entityPlayer = WGContainer.getEntityPlayer();
-		this.mouseX =  Mouse.getEventX() * this.WGContainer.width / this.WGContainer.mc.displayWidth;
-		this.mouseY = this.WGContainer.height - Mouse.getEventY() * this.WGContainer.height / this.WGContainer.mc.displayHeight - 1;
+		return wGuiContainer;
+	}
+
+	@Nonnull
+	public EntityPlayer getEntityPlayer()
+	{
+		return entityPlayer;
 	}
 
 	public int getMouseX()
@@ -50,13 +60,23 @@ public class WGInteraction
 		return mouseY;
 	}
 
-	public boolean isHovering(@Nonnull final WGElement wgElement)
+	public boolean isHovering(@Nonnull final WElement wElement)
 	{
-		return mouseX >= wgElement.getX() && mouseY >= wgElement.getY() && mouseX < wgElement.getX() + wgElement.getWidth() && mouseY < wgElement.getY() + wgElement.getHeight();
+		return mouseX >= wElement.getX() && mouseY >= wElement.getY() && mouseX < wElement.getX() + wElement.getWidth() && mouseY < wElement.getY() + wElement.getHeight();
 	}
 
 	public boolean isHovering(final int x, final int y, final int width, final int height)
 	{
 		return mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+	}
+
+	public final void notProceed()
+	{
+		proceed = false;
+	}
+
+	public final boolean proceed()
+	{
+		return proceed;
 	}
 }

@@ -8,6 +8,8 @@ package wanion.lib.proxy;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -16,6 +18,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import wanion.lib.WanionLib;
+import wanion.lib.common.INBTMessage;
 import wanion.lib.network.*;
 
 import javax.annotation.Nonnull;
@@ -61,5 +64,12 @@ public class CommonProxy
 	public IThreadListener getThreadListener()
 	{
 		return getMinecraftServer();
+	}
+
+	public void receiveNBTMessage(final NBTMessage nbtMessage, final MessageContext ctx)
+	{
+		final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
+		if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.getWindowId() && entityPlayer.openContainer instanceof INBTMessage)
+				((INBTMessage) entityPlayer.openContainer).receiveNBT(nbtMessage.getNbtMessage());
 	}
 }

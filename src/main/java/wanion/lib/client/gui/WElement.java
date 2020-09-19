@@ -13,10 +13,8 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,18 +24,18 @@ import wanion.lib.client.gui.interaction.WGMouseInteraction;
 
 import javax.annotation.Nonnull;
 
-// WG = Wanion GUI
+// W = Wanion
 @SideOnly(Side.CLIENT)
-public abstract class WGElement
+public abstract class WElement
 {
-	protected final WGContainer<?> wgContainer;
+	protected final WGuiContainer<?> wGuiContainer;
 	protected final int width, height;
 	protected int x, y;
 	protected boolean enabled;
 
-	public WGElement(@Nonnull final WGContainer<?> wgContainer, final int x, final int y, final int width, final int height)
+	public WElement(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
 	{
-		this.wgContainer = wgContainer;
+		this.wGuiContainer = wGuiContainer;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -73,15 +71,15 @@ public abstract class WGElement
 	}
 
 	@Nonnull
-	public final WGContainer<?> getWgContainer()
+	public final WGuiContainer<?> getWGuiContainer()
 	{
-		return wgContainer;
+		return wGuiContainer;
 	}
 
 	@Nonnull
 	public final EntityPlayer getEntityPlayer()
 	{
-		return wgContainer.getEntityPlayer();
+		return wGuiContainer.getEntityPlayer();
 	}
 
 	public final boolean isEnabled()
@@ -100,6 +98,14 @@ public abstract class WGElement
 		return wgInteraction.isHovering(this);
 	}
 
+	public void interaction(@Nonnull final WGInteraction wgInteraction)
+	{
+		if (wgInteraction instanceof WGKeyInteraction)
+			interaction((WGKeyInteraction) wgInteraction);
+		else if (wgInteraction instanceof WGMouseInteraction)
+			interaction((WGMouseInteraction) wgInteraction);
+	}
+
 	public void interaction(@Nonnull final WGKeyInteraction wgKeyInteraction) {}
 
 	public void interaction(@Nonnull final WGMouseInteraction wgMouseInteraction) {}
@@ -110,12 +116,12 @@ public abstract class WGElement
 
 	public int getTooltipX(@Nonnull final WGInteraction wgInteraction)
 	{
-		return wgInteraction.getMouseX() - wgInteraction.WGContainer.getGuiLeft();
+		return wgInteraction.getMouseX() - wGuiContainer.getGuiLeft();
 	}
 
 	public int getTooltipY(@Nonnull final WGInteraction wgInteraction)
 	{
-		return wgInteraction.getMouseY() - wgInteraction.WGContainer.getGuiTop();
+		return wgInteraction.getMouseY() - wGuiContainer.getGuiTop();
 	}
 
 	public SoundHandler getSoundHandler()

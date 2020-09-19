@@ -9,6 +9,8 @@ package wanion.lib.network;
  */
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -21,41 +23,47 @@ import wanion.lib.common.INBTMessage;
 public class NBTMessage implements IMessage
 {
 	private int windowId;
-	private NBTTagCompound nbtMessaging;
+	private NBTTagCompound nbtMessage;
 
 	public NBTMessage() {}
 
-	public NBTMessage(final int windowId, final NBTTagCompound nbtMessaging)
+	public NBTMessage(final int windowId, final NBTTagCompound nbtMessage)
 	{
 		this.windowId = windowId;
-		this.nbtMessaging = nbtMessaging;
+		this.nbtMessage = nbtMessage;
+	}
+
+	public int getWindowId()
+	{
+		return windowId;
+	}
+
+	public NBTTagCompound getNbtMessage()
+	{
+		return nbtMessage;
 	}
 
 	@Override
 	public void fromBytes(final ByteBuf buf)
 	{
 		this.windowId = ByteBufUtils.readVarInt(buf, 5);
-		this.nbtMessaging = ByteBufUtils.readTag(buf);
+		this.nbtMessage = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
 	public void toBytes(final ByteBuf buf)
 	{
 		ByteBufUtils.writeVarInt(buf, windowId, 5);
-		ByteBufUtils.writeTag(buf, nbtMessaging);
+		ByteBufUtils.writeTag(buf, nbtMessage);
 	}
 
-	public static class Handler implements IMessageHandler<NBTMessage, IMessage>
+	public static class Handler implements IMessageHandler<NBTMessage, NBTMessage>
 	{
 		@Override
-		public IMessage onMessage(final NBTMessage nbtMessage, final MessageContext ctx)
+		public NBTMessage onMessage(final NBTMessage nbtMessage, final MessageContext ctx)
 		{
-			WanionLib.proxy.getThreadListener().addScheduledTask(() -> {
-				final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-				if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.windowId && entityPlayer.openContainer instanceof INBTMessage)
-					((INBTMessage) entityPlayer.openContainer).receiveNBT(nbtMessage.nbtMessaging);
-			});
-			return null;
+			WanionLib.proxy.getThreadListener().addScheduledTask(() -> WanionLib.proxy.receiveNBTMessage(nbtMessage, ctx));
+			return WanionLib.proxy.isServer() ? new NBTMessage(nbtMessage.windowId, nbtMessage.nbtMessage) : null;
 		}
 	}
 }

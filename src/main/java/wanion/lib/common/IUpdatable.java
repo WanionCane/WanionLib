@@ -8,7 +8,12 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.lib.common.control.IControlInventory;
-import wanion.lib.common.matching.IMatchingInventory;
+public interface IUpdatable
+{
+    default void update()
+    {
+        update(System.nanoTime() / (double) 1000000000);
+    }
 
-public interface IControlMatchingInventory extends IControlInventory, IMatchingInventory {}
+    void update(final double seconds);
+}

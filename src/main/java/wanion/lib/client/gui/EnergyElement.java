@@ -22,33 +22,34 @@ import wanion.lib.common.control.energy.EnergyControl;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class EnergyElement extends WGElement
+public class EnergyElement extends WElement
 {
     protected final EnergyControl energyControl;
 
-    public EnergyElement(@Nonnull final EnergyControl energyControl, @Nonnull final WGContainer<?> wgContainer, final int x, final int y)
+    public EnergyElement(@Nonnull final EnergyControl energyControl, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
     {
-        super(wgContainer, x, y, 18, 54);
+        super(wGuiContainer, x, y, 18, 54);
         this.energyControl = energyControl;
     }
 
     @Override
     public void draw(@Nonnull final WGInteraction wgInteraction)
     {
-        wgContainer.mc.getTextureManager().bindTexture(Reference.GUI_TEXTURES);
-        Gui.drawModalRectWithCustomSizedTexture(wgContainer.getGuiLeft() + x, wgContainer.getGuiTop() + y - 54, 0, 0, width, height, 128, 128);
+        wGuiContainer.mc.getTextureManager().bindTexture(Reference.GUI_TEXTURES);
+        Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + x, wGuiContainer.getGuiTop() + y - 54, 0, 0, width, height, 128, 128);
         final int size = scalePowerCentage();
         if (size != 0)
-            Gui.drawModalRectWithCustomSizedTexture(wgContainer.getGuiLeft() + x, wgContainer.getGuiTop() + y - size, 18, 54 - size, 18, size, 128, 128);
+            Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + x, wGuiContainer.getGuiTop() + y - size, 18, 54 - size, 18, size, 128, 128);
     }
 
     @Override
     public void drawForegroundLayer(@Nonnull final WGInteraction interaction)
     {
         if (interaction.isHovering(this))
-            wgContainer.drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", energyControl.getEnergyUsage()), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")), getTooltipX(interaction), getTooltipY(interaction));
+            wGuiContainer.drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", energyControl.getEnergyUsage()), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")), getTooltipX(interaction), getTooltipY(interaction));
     }
 
+    // to make this WElement non-interactable
     @Override
     public boolean canInteractWith(@Nonnull final WGInteraction wgInteraction)
     {

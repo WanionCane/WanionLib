@@ -8,7 +8,7 @@ package wanion.lib.common.field;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.common.ICopyable;
@@ -22,17 +22,17 @@ public interface IField<F extends IField<F>> extends ISmartNBT, ICopyable<F>, IN
 	@Nonnull
 	String getFieldName();
 
-	default boolean canInteractWith(@Nonnull EntityPlayerMP player)
+	default boolean canInteractWith(@Nonnull EntityPlayer player)
 	{
 		return true;
 	}
 
-	default void startInteraction(@Nonnull EntityPlayerMP player) {}
+	default void startInteraction(@Nonnull EntityPlayer player) {}
 
-	default void endInteraction(@Nonnull EntityPlayerMP player) {}
+	default void endInteraction(@Nonnull EntityPlayer player) {}
 
 	@SideOnly(Side.CLIENT)
-	default String getHoveringText(@Nonnull EntityPlayerMP player)
+	default String getHoveringText(@Nonnull EntityPlayer player)
 	{
 		return null;
 	}

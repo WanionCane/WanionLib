@@ -10,20 +10,20 @@ package wanion.lib.client.gui.field;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.lib.client.gui.WGContainer;
-import wanion.lib.client.gui.WGElement;
+import wanion.lib.client.gui.WGuiContainer;
+import wanion.lib.client.gui.WElement;
 import wanion.lib.common.field.IField;
 
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public abstract class WGField<F extends IField<F>> extends WGElement
+public abstract class WField<F extends IField<F>> extends WElement
 {
 	protected final F field;
 
-	public WGField(@Nonnull final F field, @Nonnull final WGContainer<?> wgContainer, final int x, final int y, final int width, final int height)
+	public WField(@Nonnull final F field, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
 	{
-		super(wgContainer, x, y, width, height);
+		super(wGuiContainer, x, y, width, height);
 		this.field = field;
 	}
 

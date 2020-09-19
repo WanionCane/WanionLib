@@ -20,5 +20,11 @@ public interface ISmartNBT
 		return new NBTTagCompound();
 	}
 
+	// This method should only be called in Tile Saving!!
+	default void afterWriteNBT(@Nonnull final NBTTagCompound smartNBT) {}
+
 	void readNBT(@Nonnull NBTTagCompound smartNBT);
+
+
+
 }

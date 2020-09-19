@@ -18,14 +18,18 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class WTileEntity extends TileEntity implements ISidedInventory
 {
     private final Dependencies<IController<?, ?>> controllerHandler = new Dependencies<>();
     private final Collection<IController<?, ?>> controllers = controllerHandler.getInstances();
+    private final Map<Capability<?>, Object> capabilitiesMap = new HashMap<>();
     private String customName = null;
     protected final NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
@@ -35,6 +39,11 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
     }
 
     public abstract void init();
+
+    public <C> void addCapability(@Nonnull final Capability<C> capability, C cObj)
+    {
+        capabilitiesMap.put(capability, cObj);
+    }
 
     @Nonnull
     public abstract String getDefaultName();
@@ -87,6 +96,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             nbtTagCompound.setTag("display", nameNBT);
         }
         controllers.forEach(controller -> nbtTagCompound.merge(controller.writeNBT()));
+        controllers.forEach(controller -> controller.afterWriteNBT(nbtTagCompound));
         final NBTTagList nbtTagList = new NBTTagList();
         final int max = getSizeInventory();
         for (int i = 0; i < max; i++) {
@@ -239,4 +249,16 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
         return customName != null;
     }
 
+    @Override
+    public boolean hasCapability(@Nonnull final Capability<?> capability, final EnumFacing facing)
+    {
+        return capabilitiesMap.containsKey(capability) || super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(@Nonnull final Capability<T> capability, final EnumFacing facing)
+    {
+        return capabilitiesMap.containsKey(capability) ? (T) capabilitiesMap.get(capability) : super.getCapability(capability, facing);
+    }
 }

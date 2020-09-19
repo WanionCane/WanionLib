@@ -11,7 +11,7 @@ package wanion.lib.client.gui.interaction;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
-import wanion.lib.client.gui.WGContainer;
+import wanion.lib.client.gui.WGuiContainer;
 
 import javax.annotation.Nonnull;
 
@@ -20,15 +20,15 @@ public class WGMouseInteraction extends WGInteraction
 {
 	private final int mouseButton;
 
-	public WGMouseInteraction(@Nonnull final WGContainer<?> WGContainer, final int mouseX, int mouseY, int mouseButton)
+	public WGMouseInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY, int mouseButton)
 	{
-		super(WGContainer, mouseX, mouseY);
+		super(wGuiContainer, mouseX, mouseY);
 		this.mouseButton = mouseButton;
 	}
 
-	public WGMouseInteraction(@Nonnull final WGContainer<?> WGContainer)
+	public WGMouseInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
 	{
-		super(WGContainer);
+		super(wGuiContainer);
 		this.mouseButton = Mouse.getEventButton();
 	}
 
