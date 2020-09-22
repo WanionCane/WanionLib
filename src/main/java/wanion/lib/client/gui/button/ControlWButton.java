@@ -58,11 +58,11 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 			return;
 		getTextureManager().bindTexture(textureResourceLocation);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		Gui.drawModalRectWithCustomSizedTexture(x, y, texturePos.getLeft(), texturePos.getRight(), width, height, 128, 128);
+		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), texturePos.getLeft(), texturePos.getRight(), width, height, 128, 128);
 	}
 
 	@Override
-	public void drawForegroundLayer(@Nonnull final WGInteraction interaction)
+	public void drawForeground(@Nonnull final WGInteraction interaction)
 	{
 		if (!interaction.isHovering(this))
 			return;
@@ -92,7 +92,7 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 		final NBTTagCompound controlNBT = new NBTTagCompound();
 		nbtTagCompound.setTag("control", controlNBT);
 		stateProvider.writeToNBT(controlNBT, mouseInteraction.getMouseButton() == 0 ? state.getNextState() : state.getPreviousState());
-		WanionLib.networkWrapper.sendToServer(new SmartNBTMessage(wGuiContainer.inventorySlots.windowId, nbtTagCompound));
+		WanionLib.networkWrapper.sendToServer(new SmartNBTMessage(getWindowID(), nbtTagCompound));
 		playPressSound();
 	}
 }

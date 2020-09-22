@@ -62,7 +62,7 @@ public class WGInteraction
 
 	public boolean isHovering(@Nonnull final WElement wElement)
 	{
-		return mouseX >= wElement.getX() && mouseY >= wElement.getY() && mouseX < wElement.getX() + wElement.getWidth() && mouseY < wElement.getY() + wElement.getHeight();
+		return mouseX >= wElement.getUsableX() && mouseY >= wElement.getUsableY() && mouseX < wElement.getUsableX() + wElement.getWidth() && mouseY < wElement.getUsableY() + wElement.getHeight();
 	}
 
 	public boolean isHovering(final int x, final int y, final int width, final int height)
@@ -70,12 +70,17 @@ public class WGInteraction
 		return mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 	}
 
+	public final void proceed()
+	{
+		proceed = true;
+	}
+
 	public final void notProceed()
 	{
 		proceed = false;
 	}
 
-	public final boolean proceed()
+	public final boolean shouldProceed()
 	{
 		return proceed;
 	}

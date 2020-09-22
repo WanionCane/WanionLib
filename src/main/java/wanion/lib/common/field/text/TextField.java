@@ -106,7 +106,7 @@ public class TextField implements IField<TextField>
 	@Override
 	public void readNBT(@Nonnull final NBTTagCompound smartNBT)
 	{
-		this.content = smartNBT.getString("content");
+		setContent(smartNBT.getString("content"));
 		this.player = smartNBT.hasKey("player") ? WanionLib.proxy.getPlayerByUsername(smartNBT.getString("player")) : null;
 	}
 
@@ -123,7 +123,7 @@ public class TextField implements IField<TextField>
 			endInteraction(updatePlayer);
 		final String content = fieldUpdate.hasKey("content") ? fieldUpdate.getString("content") : null;
 		if (content != null)
-			this.content = content;
+			setContent(content);
 	}
 
 	@Override
@@ -137,13 +137,14 @@ public class TextField implements IField<TextField>
 		return content.length();
 	}
 
+	// synchronized may be not necessary, but who knows.
 	@Nonnull
-	public String getContent()
+	public synchronized String getContent()
 	{
 		return this.content;
 	}
 
-	public void setContent(@Nonnull final String content)
+	public synchronized void setContent(@Nonnull final String content)
 	{
 		this.content = content;
 	}
@@ -163,12 +164,12 @@ public class TextField implements IField<TextField>
 		WanionLib.networkWrapper.sendToServer(new SmartNBTMessage(windowId, smartNBT));
 	}
 
-	public void sendTextFieldNBT(@Nonnull final EntityPlayer entityPlayer, boolean interacting)
+	public void sendTextFieldNBT(final int windowId, @Nonnull final EntityPlayer entityPlayer, boolean interacting)
 	{
-		sendTextFieldNBT(entityPlayer, interacting, null);
+		sendTextFieldNBT(windowId, entityPlayer, interacting, null);
 	}
 
-	public void sendTextFieldNBT(@Nonnull final EntityPlayer entityPlayer, boolean interacting, final String content)
+	public void sendTextFieldNBT(final int windowId, @Nonnull final EntityPlayer entityPlayer, boolean interacting, final String content)
 	{
 		if (WanionLib.proxy.isServer())
 			return;
@@ -178,6 +179,6 @@ public class TextField implements IField<TextField>
 		textFieldNBT.setBoolean("interacting", interacting);
 		if (content != null)
 			textFieldNBT.setString("content", content);
-		INBTMessage.sendNBT(entityPlayer.inventoryContainer, textFieldNBT);
+		INBTMessage.sendNBT(windowId, textFieldNBT);
 	}
 }

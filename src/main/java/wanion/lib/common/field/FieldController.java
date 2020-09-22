@@ -143,13 +143,12 @@ public class FieldController implements IController<FieldController, IField<?>>,
 	}
 
 	@Override
-
 	public void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		final String fieldName = nbtTagCompound.hasKey("fieldName") ? nbtTagCompound.getString("fieldName") : null;
 		final IField<?> field = fieldName != null ? fieldControlMap.get(fieldName) : null;
 		if (field != null) {
-			field.receiveNBT(nbtTagCompound.getCompoundTag(fieldName));
+			field.receiveNBT(nbtTagCompound);
 			inventory.markDirty();
 		}
 	}

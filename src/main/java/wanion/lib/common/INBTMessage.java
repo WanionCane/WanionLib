@@ -18,14 +18,14 @@ import javax.annotation.Nonnull;
 
 public interface INBTMessage
 {
-	static void sendNBT(@Nonnull final Container container, @Nonnull final NBTTagCompound nbtTagCompound)
+	static void sendNBT(final int windowId, @Nonnull final NBTTagCompound nbtTagCompound)
 	{
-		WanionLib.networkWrapper.sendToServer(new NBTMessage(container.windowId, nbtTagCompound));
+		WanionLib.networkWrapper.sendToServer(new NBTMessage(windowId, nbtTagCompound));
 	}
 
-	static void sendNBT(@Nonnull final Container container, @Nonnull final NBTTagCompound nbtTagCompound, @Nonnull final EntityPlayerMP entityPlayerMP)
+	static void sendNBT(final int windowId, @Nonnull final NBTTagCompound nbtTagCompound, @Nonnull final EntityPlayerMP entityPlayerMP)
 	{
-		WanionLib.networkWrapper.sendTo(new NBTMessage(container.windowId, nbtTagCompound), entityPlayerMP);
+		WanionLib.networkWrapper.sendTo(new NBTMessage(windowId, nbtTagCompound), entityPlayerMP);
 	}
 
 	void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound);

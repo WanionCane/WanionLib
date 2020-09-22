@@ -83,16 +83,16 @@ public abstract class WContainer<T extends WTileEntity> extends Container implem
     }
 
     @Override
-    public final void readNBT(@Nonnull final NBTTagCompound smartNBT)
+    public void readNBT(@Nonnull final NBTTagCompound smartNBT)
     {
         wTileEntity.getControllers().forEach(controller -> controller.readNBT(smartNBT));
         wTileEntity.markDirty();
     }
 
     @Override
-    public final void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+    public void receiveNBT(@Nonnull final NBTTagCompound nbtTagCompound)
     {
-        getFieldController().readNBT(nbtTagCompound);
+        getFieldController().receiveNBT(nbtTagCompound);
         wTileEntity.markDirty();
     }
 

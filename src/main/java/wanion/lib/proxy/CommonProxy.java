@@ -8,8 +8,6 @@ package wanion.lib.proxy;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -32,6 +30,8 @@ public class CommonProxy
 		WanionLib.networkWrapper.registerMessage(SmartNBTMessage.Handler.class, SmartNBTMessage.class, d++, Side.CLIENT);
 		WanionLib.networkWrapper.registerMessage(NBTMessage.Handler.class, NBTMessage.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(NBTMessage.Handler.class, NBTMessage.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(NBTAnswer.Handler.class, NBTAnswer.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(NBTAnswer.Handler.class, NBTAnswer.class, d++, Side.CLIENT);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d, Side.CLIENT);
 	}
@@ -64,12 +64,5 @@ public class CommonProxy
 	public IThreadListener getThreadListener()
 	{
 		return getMinecraftServer();
-	}
-
-	public void receiveNBTMessage(final NBTMessage nbtMessage, final MessageContext ctx)
-	{
-		final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-		if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.getWindowId() && entityPlayer.openContainer instanceof INBTMessage)
-				((INBTMessage) entityPlayer.openContainer).receiveNBT(nbtMessage.getNbtMessage());
 	}
 }

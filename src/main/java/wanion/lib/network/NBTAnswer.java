@@ -10,7 +10,6 @@ package wanion.lib.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -20,14 +19,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.lib.WanionLib;
 import wanion.lib.common.INBTMessage;
 
-public class NBTMessage implements IMessage
+public class NBTAnswer implements IMessage
 {
 	private int windowId;
 	private NBTTagCompound nbtMessage;
 
-	public NBTMessage() {}
+	public NBTAnswer() {}
 
-	public NBTMessage(final int windowId, final NBTTagCompound nbtMessage)
+	public NBTAnswer(final int windowId, final NBTTagCompound nbtMessage)
 	{
 		this.windowId = windowId;
 		this.nbtMessage = nbtMessage;
@@ -57,17 +56,17 @@ public class NBTMessage implements IMessage
 		ByteBufUtils.writeTag(buf, nbtMessage);
 	}
 
-	public static class Handler implements IMessageHandler<NBTMessage, NBTAnswer>
+	public static class Handler implements IMessageHandler<NBTAnswer, IMessage>
 	{
 		@Override
-		public NBTAnswer onMessage(final NBTMessage nbtMessage, final MessageContext ctx)
+		public NBTAnswer onMessage(final NBTAnswer nbtMessage, final MessageContext ctx)
 		{
 			final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
 			WanionLib.proxy.getThreadListener().addScheduledTask(() -> {
-				if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.getWindowId() && entityPlayer.openContainer instanceof INBTMessage)
-					((INBTMessage) entityPlayer.openContainer).receiveNBT(nbtMessage.getNbtMessage());
+				if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.getWindowId() && Minecraft.getMinecraft().currentScreen instanceof INBTMessage)
+					((INBTMessage) Minecraft.getMinecraft().currentScreen).receiveNBT(nbtMessage.getNbtMessage());
 			});
-			return new NBTAnswer(nbtMessage.windowId, nbtMessage.nbtMessage);
+			return null;
 		}
 	}
 }

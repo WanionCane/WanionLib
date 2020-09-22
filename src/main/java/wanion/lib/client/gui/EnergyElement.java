@@ -36,14 +36,14 @@ public class EnergyElement extends WElement
     public void draw(@Nonnull final WGInteraction wgInteraction)
     {
         wGuiContainer.mc.getTextureManager().bindTexture(Reference.GUI_TEXTURES);
-        Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + x, wGuiContainer.getGuiTop() + y - 54, 0, 0, width, height, 128, 128);
+        Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + getUsableX(), wGuiContainer.getGuiTop() + getUsableY() - 54, 0, 0, width, height, 128, 128);
         final int size = scalePowerCentage();
         if (size != 0)
-            Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + x, wGuiContainer.getGuiTop() + y - size, 18, 54 - size, 18, size, 128, 128);
+            Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + getUsableX(), wGuiContainer.getGuiTop() + getUsableY() - size, 18, 54 - size, 18, size, 128, 128);
     }
 
     @Override
-    public void drawForegroundLayer(@Nonnull final WGInteraction interaction)
+    public void drawForeground(@Nonnull final WGInteraction interaction)
     {
         if (interaction.isHovering(this))
             wGuiContainer.drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", energyControl.getEnergyUsage()), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")), getTooltipX(interaction), getTooltipY(interaction));

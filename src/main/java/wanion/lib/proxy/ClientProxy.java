@@ -32,12 +32,4 @@ public final class ClientProxy extends CommonProxy
 	{
 		return Minecraft.getMinecraft();
 	}
-
-	@Override
-	public void receiveNBTMessage(final NBTMessage nbtMessage, final MessageContext ctx)
-	{
-		final EntityPlayer entityPlayer = WanionLib.proxy.getEntityPlayerFromContext(ctx);
-		if (entityPlayer != null && entityPlayer.openContainer.windowId == nbtMessage.getWindowId() && entityPlayer.openContainer instanceof INBTMessage && entityPlayer instanceof EntityPlayerSP && Minecraft.getMinecraft().currentScreen instanceof INBTMessage)
-			((INBTMessage) Minecraft.getMinecraft().currentScreen).receiveNBT(nbtMessage.getNbtMessage());
-	}
 }

@@ -24,7 +24,4 @@ public interface ISmartNBT
 	default void afterWriteNBT(@Nonnull final NBTTagCompound smartNBT) {}
 
 	void readNBT(@Nonnull NBTTagCompound smartNBT);
-
-
-
 }

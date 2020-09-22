@@ -19,6 +19,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
+import wanion.lib.common.control.ControlController;
+import wanion.lib.common.field.FieldController;
+import wanion.lib.common.matching.MatchingController;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -30,11 +33,15 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
     private final Dependencies<IController<?, ?>> controllerHandler = new Dependencies<>();
     private final Collection<IController<?, ?>> controllers = controllerHandler.getInstances();
     private final Map<Capability<?>, Object> capabilitiesMap = new HashMap<>();
+    private final WTileEntity instance = this;
     private String customName = null;
     protected final NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
     public WTileEntity()
     {
+        controllerHandler.subscribe(ControlController.class, () -> new ControlController(instance));
+        controllerHandler.subscribe(FieldController.class, () -> new FieldController(instance));
+        controllerHandler.subscribe(MatchingController.class, () -> new MatchingController(instance));
         init();
     }
 

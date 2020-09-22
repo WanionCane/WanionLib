@@ -31,7 +31,7 @@ public abstract class WElement
 	protected final WGuiContainer<?> wGuiContainer;
 	protected final int width, height;
 	protected int x, y;
-	protected boolean enabled;
+	protected boolean enabled = true;
 
 	public WElement(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
 	{
@@ -46,13 +46,21 @@ public abstract class WElement
 		return x;
 	}
 
+	public final int getUsableX() {
+		return wGuiContainer.getGuiLeft() + x;
+	}
+
 	public final void setX(final int x) {
 		this.x = x;
 	}
 
-	public final int getY()
-	{
+	public final int getY() {
 		return y;
+	}
+
+	public final int getUsableY()
+	{
+		return wGuiContainer.getGuiTop() + y;
 	}
 
 	public final void setY(final int y)
@@ -60,14 +68,19 @@ public abstract class WElement
 		this.y = y;
 	}
 
-	public final int getWidth()
+	public int getWidth()
 	{
 		return width;
 	}
 
-	public final int getHeight()
+	public int getHeight()
 	{
 		return height;
+	}
+
+	public final int getWindowID()
+	{
+		return wGuiContainer.inventorySlots.windowId;
 	}
 
 	@Nonnull
@@ -112,7 +125,7 @@ public abstract class WElement
 
 	public abstract void draw(@Nonnull final WGInteraction wgInteraction);
 
-	public void drawForegroundLayer(@Nonnull final WGInteraction wgPlayer) {}
+	public void drawForeground(@Nonnull final WGInteraction wgPlayer) {}
 
 	public int getTooltipX(@Nonnull final WGInteraction wgInteraction)
 	{

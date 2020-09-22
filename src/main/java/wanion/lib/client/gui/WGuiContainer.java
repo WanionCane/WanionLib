@@ -103,10 +103,6 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	{
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
-		// I couldn't find a better place for the line below =(
-		getUpdatableElements().forEach(IUpdatable::update);
-		getEnabledElements().forEach(element -> element.draw(interaction));
 		this.renderHoveredToolTip(mouseX, mouseY);
 	}
 
@@ -117,6 +113,10 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		mc.getTextureManager().bindTexture(guiTextureLocation);
 		final boolean smallGui = xSize < 256 && ySize < 256;
 		drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, smallGui ? 256 : Math.max(xSize, ySize), smallGui ? 256 : Math.max(xSize, ySize));
+		// I couldn't find a better place for the line below =(
+		getUpdatableElements().forEach(IUpdatable::update);
+		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
+		getEnabledElements().forEach(element -> element.draw(interaction));
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		fontRenderer.drawString(I18n.format(wContainer.getTileName()), 7, 7, 0x404040);
 		fontRenderer.drawString(I18n.format("container.inventory"), firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11, 0x404040);
 		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
-		getEnabledElements().forEach(element -> element.drawForegroundLayer(interaction));
+		getEnabledElements().forEach(element -> element.drawForeground(interaction));
 		for (final GuiButton guibutton : this.buttonList)
 			if (guibutton.isMouseOver())
 				guibutton.drawButtonForegroundLayer(mouseX, mouseY);
@@ -149,10 +149,10 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	private boolean interact(@Nonnull final WGInteraction wgInteraction)
 	{
 		for (final WElement element : getInteractableElements(wgInteraction)) {
-			if (wgInteraction.proceed())
+			if (wgInteraction.shouldProceed())
 				element.interaction(wgInteraction);
 		}
-		return wgInteraction.proceed();
+		return wgInteraction.shouldProceed();
 	}
 
 	private Collection<WElement> getEnabledElements()

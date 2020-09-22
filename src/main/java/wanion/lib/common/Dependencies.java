@@ -8,6 +8,8 @@ package wanion.lib.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import com.google.common.reflect.TypeToken;
+
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +21,7 @@ public class Dependencies<D>
 {
 	private final Map<Class<? extends D>, D> dependencies = new IdentityHashMap<>();
 	private final Collection<D> instances = Collections.unmodifiableCollection(dependencies.values());
-	private final Map<Class<? extends D>, DependenceWatcher<? extends D>> dependenciesWatchers = new IdentityHashMap<>();
+	private final Map<Class<? extends D>, IDependenceWatcher<? extends D>> dependenciesWatchers = new IdentityHashMap<>();
 
 	public Dependencies() {}
 
@@ -42,9 +44,9 @@ public class Dependencies<D>
 	{
 		if (dependencies.containsKey(typeClass))
 			return;
-		final DependenceWatcher<? extends D> dependenceWatcher = dependenciesWatchers.get(typeClass);
-		if (dependenceWatcher != null) {
-			add(dependenceWatcher.instantiate());
+		final IDependenceWatcher<? extends D> IDependenceWatcher = dependenciesWatchers.get(typeClass);
+		if (IDependenceWatcher != null) {
+			add(IDependenceWatcher.instantiate());
 			return;
 		}
 		try {
@@ -133,22 +135,16 @@ public class Dependencies<D>
 		return differences;
 	}
 
-	public final void subscribe(final DependenceWatcher<? extends D> dependenceWatcher)
+	public final <C extends D> void subscribe(final Class<C> dClass, final IDependenceWatcher<C> dependenceWatcher)
 	{
-		if (!dependenciesWatchers.containsKey(dependenceWatcher.dependenceClass))
-			dependenciesWatchers.put(dependenceWatcher.dependenceClass, dependenceWatcher);
+		if (!dependenciesWatchers.containsKey(dClass))
+			dependenciesWatchers.put(dClass, dependenceWatcher);
 	}
 
-	public abstract class DependenceWatcher<W extends D>
+	@FunctionalInterface
+	public interface IDependenceWatcher<W>
 	{
-		private final Class<W> dependenceClass;
-
-		protected DependenceWatcher()
-		{
-			this.dependenceClass = (Class<W>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		}
-
 		@Nonnull
-		public abstract W instantiate();
+		W instantiate();
 	}
 }
