@@ -18,9 +18,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.lib.client.gui.interaction.WGInteraction;
-import wanion.lib.client.gui.interaction.WGKeyInteraction;
-import wanion.lib.client.gui.interaction.WGMouseInteraction;
+import wanion.lib.client.gui.interaction.WInteraction;
+import wanion.lib.client.gui.interaction.WKeyInteraction;
+import wanion.lib.client.gui.interaction.WMouseInteraction;
 
 import javax.annotation.Nonnull;
 
@@ -106,35 +106,35 @@ public abstract class WElement
 		this.enabled = enabled;
 	}
 
-	public boolean canInteractWith(@Nonnull final WGInteraction wgInteraction)
+	public boolean canInteractWith(@Nonnull final WInteraction wInteraction)
 	{
-		return wgInteraction.isHovering(this);
+		return wInteraction.isHovering(this);
 	}
 
-	public void interaction(@Nonnull final WGInteraction wgInteraction)
+	public void interaction(@Nonnull final WInteraction wInteraction)
 	{
-		if (wgInteraction instanceof WGKeyInteraction)
-			interaction((WGKeyInteraction) wgInteraction);
-		else if (wgInteraction instanceof WGMouseInteraction)
-			interaction((WGMouseInteraction) wgInteraction);
+		if (wInteraction instanceof WKeyInteraction)
+			interaction((WKeyInteraction) wInteraction);
+		else if (wInteraction instanceof WMouseInteraction)
+			interaction((WMouseInteraction) wInteraction);
 	}
 
-	public void interaction(@Nonnull final WGKeyInteraction wgKeyInteraction) {}
+	public void interaction(@Nonnull final WKeyInteraction wKeyInteraction) {}
 
-	public void interaction(@Nonnull final WGMouseInteraction wgMouseInteraction) {}
+	public void interaction(@Nonnull final WMouseInteraction wMouseInteraction) {}
 
-	public abstract void draw(@Nonnull final WGInteraction wgInteraction);
+	public abstract void draw(@Nonnull final WInteraction wInteraction);
 
-	public void drawForeground(@Nonnull final WGInteraction wgPlayer) {}
+	public void drawForeground(@Nonnull final WInteraction wInteraction) {}
 
-	public int getTooltipX(@Nonnull final WGInteraction wgInteraction)
+	public int getTooltipX(@Nonnull final WInteraction wInteraction)
 	{
-		return wgInteraction.getMouseX() - wGuiContainer.getGuiLeft();
+		return wInteraction.getMouseX() - wGuiContainer.getGuiLeft();
 	}
 
-	public int getTooltipY(@Nonnull final WGInteraction wgInteraction)
+	public int getTooltipY(@Nonnull final WInteraction wInteraction)
 	{
-		return wgInteraction.getMouseY() - wGuiContainer.getGuiTop();
+		return wInteraction.getMouseY() - wGuiContainer.getGuiTop();
 	}
 
 	public SoundHandler getSoundHandler()

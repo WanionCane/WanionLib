@@ -28,8 +28,5 @@ wanionlib.failure=Failure
 wanionlib.consumes=Consumes %1$s FE
 wanionlib.per.operation=per operation
 
-// Recipe
-wanionlib.recipe.clear=Click to Clear Recipe
-
 // Field
 wanionlib.field.occupied=You cannot use this field while %1$s is using it.

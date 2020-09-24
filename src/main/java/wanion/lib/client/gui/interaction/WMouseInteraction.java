@@ -16,17 +16,17 @@ import wanion.lib.client.gui.WGuiContainer;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class WGMouseInteraction extends WGInteraction
+public class WMouseInteraction extends WInteraction
 {
 	private final int mouseButton;
 
-	public WGMouseInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY, int mouseButton)
+	public WMouseInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY, int mouseButton)
 	{
 		super(wGuiContainer, mouseX, mouseY);
 		this.mouseButton = mouseButton;
 	}
 
-	public WGMouseInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
+	public WMouseInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
 	{
 		super(wGuiContainer);
 		this.mouseButton = Mouse.getEventButton();

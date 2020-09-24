@@ -18,9 +18,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.client.gui.WGuiContainer;
-import wanion.lib.client.gui.interaction.WGInteraction;
-import wanion.lib.client.gui.interaction.WGKeyInteraction;
-import wanion.lib.client.gui.interaction.WGMouseInteraction;
+import wanion.lib.client.gui.interaction.WInteraction;
+import wanion.lib.client.gui.interaction.WKeyInteraction;
+import wanion.lib.client.gui.interaction.WMouseInteraction;
 import wanion.lib.common.INBTMessage;
 import wanion.lib.common.IUpdatable;
 import wanion.lib.common.field.text.TextField;
@@ -45,20 +45,19 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
 
     public TextFieldWElement(@Nonnull final TextField textField, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
     {
-        this(textField, wGuiContainer, x, y, width, height, false);
+        this(textField, wGuiContainer, x, y, width, height, true);
     }
 
     public TextFieldWElement(@Nonnull final TextField textField, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height, final boolean enableBackgroundDrawing)
     {
         super(textField, wGuiContainer, x, y, width, height);
         this.enableBackgroundDrawing = enableBackgroundDrawing;
-        this.setCursorPositionEnd();
     }
 
     @Override
-    public boolean canInteractWith(@Nonnull final WGInteraction wgInteraction)
+    public boolean canInteractWith(@Nonnull final WInteraction wInteraction)
     {
-        return (isFocused || wgInteraction.isHovering(this)) && field.canInteractWith(wgInteraction.getEntityPlayer());
+        return (isFocused || wInteraction.isHovering(this)) && field.canInteractWith(wInteraction.getEntityPlayer());
     }
 
     /**
@@ -244,7 +243,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     /**
      * Call this method from your GuiScreen to process the keys into the textbox
      */
-    public void interaction(@Nonnull final WGKeyInteraction keyInteraction)
+    public void interaction(@Nonnull final WKeyInteraction keyInteraction)
     {
         char typedChar = keyInteraction.getKey();
         int keyCode = keyInteraction.getKeyCode();
@@ -344,7 +343,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
      * Called when mouse is clicked, regardless as to whether it is over this button or not.
      */
     @Override
-    public void interaction(@Nonnull final WGMouseInteraction mouseInteraction)
+    public void interaction(@Nonnull final WMouseInteraction mouseInteraction)
     {
         final boolean hovering = mouseInteraction.isHovering(this);
         this.setFocused(mouseInteraction, hovering);
@@ -361,7 +360,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
      * Draws the textbox
      */
     @Override
-    public void draw(@Nonnull final WGInteraction interaction)
+    public void draw(@Nonnull final WInteraction interaction)
     {
         if (enableBackgroundDrawing) {
             Gui.drawRect(this.getUsableX() - 1, this.getUsableY() - 1, this.getUsableX() + this.width + 1, this.getUsableY() + this.height + 1, -7631989);
@@ -401,7 +400,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     }
 
     @Override
-    public void drawForeground(@Nonnull final WGInteraction interaction)
+    public void drawForeground(@Nonnull final WInteraction interaction)
     {
         if (interaction.isHovering(this) && !canInteractWith(interaction))
             wGuiContainer.drawHoveringText(field.getHoveringText(interaction.getEntityPlayer()), getTooltipX(interaction), getTooltipY(interaction));
@@ -426,7 +425,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     /**
      * Sets focus to this gui element
      */
-    public void setFocused(@Nonnull final WGMouseInteraction mouseInteraction, final boolean isFocusedIn)
+    public void setFocused(@Nonnull final WMouseInteraction mouseInteraction, final boolean isFocusedIn)
     {
         if (!canInteractWith(mouseInteraction))
             return;

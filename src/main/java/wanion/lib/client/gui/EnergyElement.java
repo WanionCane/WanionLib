@@ -16,7 +16,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.Reference;
-import wanion.lib.client.gui.interaction.WGInteraction;
+import wanion.lib.client.gui.interaction.WInteraction;
 import wanion.lib.common.control.energy.EnergyControl;
 
 import javax.annotation.Nonnull;
@@ -33,17 +33,17 @@ public class EnergyElement extends WElement
     }
 
     @Override
-    public void draw(@Nonnull final WGInteraction wgInteraction)
+    public void draw(@Nonnull final WInteraction wInteraction)
     {
         wGuiContainer.mc.getTextureManager().bindTexture(Reference.GUI_TEXTURES);
-        Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + getUsableX(), wGuiContainer.getGuiTop() + getUsableY() - 54, 0, 0, width, height, 128, 128);
+        Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), 0, 0, width, height, 128, 128);
         final int size = scalePowerCentage();
         if (size != 0)
-            Gui.drawModalRectWithCustomSizedTexture(wGuiContainer.getGuiLeft() + getUsableX(), wGuiContainer.getGuiTop() + getUsableY() - size, 18, 54 - size, 18, size, 128, 128);
+            Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY() + height - size, 18, height - size, 18, size, 128, 128);
     }
 
     @Override
-    public void drawForeground(@Nonnull final WGInteraction interaction)
+    public void drawForeground(@Nonnull final WInteraction interaction)
     {
         if (interaction.isHovering(this))
             wGuiContainer.drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", energyControl.getEnergyUsage()), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")), getTooltipX(interaction), getTooltipY(interaction));
@@ -51,7 +51,7 @@ public class EnergyElement extends WElement
 
     // to make this WElement non-interactable
     @Override
-    public boolean canInteractWith(@Nonnull final WGInteraction wgInteraction)
+    public boolean canInteractWith(@Nonnull final WInteraction wInteraction)
     {
         return false;
     }
@@ -59,6 +59,6 @@ public class EnergyElement extends WElement
     private int scalePowerCentage()
     {
         final int energyStored = energyControl.getEnergyStored();
-        return energyStored != 0 ? (int) (54 * energyStored / (double) energyControl.getMaxEnergyStored()) : 0;
+        return energyStored != 0 ? (int) (height * energyStored / (double) energyControl.getMaxEnergyStored()) : 0;
     }
 }

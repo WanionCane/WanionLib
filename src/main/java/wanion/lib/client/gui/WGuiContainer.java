@@ -19,9 +19,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-import wanion.lib.client.gui.interaction.WGInteraction;
-import wanion.lib.client.gui.interaction.WGKeyInteraction;
-import wanion.lib.client.gui.interaction.WGMouseInteraction;
+import wanion.lib.client.gui.interaction.WInteraction;
+import wanion.lib.client.gui.interaction.WKeyInteraction;
+import wanion.lib.client.gui.interaction.WMouseInteraction;
 import wanion.lib.common.*;
 import wanion.lib.common.control.ControlController;
 import wanion.lib.common.control.IControl;
@@ -75,7 +75,7 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	}
 
 	@Nonnull
-	public <C extends IControl<C>> IControl<C> getControl(@Nonnull final Class<C> cClass)
+	public <C extends IControl<C>> C getControl(@Nonnull final Class<C> cClass)
 	{
 		return getController(ControlController.class).get(cClass);
 	}
@@ -115,7 +115,7 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, smallGui ? 256 : Math.max(xSize, ySize), smallGui ? 256 : Math.max(xSize, ySize));
 		// I couldn't find a better place for the line below =(
 		getUpdatableElements().forEach(IUpdatable::update);
-		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
+		final WInteraction interaction = new WInteraction(this, mouseX, mouseY);
 		getEnabledElements().forEach(element -> element.draw(interaction));
 	}
 
@@ -124,7 +124,7 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	{
 		fontRenderer.drawString(I18n.format(wContainer.getTileName()), 7, 7, 0x404040);
 		fontRenderer.drawString(I18n.format("container.inventory"), firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11, 0x404040);
-		final WGInteraction interaction = new WGInteraction(this, mouseX, mouseY);
+		final WInteraction interaction = new WInteraction(this, mouseX, mouseY);
 		getEnabledElements().forEach(element -> element.drawForeground(interaction));
 		for (final GuiButton guibutton : this.buttonList)
 			if (guibutton.isMouseOver())
@@ -133,7 +133,7 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	@Override
 	protected void keyTyped(final char typedChar, final int keyCode) throws IOException
 	{
-		final WGKeyInteraction keyInteraction = new WGKeyInteraction(this);
+		final WKeyInteraction keyInteraction = new WKeyInteraction(this);
 		if (interact(keyInteraction))
 			super.keyTyped(typedChar, keyCode);
 	}
@@ -141,18 +141,18 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	@Override
 	protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException
 	{
-		final WGMouseInteraction mouseInteraction = new WGMouseInteraction(this);
+		final WMouseInteraction mouseInteraction = new WMouseInteraction(this);
 		if (interact(mouseInteraction))
 			super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
-	private boolean interact(@Nonnull final WGInteraction wgInteraction)
+	private boolean interact(@Nonnull final WInteraction wInteraction)
 	{
-		for (final WElement element : getInteractableElements(wgInteraction)) {
-			if (wgInteraction.shouldProceed())
-				element.interaction(wgInteraction);
+		for (final WElement element : getInteractableElements(wInteraction)) {
+			if (wInteraction.shouldProceed())
+				element.interaction(wInteraction);
 		}
-		return wgInteraction.shouldProceed();
+		return wInteraction.shouldProceed();
 	}
 
 	private Collection<WElement> getEnabledElements()
@@ -160,9 +160,9 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		return wElements.stream().filter(WElement::isEnabled).collect(Collectors.toList());
 	}
 
-	private Collection<WElement> getInteractableElements(@Nonnull final WGInteraction wgInteraction)
+	private Collection<WElement> getInteractableElements(@Nonnull final WInteraction wInteraction)
 	{
-		return wElements.stream().filter(element -> element.isEnabled() && element.canInteractWith(wgInteraction)).collect(Collectors.toList());
+		return wElements.stream().filter(element -> element.isEnabled() && element.canInteractWith(wInteraction)).collect(Collectors.toList());
 	}
 
 	private Collection<IUpdatable> getUpdatableElements()

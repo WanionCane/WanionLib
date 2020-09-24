@@ -11,7 +11,7 @@ package wanion.lib.common.control.redstone;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.client.gui.WGuiContainer;
-import wanion.lib.client.gui.interaction.WGInteraction;
+import wanion.lib.client.gui.interaction.WInteraction;
 import wanion.lib.client.gui.button.ControlWButton;
 
 import javax.annotation.Nonnull;
@@ -25,14 +25,14 @@ public final class RedstoneControlWButton extends ControlWButton<RedstoneControl
 	}
 
 	@Override
-	public int getTooltipX(@Nonnull final WGInteraction wgInteraction)
+	public int getTooltipX(@Nonnull final WInteraction wInteraction)
 	{
-		return wgInteraction.getMouseX() - (lineWidth / 2) - 12 - wGuiContainer.getGuiLeft();
+		return wInteraction.getMouseX() - (lineWidth / 2) - 12 - wGuiContainer.getGuiLeft();
 	}
 
 	@Override
-	public int getTooltipY(@Nonnull final WGInteraction wgInteraction)
+	public int getTooltipY(@Nonnull final WInteraction wInteraction)
 	{
-		return wgInteraction.getMouseY() - 20 - wGuiContainer.getGuiTop();
+		return wInteraction.getMouseY() - 20 - wGuiContainer.getGuiTop();
 	}
 }

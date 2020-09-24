@@ -18,19 +18,19 @@ import wanion.lib.client.gui.WElement;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class WGInteraction
+public class WInteraction
 {
 	private final WGuiContainer<?> wGuiContainer;
 	private final EntityPlayer entityPlayer;
 	private final int mouseX, mouseY;
 	private boolean proceed = true;
 
-	public WGInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
+	public WInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
 	{
 		this(wGuiContainer,Mouse.getEventX() * wGuiContainer.width / wGuiContainer.mc.displayWidth,  wGuiContainer.height - Mouse.getEventY() * wGuiContainer.height / wGuiContainer.mc.displayHeight - 1);
 	}
 
-	public WGInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY)
+	public WInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY)
 	{
 		this.wGuiContainer = wGuiContainer;
 		this.entityPlayer = wGuiContainer.getEntityPlayer();

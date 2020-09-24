@@ -42,10 +42,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
         controllerHandler.subscribe(ControlController.class, () -> new ControlController(instance));
         controllerHandler.subscribe(FieldController.class, () -> new FieldController(instance));
         controllerHandler.subscribe(MatchingController.class, () -> new MatchingController(instance));
-        init();
     }
-
-    public abstract void init();
 
     public <C> void addCapability(@Nonnull final Capability<C> capability, C cObj)
     {
@@ -74,6 +71,11 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
     public final void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound)
     {
         super.readFromNBT(nbtTagCompound);
+        readCustomNBT(nbtTagCompound);
+    }
+
+    public void readCustomNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+    {
         final NBTTagCompound displayTag = nbtTagCompound.getCompoundTag("display");
         if (displayTag.hasKey("Name"))
             this.customName = displayTag.getString("Name");
@@ -87,16 +89,18 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             if (slot >= 0 && slot < getSizeInventory())
                 setInventorySlotContents(slot, new ItemStack(slotCompound));
         }
-        readCustomNBT(nbtTagCompound);
     }
-
-    public void readCustomNBT(@Nonnull final NBTTagCompound nbtTagCompound) {}
 
     @Nonnull
     @Override
     public final NBTTagCompound writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
+        return writeCustomNBT(nbtTagCompound);
+    }
+
+    public NBTTagCompound writeCustomNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+    {
         if (customName != null) {
             final NBTTagCompound nameNBT = new NBTTagCompound();
             nameNBT.setString("Name", customName);
@@ -116,11 +120,6 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
         }
         if (!nbtTagList.hasNoTags())
             nbtTagCompound.setTag("Contents", nbtTagList);
-        return writeCustomNBT(nbtTagCompound);
-    }
-
-    public NBTTagCompound writeCustomNBT(@Nonnull final NBTTagCompound nbtTagCompound)
-    {
         return nbtTagCompound;
     }
 

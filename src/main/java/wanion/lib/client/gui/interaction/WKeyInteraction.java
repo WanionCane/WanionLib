@@ -16,26 +16,26 @@ import wanion.lib.client.gui.WGuiContainer;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public final class WGKeyInteraction extends WGInteraction
+public final class WKeyInteraction extends WInteraction
 {
 	private final char key;
 	private final int keyCode;
 
-	public WGKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY, final char key, final int keyCode)
+	public WKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final int mouseX, int mouseY, final char key, final int keyCode)
 	{
 		super(wGuiContainer, mouseX, mouseY);
 		this.key = key;
 		this.keyCode = keyCode;
 	}
 
-	public WGKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final char key, final int keyCode)
+	public WKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer, final char key, final int keyCode)
 	{
 		super(wGuiContainer);
 		this.key = key;
 		this.keyCode = keyCode;
 	}
 
-	public WGKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
+	public WKeyInteraction(@Nonnull final WGuiContainer<?> wGuiContainer)
 	{
 		super(wGuiContainer);
 		this.key = Keyboard.getEventCharacter();

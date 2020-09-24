@@ -12,6 +12,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,8 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import wanion.lib.WanionLib;
 import wanion.lib.client.gui.WGuiContainer;
-import wanion.lib.client.gui.interaction.WGInteraction;
-import wanion.lib.client.gui.interaction.WGMouseInteraction;
+import wanion.lib.client.gui.interaction.WInteraction;
+import wanion.lib.client.gui.interaction.WMouseInteraction;
 import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.control.IState;
 import wanion.lib.common.control.IStateNameable;
@@ -49,11 +50,11 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 	}
 
 	@Override
-	public void draw(@Nonnull final WGInteraction wgInteraction)
+	public void draw(@Nonnull final WInteraction wInteraction)
 	{
 		final S state = stateProvider.getState();
 		final ResourceLocation textureResourceLocation = state.getTextureResourceLocation();
-		final Pair<Integer, Integer> texturePos = state.getTexturePos(wgInteraction.isHovering(this));
+		final Pair<Integer, Integer> texturePos = state.getTexturePos(wInteraction.isHovering(this));
 		if (textureResourceLocation == null || texturePos == null)
 			return;
 		getTextureManager().bindTexture(textureResourceLocation);
@@ -62,7 +63,7 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 	}
 
 	@Override
-	public void drawForeground(@Nonnull final WGInteraction interaction)
+	public void drawForeground(@Nonnull final WInteraction interaction)
 	{
 		if (!interaction.isHovering(this))
 			return;
@@ -85,13 +86,15 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 	}
 
 	@Override
-	public void interaction(@Nonnull final WGMouseInteraction mouseInteraction)
+	public void interaction(@Nonnull final WMouseInteraction mouseInteraction)
 	{
 		final S state = stateProvider.getState();
 		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+		final NBTTagList controlTagList = new NBTTagList();
 		final NBTTagCompound controlNBT = new NBTTagCompound();
-		nbtTagCompound.setTag("control", controlNBT);
 		stateProvider.writeToNBT(controlNBT, mouseInteraction.getMouseButton() == 0 ? state.getNextState() : state.getPreviousState());
+		controlTagList.appendTag(controlNBT);
+		nbtTagCompound.setTag("control", controlTagList);
 		WanionLib.networkWrapper.sendToServer(new SmartNBTMessage(getWindowID(), nbtTagCompound));
 		playPressSound();
 	}
