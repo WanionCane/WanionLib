@@ -33,15 +33,14 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
     private final Dependencies<IController<?, ?>> controllerHandler = new Dependencies<>();
     private final Collection<IController<?, ?>> controllers = controllerHandler.getInstances();
     private final Map<Capability<?>, Object> capabilitiesMap = new HashMap<>();
-    private final WTileEntity instance = this;
     private String customName = null;
     protected final NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
     public WTileEntity()
     {
-        controllerHandler.subscribe(ControlController.class, () -> new ControlController(instance));
-        controllerHandler.subscribe(FieldController.class, () -> new FieldController(instance));
-        controllerHandler.subscribe(MatchingController.class, () -> new MatchingController(instance));
+        controllerHandler.subscribe(ControlController.class, () -> new ControlController(this));
+        controllerHandler.subscribe(FieldController.class, () -> new FieldController(this));
+        controllerHandler.subscribe(MatchingController.class, () -> new MatchingController(this));
     }
 
     public <C> void addCapability(@Nonnull final Capability<C> capability, C cObj)
