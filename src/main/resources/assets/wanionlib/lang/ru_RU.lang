@@ -1,0 +1,32 @@
+// Redstone
+wanionlib.redstone.control=Контроль за Красным камнем
+wanionlib.redstone.control.state.ignored=Игнорировать
+wanionlib.redstone.control.state.off=Выкл
+wanionlib.redstone.control.state.on=Вкл
+wanionlib.redstone.control.state.ignored.desc=будет игнорировать сигналы Красного камня
+wanionlib.redstone.control.state.off.desc=будет работать только тогда, если не получает сигнал Красного камня
+wanionlib.redstone.control.state.on.desc=будет работать только тогда, если применяется сигнал Красного камня
+
+// Matching
+wanionlib.matching.control=Контроль за соответствием
+wanionlib.matching.desc=Пкм, чтобы сменить режим
+wanionlib.matching.matcher.item_stack=ItemStack
+wanionlib.matching.matcher.any_damage=Любой урон
+wanionlib.matching.matcher.nbt=NBT
+wanionlib.matching.matcher.ore_dict=Словарь руд:
+
+// Misc
+wanionlib.how-to-use=Как использовать:
+wanionlib.problem.singular=Проблема
+wanionlib.problem.plural=Проблемы
+wanionlib.found.singular=Найдено
+wanionlib.found.plural=Найдено
+wanionlib.success=Успех!
+wanionlib.failure=Провал
+
+// Energy
+wanionlib.consumes=Потребляет %1$s FE
+wanionlib.per.operation=за каждое действие
+
+// Field
+wanionlib.field.occupied=Вы не можете использовать эту область пока %1$s используется.
