@@ -27,6 +27,7 @@ import wanion.lib.common.control.ControlController;
 import wanion.lib.common.control.IControl;
 import wanion.lib.common.field.FieldController;
 import wanion.lib.common.field.IField;
+import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.Matching;
 import wanion.lib.common.matching.MatchingController;
 
@@ -87,7 +88,7 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	}
 
 	@Nonnull
-	public Matching getMatching(final int matchingNumber)
+	public AbstractMatching<?> getMatching(final int matchingNumber)
 	{
 		return getController(MatchingController.class).getMatching(matchingNumber);
 	}

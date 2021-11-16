@@ -34,13 +34,18 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
     private final Collection<IController<?, ?>> controllers = controllerHandler.getInstances();
     private final Map<Capability<?>, Object> capabilitiesMap = new HashMap<>();
     private String customName = null;
-    protected final NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    protected final NonNullList<ItemStack> itemStacks = getItemStacks();
 
     public WTileEntity()
     {
         controllerHandler.subscribe(ControlController.class, () -> new ControlController(this));
         controllerHandler.subscribe(FieldController.class, () -> new FieldController(this));
         controllerHandler.subscribe(MatchingController.class, () -> new MatchingController(this));
+    }
+
+    protected NonNullList<ItemStack> getItemStacks()
+    {
+        return NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
     }
 
     public <C> void addCapability(@Nonnull final Capability<C> capability, C cObj)
@@ -78,7 +83,6 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
         final NBTTagCompound displayTag = nbtTagCompound.getCompoundTag("display");
         if (displayTag.hasKey("Name"))
             this.customName = displayTag.getString("Name");
-        controllers.forEach(controller -> controller.readNBT(nbtTagCompound));
         final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
         if (nbtTagList.hasNoTags())
             return;
@@ -88,6 +92,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             if (slot >= 0 && slot < getSizeInventory())
                 setInventorySlotContents(slot, new ItemStack(slotCompound));
         }
+        controllers.forEach(controller -> controller.readNBT(nbtTagCompound));
     }
 
     @Nonnull
@@ -105,8 +110,6 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             nameNBT.setString("Name", customName);
             nbtTagCompound.setTag("display", nameNBT);
         }
-        controllers.forEach(controller -> nbtTagCompound.merge(controller.writeNBT()));
-        controllers.forEach(controller -> controller.afterWriteNBT(nbtTagCompound));
         final NBTTagList nbtTagList = new NBTTagList();
         final int max = getSizeInventory();
         for (int i = 0; i < max; i++) {
@@ -117,6 +120,8 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             slotCompound.setShort("Slot", (short) i);
             nbtTagList.appendTag(itemStack.writeToNBT(slotCompound));
         }
+        controllers.forEach(controller -> nbtTagCompound.merge(controller.writeNBT()));
+        controllers.forEach(controller -> controller.afterWriteNBT(nbtTagCompound));
         if (!nbtTagList.hasNoTags())
             nbtTagCompound.setTag("Contents", nbtTagList);
         return nbtTagCompound;
@@ -145,12 +150,6 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
     public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
     {
         return false;
-    }
-
-    @Override
-    public int getSizeInventory()
-    {
-        return 0;
     }
 
     @Override

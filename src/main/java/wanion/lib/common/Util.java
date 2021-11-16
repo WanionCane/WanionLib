@@ -11,12 +11,16 @@ package wanion.lib.common;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.OreIngredient;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public final class Util
 {
@@ -72,6 +76,11 @@ public final class Util
 		return item.delegate.name().getResourceDomain();
 	}
 
+	public static boolean areFromSameMod(@Nonnull final ItemStack stack1, @Nonnull final ItemStack stack2)
+	{
+		return getModName(stack1).equals(getModName(stack2));
+	}
+
 	public static <O> void fillArray(@Nonnull final O[] array, @Nonnull final O defaultInstance)
 	{
 		Arrays.fill(array, defaultInstance);
@@ -87,9 +96,23 @@ public final class Util
 		return (O[]) oList.toArray();
 	}
 
-	public static ItemStack getStackFromIngredient(final Ingredient ingredient)
+	public static ItemStack getStackFromIngredient(@Nonnull final Ingredient ingredient)
 	{
 		final ItemStack[] stacks = ingredient.getMatchingStacks();
 		return stacks.length > 0 ? stacks[0] : ItemStack.EMPTY;
+	}
+
+	public static String getOreNameFromOreIngredient(@Nonnull final OreIngredient oreIngredient)
+	{
+		final NonNullList<ItemStack> ores = getField(OreIngredient.class, "ores", oreIngredient, NonNullList.class);
+		final List<NonNullList<ItemStack>> idToStackUn = Util.getField(OreDictionary.class, "idToStackUn", null, List.class);
+		if (idToStackUn == null)
+			return null;
+		for (int i = 0; i < idToStackUn.size(); i++) {
+			final NonNullList<ItemStack> stackList = idToStackUn.get(i);
+			if (stackList == ores)
+				return OreDictionary.getOreName(i);
+		}
+		return null;
 	}
 }

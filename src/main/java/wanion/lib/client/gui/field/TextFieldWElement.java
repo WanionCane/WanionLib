@@ -403,7 +403,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     public void drawForeground(@Nonnull final WInteraction interaction)
     {
         if (interaction.isHovering(this) && !canInteractWith(interaction))
-            wGuiContainer.drawHoveringText(field.getHoveringText(interaction.getEntityPlayer()), getTooltipX(interaction), getTooltipY(interaction));
+            wGuiContainer.drawHoveringText(field.getHoveringText(interaction), getTooltipX(interaction), getTooltipY(interaction));
     }
 
     /**

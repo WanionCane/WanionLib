@@ -10,112 +10,51 @@ package wanion.lib.common.matching;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import wanion.lib.common.ICopyable;
-import wanion.lib.common.ISmartNBT;
-import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.matching.matcher.AbstractMatcher;
 import wanion.lib.common.matching.matcher.ItemStackMatcher;
-import wanion.lib.common.matching.matcher.MatcherEnum;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class Matching implements ISmartNBT, ICopyable<Matching>, IControlNameable
+public class Matching extends AbstractMatching<Matching>
 {
-	private final List<ItemStack> itemStacks;
-	private final int number;
-	private final String stringNumber;
-	private final boolean shouldUseNbt;
-	private AbstractMatcher<?> matcher = new ItemStackMatcher(this);
+	protected final boolean shouldUseNbt;
 
 	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number)
 	{
-		this(itemStacks, number, false);
+		super(itemStacks, number);
+		this.shouldUseNbt = false;
 	}
 
-	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final boolean shouldUseNbt)
+	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final NBTTagCompound tagToRead, final boolean shouldUseNbt)
 	{
-		this.itemStacks = itemStacks;
-		this.stringNumber = Integer.toString(this.number = number);
+		super(itemStacks, number, tagToRead);
 		this.shouldUseNbt = shouldUseNbt;
 	}
 
-	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final boolean shouldUseNbt, @Nonnull NBTTagCompound tagToRead)
-	{
-		this.itemStacks = itemStacks;
-		this.stringNumber = Integer.toString(this.number = number);
-		this.shouldUseNbt = shouldUseNbt;
-		readNBT(tagToRead);
-	}
-
-	public void resetMatcher()
-	{
-		this.matcher = new ItemStackMatcher(this);
-	}
-
-	public void nextMatcher()
-	{
-		this.matcher = matcher.next();
-	}
-
-	public AbstractMatcher<?> getMatcher()
-	{
-		return matcher;
-	}
-
-	public void setMatcher(@Nonnull final AbstractMatcher<?> matcher)
-	{
-		this.matcher = matcher.validate();
-	}
-
-	public ItemStack getStack()
-	{
-		return itemStacks.get(number);
-	}
-
-	public boolean shouldUseNbt()
+	public final boolean shouldUseNbt()
 	{
 		return shouldUseNbt;
 	}
 
-	@Nonnull
 	@Override
-	public NBTTagCompound writeNBT()
+	@Nonnull
+	public AbstractMatcher<?> getDefaultMatcher()
 	{
-		final NBTTagCompound matcherNBT = new NBTTagCompound();
-		matcherNBT.setInteger("number", number);
-		matcherNBT.setInteger("matcherType", matcher.getMatcherEnum().ordinal());
-		matcherNBT.setTag("matcher", matcher.writeNBT());
-		return matcherNBT;
+		return new ItemStackMatcher(this).validate();
 	}
 
 	@Override
-	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	public void nextMatcher()
 	{
-		final MatcherEnum matcherEnum = MatcherEnum.values()[nbtTagCompound.getInteger("matcherType")];
-		final AbstractMatcher<?> matcher = matcherEnum.getMatcher(this);
-		matcher.readNBT(nbtTagCompound.getCompoundTag("matcher"));
-		setMatcher(matcher);
+		this.matcher = matcher.next().validate();
 	}
 
-	@Nonnull
 	@Override
+	@Nonnull
 	public Matching copy()
 	{
-		return new Matching(itemStacks, number, shouldUseNbt, writeNBT());
-	}
-
-	@Nonnull
-	@Override
-	public String getControlName()
-	{
-		return "wanionlib.matching.control";
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return number;
+		return new Matching(itemStacks, number, writeNBT(), shouldUseNbt);
 	}
 
 	@Override
@@ -130,4 +69,5 @@ public class Matching implements ISmartNBT, ICopyable<Matching>, IControlNameabl
 			else return false;
 		} else return false;
 	}
+
 }

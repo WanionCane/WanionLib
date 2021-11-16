@@ -8,14 +8,14 @@ package wanion.lib.inventory.slot;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.IMatchingInventory;
-import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
 public class MatchingSlot extends ShapeSlot
 {
-	private final Matching matching;
+	private final AbstractMatching<?> matching;
 
 	public MatchingSlot(@Nonnull final IMatchingInventory matchingInventory, final int id, final int x, final int y)
 	{
@@ -23,7 +23,7 @@ public class MatchingSlot extends ShapeSlot
 			this.matching = matchingInventory.getMatchingController().getMatching(id);
 	}
 
-	public Matching getMatching()
+	public AbstractMatching<?> getMatching()
 	{
 		return matching;
 	}

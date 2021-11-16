@@ -10,6 +10,7 @@ wanionlib.redstone.control.state.on.desc=Apenas funcionará se um sinal de Redst
 // Matching
 wanionlib.matching.control=Controle do Comparador
 wanionlib.matching.desc=Clique com o Direito para Mudar
+wanionlib.matching.matcher.empty=Vazio
 wanionlib.matching.matcher.any_damage=Qualquer Dano
 
 // Misc

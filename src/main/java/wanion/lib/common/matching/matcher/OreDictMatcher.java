@@ -8,23 +8,30 @@ package wanion.lib.common.matching.matcher;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.oredict.OreDictionary;
-import wanion.lib.common.matching.Matching;
+import wanion.lib.common.matching.AbstractMatching;
 
 import javax.annotation.Nonnull;
 
-public class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
+public final class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 {
-	private final int[] ores = !matching.getStack().isEmpty() ? OreDictionary.getOreIDs(getStack()) : new int[0];
-	private int actualOre = 0;
+	private int[] ores;
+	private int actualOre;
+	private String oreName;
 
-	public OreDictMatcher(@Nonnull final Matching matching)
+	public OreDictMatcher(@Nonnull final AbstractMatching<?> matching)
+	{
+		this(matching, null);
+	}
+
+	public OreDictMatcher(@Nonnull final AbstractMatching<?> matching, final String oreName)
 	{
 		super(matching);
+		this.oreName = oreName;
 	}
 
 	@Nonnull
@@ -32,14 +39,14 @@ public class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 	public NBTTagCompound writeNBT()
 	{
 		final NBTTagCompound matchingNbt = super.writeNBT();
-		matchingNbt.setInteger("actualOre", actualOre);
+		matchingNbt.setString("oreName", oreName != null ? oreName : "");
 		return matchingNbt;
 	}
 
 	@Override
 	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
-		actualOre = nbtTagCompound.getInteger("actualOre");
+		oreName = nbtTagCompound.getString("oreName");
 	}
 
 	@Nonnull
@@ -53,14 +60,34 @@ public class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 	@Override
 	public AbstractMatcher<?> validate()
 	{
-		return ores.length > 0 && actualOre < ores.length ? this : new ItemStackMatcher(matching);
+		final ItemStack matchingStack = getStack();
+		if (!matchingStack.isEmpty() && this.ores == null)
+			this.ores = OreDictionary.getOreIDs(matchingStack);
+		if (this.ores == null)
+			return matching.getDefaultMatcher();
+		if ((oreName == null || oreName.isEmpty()) && ores.length > 0) {
+			actualOre = 0;
+			this.oreName = OreDictionary.getOreName(getOre());
+		}
+		if (this.ores != null && !(oreName == null || oreName.isEmpty()) && actualOre < this.ores.length && OreDictionary.getOres(oreName).stream().anyMatch(stack -> OreDictionary.itemMatches(stack, matchingStack, false))) {
+			for (int x = 0; x < ores.length; x++) {
+				if (OreDictionary.getOreName(ores[x]).equals(oreName)) {
+					this.actualOre = x;
+					return this;
+				}
+			}
+		}
+		return matching.getDefaultMatcher();
 	}
 
 	@Nonnull
 	@Override
 	public AbstractMatcher<?> next()
 	{
-		return ++actualOre < ores.length ? this : new ItemStackMatcher(matching);
+		if (++actualOre >= ores.length)
+			return new ItemStackMatcher(matching);
+		this.oreName = OreDictionary.getOreName(actualOre);
+		return this;
 	}
 
 	@Override
@@ -74,14 +101,12 @@ public class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 	@Override
 	public String getDescription()
 	{
-		return I18n.format("wanionlib.matching.matcher." + getMatcherEnum().name().toLowerCase()) + " " + TextFormatting.GOLD + OreDictionary.getOreName(ores[actualOre]);
+		return super.getDescription() + " " + TextFormatting.GOLD + oreName;
 	}
 
-	@Nonnull
-	@Override
-	public String ctFormat()
+	public int getOre()
 	{
-		return "<ore:" + OreDictionary.getOreName(ores[actualOre]) + ">";
+		return ores[actualOre];
 	}
 
 	@Override
@@ -91,6 +116,8 @@ public class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 			return true;
 		else if (obj instanceof OreDictMatcher) {
 			final OreDictMatcher oreDictMatcher = (OreDictMatcher) obj;
+			if (!oreName.equals(oreDictMatcher.oreName))
+				return false;
 			if (this.actualOre != oreDictMatcher.actualOre || ores.length != oreDictMatcher.ores.length)
 				return false;
 			for (int i = 0; i < ores.length; i++)

@@ -11,6 +11,7 @@ package wanion.lib.common.field;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import wanion.lib.client.gui.interaction.WInteraction;
 import wanion.lib.common.ICopyable;
 import wanion.lib.common.INBTMessage;
 import wanion.lib.common.ISmartNBT;
@@ -32,7 +33,7 @@ public interface IField<F extends IField<F>> extends ISmartNBT, ICopyable<F>, IN
 	default void endInteraction(@Nonnull EntityPlayer player) {}
 
 	@SideOnly(Side.CLIENT)
-	default String getHoveringText(@Nonnull EntityPlayer player)
+	default String getHoveringText(@Nonnull final WInteraction wInteraction)
 	{
 		return null;
 	}

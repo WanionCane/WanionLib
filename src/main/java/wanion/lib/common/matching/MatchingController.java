@@ -15,10 +15,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import wanion.lib.common.IController;
-import wanion.lib.common.ICopyable;
-import wanion.lib.common.ISmartNBT;
 import wanion.lib.common.WContainer;
-import wanion.lib.common.field.IField;
+import wanion.lib.common.matching.matcher.EmptyMatcher;
 import wanion.lib.network.NetworkHelper;
 
 import javax.annotation.Nonnull;
@@ -27,10 +25,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MatchingController implements IController<MatchingController, Matching>, ICopyable<MatchingController>
+public class MatchingController implements IController<MatchingController, AbstractMatching<?>>
 {
-	private final Int2ObjectMap<Matching> matchingControlMap = new Int2ObjectOpenHashMap<>();
-	private final Collection<Matching> values = matchingControlMap.values();
+	private final Int2ObjectMap<AbstractMatching<?>> matchingControlMap = new Int2ObjectOpenHashMap<>();
+	private final Collection<AbstractMatching<?>> values = matchingControlMap.values();
 	private final IInventory inventory;
 
 	public MatchingController(@Nonnull final IInventory inventory)
@@ -38,47 +36,47 @@ public class MatchingController implements IController<MatchingController, Match
 		this.inventory = inventory;
 	}
 
-	public MatchingController(@Nonnull final IInventory inventory, final Matching... matchings)
+	public MatchingController(@Nonnull final IInventory inventory, final AbstractMatching<?>... matchings)
 	{
 		this(inventory);
 		add(matchings);
 	}
 
-	public MatchingController(@Nonnull final IInventory inventory, @Nonnull final List<Matching> matchingList)
+	public MatchingController(@Nonnull final IInventory inventory, @Nonnull final List<AbstractMatching<?>> matchingList)
 	{
 		this(inventory);
 		matchingList.forEach(this::add);
 	}
 
-	public MatchingController(@Nonnull final IInventory inventory, @Nonnull final Int2ObjectMap<Matching> matchingMap)
+	public MatchingController(@Nonnull final IInventory inventory, @Nonnull final Int2ObjectMap<AbstractMatching<?>> matchingMap)
 	{
 		this(inventory);
 		matchingControlMap.putAll(matchingMap);
 	}
 
-	public void add(@Nonnull final Matching... matchings)
+	public void add(@Nonnull final AbstractMatching<?>... matchings)
 	{
-		for (final Matching matching : matchings)
-			matchingControlMap.put(matching.hashCode(), matching);
+		for (final AbstractMatching<?> matching : matchings)
+			matchingControlMap.put(matching.getNumber(), matching);
 	}
 
-	public Collection<Matching> getInstances()
+	public Collection<AbstractMatching<?>> getInstances()
 	{
 		return values;
 	}
 
-	public Matching getMatching(final int number)
+	public AbstractMatching<?> getMatching(final int number)
 	{
 		return matchingControlMap.get(number);
 	}
 
 	@Nonnull
 	@Override
-	public List<Matching> compareContents(@Nonnull final MatchingController otherMatchingController)
+	public List<AbstractMatching<?>> compareContents(@Nonnull final MatchingController otherMatchingController)
 	{
-		final List<Matching> differences = new ArrayList<>();
-		for (final Matching matching : values) {
-			final Matching otherMatching = otherMatchingController.matchingControlMap.get(matching.hashCode());
+		final List<AbstractMatching<?>> differences = new ArrayList<>();
+		for (final AbstractMatching<?> matching : values) {
+			final AbstractMatching<?> otherMatching = otherMatchingController.matchingControlMap.get(matching.hashCode());
 			if (!matching.equals(otherMatching))
 				differences.add(matching);
 		}
@@ -116,7 +114,7 @@ public class MatchingController implements IController<MatchingController, Match
 			return;
 		for (int i = 0; i < matchingTagList.tagCount(); i++) {
 			final NBTTagCompound matchingTag = matchingTagList.getCompoundTagAt(i);
-			final Matching matching = matchingControlMap.get(matchingTag.getInteger("number"));
+			final AbstractMatching<?> matching = matchingControlMap.get(matchingTag.getInteger("number"));
 			if (matching != null)
 				matching.afterWriteNBT(matchingTag);
 		}
@@ -130,7 +128,7 @@ public class MatchingController implements IController<MatchingController, Match
 			return;
 		for (int i = 0; i < matchingTagList.tagCount(); i++) {
 			final NBTTagCompound matchingTag = matchingTagList.getCompoundTagAt(i);
-			final Matching matching = matchingControlMap.get(matchingTag.getInteger("number"));
+			final AbstractMatching<?> matching = matchingControlMap.get(matchingTag.getInteger("number"));
 			if (matching != null)
 				matching.readNBT(matchingTag);
 		}
@@ -141,6 +139,6 @@ public class MatchingController implements IController<MatchingController, Match
 	@Override
 	public MatchingController copy()
 	{
-		return new MatchingController(inventory, values.stream().map(Matching::copy).collect(Collectors.toList()));
+		return new MatchingController(inventory, values.stream().map(AbstractMatching::copy).collect(Collectors.toList()));
 	}
 }

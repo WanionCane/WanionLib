@@ -77,9 +77,8 @@ public abstract class WContainer<T extends WTileEntity> extends Container implem
     public void onContainerClosed(@Nonnull final EntityPlayer playerIn)
     {
         super.onContainerClosed(playerIn);
-        if (!wTileEntity.hasController(FieldController.class))
-            return;
-        wTileEntity.getController(FieldController.class).getInstances().forEach(field -> field.endInteraction(playerIn));
+        if (wTileEntity.hasController(FieldController.class))
+            wTileEntity.getController(FieldController.class).getInstances().forEach(field -> field.endInteraction(playerIn));
     }
 
     @Override

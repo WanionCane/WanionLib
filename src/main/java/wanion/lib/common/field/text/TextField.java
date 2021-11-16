@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.WanionLib;
+import wanion.lib.client.gui.interaction.WInteraction;
 import wanion.lib.common.INBTMessage;
 import wanion.lib.common.field.IField;
 import wanion.lib.network.SmartNBTMessage;
@@ -79,8 +80,9 @@ public class TextField implements IField<TextField>
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public String getHoveringText(@Nonnull final EntityPlayer player)
+	public String getHoveringText(@Nonnull final WInteraction wInteraction)
 	{
+		final EntityPlayer player = wInteraction.getEntityPlayer();
 		return this.player != null && this.player != player ? I18n.format("wanionlib.field.occupied", this.player.getName()) : null;
 	}
 
@@ -180,5 +182,11 @@ public class TextField implements IField<TextField>
 		if (content != null)
 			textFieldNBT.setString("content", content);
 		INBTMessage.sendNBT(windowId, textFieldNBT);
+	}
+
+	@Override
+	public String toString()
+	{
+		return fieldName;
 	}
 }

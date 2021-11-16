@@ -9,16 +9,13 @@ package wanion.lib.common.matching.matcher;
  */
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
-import wanion.lib.common.NBTUtils;
-import wanion.lib.common.matching.Matching;
+import wanion.lib.common.matching.AbstractMatching;
 
 import javax.annotation.Nonnull;
 
-public class NbtMatcher extends AbstractMatcher<NbtMatcher>
+public final class NbtMatcher extends AbstractMatcher<NbtMatcher>
 {
-	public NbtMatcher(@Nonnull final Matching matching)
+	public NbtMatcher(@Nonnull final AbstractMatching<?> matching)
 	{
 		super(matching);
 	}
@@ -34,14 +31,14 @@ public class NbtMatcher extends AbstractMatcher<NbtMatcher>
 	@Override
 	public AbstractMatcher<?> validate()
 	{
-		return getStack().hasTagCompound() ? this : new ItemStackMatcher(matching);
+		return getStack().hasTagCompound() ? this : matching.getDefaultMatcher();
 	}
 
 	@Nonnull
 	@Override
 	public AbstractMatcher<?> next()
 	{
-		return OreDictionary.getOreIDs(getStack()).length > 0 ? new OreDictMatcher(matching) : new ItemStackMatcher(matching);
+		return new OreDictMatcher(matching);
 	}
 
 	@Override
@@ -53,29 +50,16 @@ public class NbtMatcher extends AbstractMatcher<NbtMatcher>
 
 	@Nonnull
 	@Override
-	public String ctFormat()
-	{
-		final ItemStack itemStack = getStack();
-		final boolean greaterThanOne = itemStack.getCount() > 1;
-		final StringBuilder formatBuilder = new StringBuilder();
-		if (greaterThanOne)
-			formatBuilder.append('(');
-		formatBuilder.append('<').append(itemStack.getItem().getRegistryName());
-		if (itemStack.getItemDamage() > 0)
-			formatBuilder.append(':').append(itemStack.getItemDamage());
-		formatBuilder.append('>');
-		if (greaterThanOne)
-			formatBuilder.append(" * ").append(itemStack.getCount()).append(')');
-		final NBTTagCompound nbtTagCompound = itemStack.getTagCompound();
-		if (nbtTagCompound != null)
-			formatBuilder.append(".withTag(").append(NBTUtils.formatNbt(nbtTagCompound)).append(')');
-		return formatBuilder.toString();
-	}
-
-	@Nonnull
-	@Override
 	public NbtMatcher copy()
 	{
 		return new NbtMatcher(matching);
 	}
+
+
+	@Override
+	public boolean equals(final Object obj)
+	{
+		return obj instanceof NbtMatcher;
+	}
+
 }

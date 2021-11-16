@@ -9,15 +9,14 @@ package wanion.lib.common.matching.matcher;
  */
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
-import wanion.lib.common.ICopyable;
+import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
-public class ItemStackMatcher extends AbstractMatcher<ItemStackMatcher>
+public final class ItemStackMatcher extends AbstractMatcher<ItemStackMatcher>
 {
-	public ItemStackMatcher(@Nonnull final Matching matching)
+	public ItemStackMatcher(@Nonnull final AbstractMatching<?> matching)
 	{
 		super(matching);
 	}
@@ -33,7 +32,7 @@ public class ItemStackMatcher extends AbstractMatcher<ItemStackMatcher>
 	@Override
 	public AbstractMatcher<?> validate()
 	{
-		return this;
+		return !getStack().isEmpty() ? this : new EmptyMatcher(matching);
 	}
 
 	@Nonnull
@@ -43,32 +42,16 @@ public class ItemStackMatcher extends AbstractMatcher<ItemStackMatcher>
 		final ItemStack itemStack = getStack();
 		if (itemStack.getHasSubtypes() || itemStack.isItemStackDamageable())
 			return new AnyDamageMatcher(matching);
-		else if (matching.shouldUseNbt() && itemStack.hasTagCompound())
+		else if (matching instanceof Matching && ((Matching) matching).shouldUseNbt() && itemStack.hasTagCompound())
 			return new NbtMatcher(matching);
-		else if (OreDictionary.getOreIDs(itemStack).length > 0)
+		else
 			return new OreDictMatcher(matching);
-		else return this;
 	}
 
 	@Override
 	public boolean matches(@Nonnull final ItemStack otherItemStack)
 	{
 		return getStack().isItemEqual(otherItemStack);
-	}
-
-	@Nonnull
-	@Override
-	public String ctFormat()
-	{
-		final ItemStack itemStack = getStack();
-		final StringBuilder formatBuilder = new StringBuilder().append('<');
-		formatBuilder.append(itemStack.getItem().getRegistryName());
-		if (itemStack.getItemDamage() > 0)
-			formatBuilder.append(':').append(itemStack.getItemDamage());
-		formatBuilder.append('>');
-		if (itemStack.getCount() > 1)
-			formatBuilder.append(" * ").append(itemStack.getCount());
-		return formatBuilder.toString();
 	}
 
 	@Override

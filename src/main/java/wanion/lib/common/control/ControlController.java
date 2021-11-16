@@ -14,7 +14,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import wanion.lib.common.Dependencies;
 import wanion.lib.common.IController;
-import wanion.lib.common.ICopyable;
 import wanion.lib.common.WContainer;
 import wanion.lib.network.NetworkHelper;
 
@@ -23,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class ControlController extends Dependencies<IControl<?>> implements IController<ControlController, IControl<?>>, ICopyable<ControlController>
+public final class ControlController extends Dependencies<IControl<?>> implements IController<ControlController, IControl<?>>
 {
 	private final IInventory inventory;
 
@@ -49,6 +48,7 @@ public final class ControlController extends Dependencies<IControl<?>> implement
 		super(controlController);
 		this.inventory = inventory;
 	}
+
 	@Nonnull
 	@Override
 	public List<IControl<?>> compareContents(@Nonnull final ControlController otherController)
@@ -110,6 +110,4 @@ public final class ControlController extends Dependencies<IControl<?>> implement
 	{
 		return new ControlController(inventory, getInstances().stream().<IControl<?>>map(IControl::copy).collect(Collectors.toList()));
 	}
-
-
 }

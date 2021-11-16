@@ -14,7 +14,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import wanion.lib.common.IController;
-import wanion.lib.common.ICopyable;
 import wanion.lib.common.INBTMessage;
 import wanion.lib.common.WContainer;
 import wanion.lib.network.NetworkHelper;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FieldController implements IController<FieldController, IField<?>>, ICopyable<FieldController>, INBTMessage
+public class FieldController implements IController<FieldController, IField<?>>, INBTMessage
 {
 	private final Map<String, IField<?>> fieldControlMap = new THashMap<>();
 	private final Collection<IField<?>> values = fieldControlMap.values();

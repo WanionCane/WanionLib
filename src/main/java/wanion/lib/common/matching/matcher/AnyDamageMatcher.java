@@ -10,13 +10,14 @@ package wanion.lib.common.matching.matcher;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
-public class AnyDamageMatcher extends AbstractMatcher<AnyDamageMatcher>
+public final class AnyDamageMatcher extends AbstractMatcher<AnyDamageMatcher>
 {
-	public AnyDamageMatcher(@Nonnull final Matching matching)
+	public AnyDamageMatcher(@Nonnull final AbstractMatching<?> matching)
 	{
 		super(matching);
 	}
@@ -33,7 +34,7 @@ public class AnyDamageMatcher extends AbstractMatcher<AnyDamageMatcher>
 	public AbstractMatcher<?> validate()
 	{
 		final ItemStack itemStack = getStack();
-		return itemStack.getHasSubtypes() || itemStack.isItemStackDamageable() ? this : new ItemStackMatcher(matching);
+		return itemStack.getHasSubtypes() || itemStack.isItemStackDamageable() ? this : matching.getDefaultMatcher();
 	}
 
 	@Nonnull
@@ -41,7 +42,7 @@ public class AnyDamageMatcher extends AbstractMatcher<AnyDamageMatcher>
 	public AbstractMatcher<?> next()
 	{
 		final ItemStack itemStack = getStack();
-		return matching.shouldUseNbt() && itemStack.hasTagCompound() ? new NbtMatcher(matching) : OreDictionary.getOreIDs(itemStack).length > 0 ? new OreDictMatcher(matching) : new ItemStackMatcher(matching);
+		return matching instanceof Matching && ((Matching) matching).shouldUseNbt() && itemStack.hasTagCompound() ? new NbtMatcher(matching) : OreDictionary.getOreIDs(itemStack).length > 0 ? new OreDictMatcher(matching) : new ItemStackMatcher(matching);
 	}
 
 	@Override
@@ -49,18 +50,6 @@ public class AnyDamageMatcher extends AbstractMatcher<AnyDamageMatcher>
 	{
 		final ItemStack itemStack = getStack();
 		return !itemStack.isEmpty() && itemStack.getItem() == otherItemStack.getItem();
-	}
-
-	@Nonnull
-	@Override
-	public String ctFormat()
-	{
-		final ItemStack itemStack = getStack();
-		final StringBuilder formatBuilder = new StringBuilder().append('<');
-		formatBuilder.append(itemStack.getItem().getRegistryName()).append(":*>");
-		if (itemStack.getCount() > 1)
-			formatBuilder.append(" * ").append(itemStack.getCount());
-		return formatBuilder.toString();
 	}
 
 	@Override

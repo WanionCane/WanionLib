@@ -19,6 +19,7 @@ import wanion.lib.common.control.IControlControllerProvider;
 import wanion.lib.common.field.IField;
 import wanion.lib.common.field.IFieldContainer;
 import wanion.lib.common.field.IFieldControllerProvider;
+import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.IMatchingContainer;
 import wanion.lib.common.matching.IMatchingControllerProvider;
 import wanion.lib.common.matching.Matching;
@@ -90,9 +91,9 @@ public class NetworkHelper
 
 	public static void detectAndSendMatchingChanges(final int windowId, @Nonnull final IMatchingContainer matchingContainer)
 	{
-		final List<Matching> matchingList = matchingContainer.getMatchingController().compareContents(matchingContainer.getContainerMatchingController());
+		final List<AbstractMatching<?>> matchingList = matchingContainer.getMatchingController().compareContents(matchingContainer.getContainerMatchingController());
 		if (!matchingList.isEmpty()) {
-			matchingList.stream().map(Matching::copy).collect(Collectors.toList()).forEach(matchingContainer.getContainerMatchingController()::add);
+			matchingList.stream().map(AbstractMatching::copy).collect(Collectors.toList()).forEach(matchingContainer.getContainerMatchingController()::add);
 			final NBTTagCompound smartNBT = new NBTTagCompound();
 			final NBTTagList matchingTag = new NBTTagList();
 			smartNBT.setTag("matching", matchingTag);

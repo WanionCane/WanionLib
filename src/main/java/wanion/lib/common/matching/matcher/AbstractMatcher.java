@@ -11,29 +11,33 @@ package wanion.lib.common.matching.matcher;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import wanion.lib.common.CraftTweakerHelper;
 import wanion.lib.common.ICopyable;
 import wanion.lib.common.ISmartNBT;
-import wanion.lib.common.matching.Matching;
+import wanion.lib.common.matching.AbstractMatching;
 
 import javax.annotation.Nonnull;
 
 public abstract class AbstractMatcher<M extends AbstractMatcher<M>> implements ISmartNBT, ICopyable<M>
 {
-	protected Matching matching;
+	protected AbstractMatching<?> matching;
 
-	public AbstractMatcher(@Nonnull final Matching matching)
+	public AbstractMatcher(@Nonnull final AbstractMatching<?> matching)
 	{
 		this.matching = matching;
 	}
 
-	public ItemStack getStack()
+	public final ItemStack getStack()
 	{
 		return matching.getStack();
 	}
 
 	@Nonnull
 	@Override
-	public NBTTagCompound writeNBT() { return new NBTTagCompound();	}
+	public NBTTagCompound writeNBT()
+	{
+		return new NBTTagCompound();
+	}
 
 	@Override
 	public void readNBT(@Nonnull final NBTTagCompound nbtTagCompound) {}
@@ -50,11 +54,14 @@ public abstract class AbstractMatcher<M extends AbstractMatcher<M>> implements I
 	public abstract boolean matches(@Nonnull ItemStack otherItemStack);
 
 	@Nonnull
-	public abstract String ctFormat();
+	public final String ctFormat()
+	{
+		return CraftTweakerHelper.MatcherToCtFormat(this);
+	}
 
 	@Nonnull
 	public String getDescription()
 	{
-		return I18n.format("wanionlib.matching.matcher." + getMatcherEnum().name().toLowerCase());
+		return I18n.format("wanionlib.matching.matcher." + getMatcherEnum().getLowerCaseName());
 	}
 }
