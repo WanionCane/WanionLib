@@ -49,7 +49,10 @@ public abstract class AbstractMatcher<M extends AbstractMatcher<M>> implements I
 	public abstract AbstractMatcher<?> validate();
 
 	@Nonnull
-	public abstract AbstractMatcher<?> next();
+	public AbstractMatcher<?> next()
+	{
+		return matching.getDefaultMatcher();
+	}
 
 	public abstract boolean matches(@Nonnull ItemStack otherItemStack);
 

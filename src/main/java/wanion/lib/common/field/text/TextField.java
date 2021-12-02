@@ -8,6 +8,7 @@ package wanion.lib.common.field.text;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import joptsimple.internal.Strings;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,6 +45,33 @@ public class TextField implements IField<TextField>
 		this.fieldName = fieldName;
 		this.content = content;
 		this.player = player;
+	}
+
+	// synchronized may not be necessary, but who knows.
+	public synchronized int length()
+	{
+		return content.length();
+	}
+
+	@Nonnull
+	public synchronized String getContent()
+	{
+		return this.content;
+	}
+
+	public synchronized void setContent(@Nonnull final String content)
+	{
+		this.content = content;
+	}
+
+	public synchronized final void clear()
+	{
+		this.content = Strings.EMPTY;
+	}
+
+	public synchronized final boolean isEmpty()
+	{
+		return content.isEmpty();
 	}
 
 	@Nonnull
@@ -132,28 +160,6 @@ public class TextField implements IField<TextField>
 	public boolean equals(Object obj)
 	{
 		return obj instanceof TextField && fieldName.equals(((TextField) obj).fieldName) && content.equals(((TextField) obj).content) && Objects.equals(this.player, ((TextField) obj).player);
-	}
-
-	public int length()
-	{
-		return content.length();
-	}
-
-	// synchronized may be not necessary, but who knows.
-	@Nonnull
-	public synchronized String getContent()
-	{
-		return this.content;
-	}
-
-	public synchronized void setContent(@Nonnull final String content)
-	{
-		this.content = content;
-	}
-
-	public final boolean isEmpty()
-	{
-		return content.isEmpty();
 	}
 
 	@SideOnly(Side.CLIENT)

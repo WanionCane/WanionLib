@@ -10,10 +10,14 @@ wanionlib.redstone.control.state.on.desc=it will run only if a Redstone Signal i
 // Matching
 wanionlib.matching.control=Matching Control
 wanionlib.matching.desc=Right click to change mode
+wanionlib.matching.matcher.disabled=Disabled
+wanionlib.matching.matcher.enum=ENUM
 wanionlib.matching.matcher.empty=Empty
 wanionlib.matching.matcher.item_stack=ItemStack
 wanionlib.matching.matcher.any_damage=Any Damage
+wanionlib.matching.matcher.damaged=Damaged
 wanionlib.matching.matcher.nbt=NBT
+wanionlib.matching.matcher.vanilla=Vanilla
 wanionlib.matching.matcher.mod=Mod:
 wanionlib.matching.matcher.ore_dict=Ore Dict:
 

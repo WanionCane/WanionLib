@@ -68,18 +68,11 @@ public final class ModMatcher extends AbstractMatcher<ModMatcher>
 		return modId != null ? this : matching.getDefaultMatcher();
 	}
 
-	@Nonnull
-	@Override
-	public AbstractMatcher<?> next()
-	{
-		return matching.getDefaultMatcher();
-	}
-
 	@Override
 	public boolean matches(@Nonnull final ItemStack otherItemStack)
 	{
 		final ItemStack stack = getStack();
-		return !stack.isEmpty() && !otherItemStack.isEmpty() && Util.areFromSameMod(stack, otherItemStack);
+		return !stack.isEmpty() && !otherItemStack.isEmpty() && modId.equals(Util.getModName(otherItemStack));
 	}
 
 	@Nonnull

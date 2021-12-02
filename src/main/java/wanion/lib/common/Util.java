@@ -20,7 +20,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public final class Util
 {
@@ -46,7 +47,7 @@ public final class Util
 			Field field;
 			try {
 				field = clas.getDeclaredField(obfuscatedName);
-			} catch (Exception e){
+			} catch (Exception e) {
 				field = clas.getDeclaredField(unobfuscatedName);
 			}
 			field.setAccessible(true);
@@ -68,12 +69,18 @@ public final class Util
 		}
 	}
 
-	public static String getModName(final ItemStack itemStack)
+	@Nonnull
+	public static String getModName(@Nonnull final ItemStack itemStack)
 	{
 		Item item;
 		if (itemStack == null || (item = itemStack.getItem()) == null)
 			return "";
 		return item.delegate.name().getResourceDomain();
+	}
+
+	public static boolean isFromVanilla(@Nonnull final ItemStack itemStack)
+	{
+		return getModName(itemStack).equals("minecraft");
 	}
 
 	public static boolean areFromSameMod(@Nonnull final ItemStack stack1, @Nonnull final ItemStack stack2)
@@ -114,5 +121,16 @@ public final class Util
 				return OreDictionary.getOreName(i);
 		}
 		return null;
+	}
+
+	public static <R> Predicate<R> not(@Nonnull final Predicate<R> predicate)
+	{
+		return predicate.negate();
+	}
+
+	@SuppressWarnings("ConstantConditions")
+	public static boolean itemStackHasOres(@Nonnull final ItemStack itemStack)
+	{
+		return Util.getField(OreDictionary.class, "stackToId", null, Map.class).containsKey(MetaItem.get(itemStack));
 	}
 }
