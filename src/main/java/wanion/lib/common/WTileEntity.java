@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -83,6 +84,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
         final NBTTagCompound displayTag = nbtTagCompound.getCompoundTag("display");
         if (displayTag.hasKey("Name"))
             this.customName = displayTag.getString("Name");
+        controllers.forEach(controller -> controller.readNBT(nbtTagCompound));
         final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
         if (nbtTagList.hasNoTags())
             return;
@@ -92,7 +94,6 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             if (slot >= 0 && slot < getSizeInventory())
                 setInventorySlotContents(slot, new ItemStack(slotCompound));
         }
-        controllers.forEach(controller -> controller.readNBT(nbtTagCompound));
     }
 
     @Nonnull
@@ -111,7 +112,7 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
             nbtTagCompound.setTag("display", nameNBT);
         }
         final NBTTagList nbtTagList = new NBTTagList();
-        final int max = getSizeInventory();
+        final int max = MathHelper.clamp(getSizeInventory(), 0, itemStacks.size());
         for (int i = 0; i < max; i++) {
             final ItemStack itemStack = getStackInSlot(i);
             if (itemStack.isEmpty())

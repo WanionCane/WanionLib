@@ -51,6 +51,8 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		super(wContainer);
 		this.wContainer = wContainer;
 		this.guiTextureLocation = guiTextureLocation;
+		addElement(new TextElement(() -> I18n.format(wContainer.getTileName()), this, 7, 7));
+		addElement(new TextElement(() -> I18n.format("container.inventory"), this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11));
 	}
 
 	public void addElement(@Nonnull final WElement element)
@@ -123,14 +125,13 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	@Override
 	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
 	{
-		fontRenderer.drawString(I18n.format(wContainer.getTileName()), 7, 7, 0x404040);
-		fontRenderer.drawString(I18n.format("container.inventory"), firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11, 0x404040);
 		final WInteraction interaction = new WInteraction(this, mouseX, mouseY);
 		getEnabledElements().forEach(element -> element.drawForeground(interaction));
 		for (final GuiButton guibutton : this.buttonList)
 			if (guibutton.isMouseOver())
 				guibutton.drawButtonForegroundLayer(mouseX, mouseY);
 	}
+
 	@Override
 	protected void keyTyped(final char typedChar, final int keyCode) throws IOException
 	{

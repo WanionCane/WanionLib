@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import wanion.lib.WanionLib;
-import wanion.lib.common.INBTMessage;
 import wanion.lib.network.*;
 
 import javax.annotation.Nonnull;
@@ -33,7 +32,11 @@ public class CommonProxy
 		WanionLib.networkWrapper.registerMessage(NBTAnswer.Handler.class, NBTAnswer.class, d++, Side.SERVER);
 		WanionLib.networkWrapper.registerMessage(NBTAnswer.Handler.class, NBTAnswer.class, d++, Side.CLIENT);
 		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d++, Side.SERVER);
-		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(NameTransferMessage.Handler.class, NameTransferMessage.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(ClearShapeMessage.Handler.class, ClearShapeMessage.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(ClearShapeMessage.Handler.class, ClearShapeMessage.class, d++, Side.CLIENT);
+		WanionLib.networkWrapper.registerMessage(DefineShapeMessage.Handler.class, DefineShapeMessage.class, d++, Side.SERVER);
+		WanionLib.networkWrapper.registerMessage(DefineShapeMessage.Handler.class, DefineShapeMessage.class, d, Side.CLIENT);
 	}
 
 	public EntityPlayer getEntityPlayerFromContext(@Nonnull final MessageContext messageContext)

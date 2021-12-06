@@ -33,6 +33,18 @@ public abstract class WElement
 	protected int x, y;
 	protected boolean enabled = true;
 
+	// using this constructor, getX, getY, getWidth and getHeight must be overridden.
+	public WElement(@Nonnull final WGuiContainer<?> wGuiContainer)
+	{
+		this(wGuiContainer, 0, 0);
+	}
+
+	// using this constructor, getWidth and getHeight must be overridden.
+	public WElement(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
+	{
+		this(wGuiContainer, x, y, 0, 0);
+	}
+
 	public WElement(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
 	{
 		this.wGuiContainer = wGuiContainer;
@@ -42,30 +54,33 @@ public abstract class WElement
 		this.height = height;
 	}
 
-	public final int getX() {
+	public int getX()
+	{
 		return x;
 	}
 
-	public final int getUsableX() {
-		return wGuiContainer.getGuiLeft() + x;
-	}
-
-	public final void setX(final int x) {
+	public final void setX(final int x)
+	{
 		this.x = x;
 	}
 
-	public final int getY() {
-		return y;
-	}
-
-	public final int getUsableY()
+	public int getY()
 	{
-		return wGuiContainer.getGuiTop() + y;
+		return y;
 	}
 
 	public final void setY(final int y)
 	{
 		this.y = y;
+	}
+
+	public final int getUsableX() {
+		return wGuiContainer.getGuiLeft() + getX();
+	}
+
+	public final int getUsableY()
+	{
+		return wGuiContainer.getGuiTop() + getY();
 	}
 
 	public int getWidth()
