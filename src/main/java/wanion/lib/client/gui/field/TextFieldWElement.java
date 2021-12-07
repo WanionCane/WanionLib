@@ -8,6 +8,7 @@ package wanion.lib.client.gui.field;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -52,6 +53,8 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     {
         super(textField, wGuiContainer, x, y, width, height);
         this.enableBackgroundDrawing = enableBackgroundDrawing;
+        setForegroundCheck(interaction -> interaction.isHovering(this) && !canInteractWith(interaction));
+        setTooltipSupplier((interaction, stackSupplier) -> Lists.newArrayList(field.getHoveringText(interaction)));
     }
 
     @Override
@@ -397,13 +400,6 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
             else
                 fontRenderer.drawStringWithShadow("_", (float) k1, (float) i1, 0xFFFFFF);
         }
-    }
-
-    @Override
-    public void drawForeground(@Nonnull final WInteraction interaction)
-    {
-        if (interaction.isHovering(this) && !canInteractWith(interaction))
-            wGuiContainer.drawHoveringText(field.getHoveringText(interaction), getTooltipX(interaction), getTooltipY(interaction));
     }
 
     /**

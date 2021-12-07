@@ -11,6 +11,7 @@ package wanion.lib.client.gui.button;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import wanion.lib.WanionLib;
+import wanion.lib.client.gui.ITooltipSupplier;
 import wanion.lib.client.gui.WGuiContainer;
 import wanion.lib.client.gui.interaction.WInteraction;
 import wanion.lib.client.gui.interaction.WMouseInteraction;
@@ -31,6 +33,7 @@ import wanion.lib.network.SmartNBTMessage;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
 public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>> extends WButton
@@ -47,6 +50,7 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 	{
 		super(wGuiContainer, x,y, width, height);
 		this.stateProvider = stateProvider;
+		setTooltipSupplier(new ControlWButtonTooltipSupplier());
 	}
 
 	@Override
@@ -63,29 +67,6 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 	}
 
 	@Override
-	public void drawForeground(@Nonnull final WInteraction interaction)
-	{
-		if (!interaction.isHovering(this))
-			return;
-		final List<String> description = new ArrayList<>();
-		final S state = stateProvider.getState();
-		if (stateProvider instanceof IControlNameable)
-			description.add(state instanceof IStateNameable ? TextFormatting.RED + I18n.format(((IControlNameable) stateProvider).getControlName()) + ": " + TextFormatting.WHITE + I18n.format(((IStateNameable) state).getStateName()) : TextFormatting.RED + I18n.format(((IControlNameable) stateProvider).getControlName()));
-		if (state instanceof IStateNameable) {
-			final String desc = ((IStateNameable) state).getStateDescription();
-			if (desc != null)
-				description.add(I18n.format(desc));
-		}
-		this.lineWidth = 0;
-		for (final String line : description) {
-			final int lineWidth = getFontRenderer().getStringWidth(line);
-			if (lineWidth > this.lineWidth)
-				this.lineWidth = lineWidth;
-		}
-		wGuiContainer.drawHoveringText(description, getTooltipX(interaction), getTooltipY(interaction));
-	}
-
-	@Override
 	public void interaction(@Nonnull final WMouseInteraction mouseInteraction)
 	{
 		final S state = stateProvider.getState();
@@ -97,5 +78,29 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 		nbtTagCompound.setTag("control", controlTagList);
 		WanionLib.networkWrapper.sendToServer(new SmartNBTMessage(getWindowID(), nbtTagCompound));
 		playPressSound();
+	}
+
+	private class ControlWButtonTooltipSupplier implements ITooltipSupplier
+	{
+		@Override
+		public List<String> getTooltip(@Nonnull final WInteraction interaction, @Nonnull final Supplier<ItemStack> stackSupplier)
+		{
+			final List<String> description = new ArrayList<>();
+			final S state = stateProvider.getState();
+			if (stateProvider instanceof IControlNameable)
+				description.add(state instanceof IStateNameable ? TextFormatting.RED + I18n.format(((IControlNameable) stateProvider).getControlName()) + ": " + TextFormatting.WHITE + I18n.format(((IStateNameable) state).getStateName()) : TextFormatting.RED + I18n.format(((IControlNameable) stateProvider).getControlName()));
+			if (state instanceof IStateNameable) {
+				final String desc = ((IStateNameable) state).getStateDescription();
+				if (desc != null)
+					description.add(I18n.format(desc));
+			}
+			lineWidth = 0;
+			for (final String line : description) {
+				final int localLineWidth = getFontRenderer().getStringWidth(line);
+				if (localLineWidth > lineWidth)
+					lineWidth = localLineWidth;
+			}
+			return description;
+		}
 	}
 }

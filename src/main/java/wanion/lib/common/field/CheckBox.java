@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 public class CheckBox implements IField<CheckBox>
 {
 	private final String fieldName;
+	private final boolean defaultChecked;
 	private boolean checked;
 
 	public CheckBox(@Nonnull final String fieldName)
@@ -24,10 +25,10 @@ public class CheckBox implements IField<CheckBox>
 		this(fieldName, false);
 	}
 
-	public CheckBox(@Nonnull final String fieldName, final boolean checked)
+	public CheckBox(@Nonnull final String fieldName, final boolean defaultChecked)
 	{
 		this.fieldName = fieldName;
-		this.checked = checked;
+		this.defaultChecked = (this.checked = defaultChecked);
 	}
 
 	public final CheckBox toggle()
@@ -73,7 +74,7 @@ public class CheckBox implements IField<CheckBox>
 	@Override
 	public void readNBT(@Nonnull final NBTTagCompound smartNBT)
 	{
-		this.checked = smartNBT.getBoolean("checked");
+		this.checked = smartNBT.hasKey("checked") ? smartNBT.getBoolean("checked") : defaultChecked;
 	}
 
 	@Nonnull

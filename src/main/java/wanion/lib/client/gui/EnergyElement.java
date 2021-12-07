@@ -11,6 +11,7 @@ package wanion.lib.client.gui;
 import com.google.common.collect.Lists;
 import joptsimple.internal.Strings;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,23 +31,18 @@ public class EnergyElement extends WElement
     {
         super(wGuiContainer, x, y, 18, 54);
         this.energyControl = energyControl;
+        setTooltipSupplier((interaction, stackSupplier) -> Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", energyControl.getEnergyUsage()), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")));
     }
 
     @Override
     public void draw(@Nonnull final WInteraction wInteraction)
     {
         wGuiContainer.mc.getTextureManager().bindTexture(Reference.GUI_TEXTURES);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), 0, 0, width, height, 128, 128);
         final int size = scalePowerCentage();
         if (size != 0)
             Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY() + height - size, 18, height - size, 18, size, 128, 128);
-    }
-
-    @Override
-    public void drawForeground(@Nonnull final WInteraction interaction)
-    {
-        if (interaction.isHovering(this))
-            wGuiContainer.drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", energyControl.getEnergyUsage()), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")), getTooltipX(interaction), getTooltipY(interaction));
     }
 
     // to make this WElement non-interactable

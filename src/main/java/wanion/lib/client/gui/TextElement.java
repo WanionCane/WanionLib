@@ -9,7 +9,6 @@ package wanion.lib.client.gui;
  */
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.client.gui.interaction.WInteraction;
@@ -36,6 +35,7 @@ public class TextElement extends WElement
 		this.textSupplier = textSupplier;
 		this.textAnchor = textAnchor;
 		this.fontRenderer = getFontRenderer();
+		setForegroundCheck((interaction) -> false);
 	}
 
 	public int getColor()

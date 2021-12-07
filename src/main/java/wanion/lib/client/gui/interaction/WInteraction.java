@@ -39,7 +39,7 @@ public class WInteraction
 	}
 
 	@Nonnull
-	public WGuiContainer<?> getContainer()
+	public WGuiContainer<?> getWGuiContainer()
 	{
 		return wGuiContainer;
 	}
@@ -65,10 +65,12 @@ public class WInteraction
 		return mouseX >= wElement.getUsableX() && mouseY >= wElement.getUsableY() && mouseX < wElement.getUsableX() + wElement.getWidth() && mouseY < wElement.getUsableY() + wElement.getHeight();
 	}
 
+	/*
 	public boolean isHovering(final int x, final int y, final int width, final int height)
 	{
 		return mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 	}
+	 */
 
 	public final void proceed()
 	{

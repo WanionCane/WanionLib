@@ -23,12 +23,19 @@ import wanion.lib.client.gui.interaction.WKeyInteraction;
 import wanion.lib.client.gui.interaction.WMouseInteraction;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
 // W = Wanion
 @SideOnly(Side.CLIENT)
 public abstract class WElement
 {
+	public final static ITooltipSupplier DEFAULT_WELEMENT_TOOLTIP_SUPPLIER = ((interaction, stackSupplier) -> Collections.emptyList());
 	protected final WGuiContainer<?> wGuiContainer;
+	private Predicate<WInteraction> foregroundCheck;
+	private ITooltipSupplier tooltipSupplier;
+
 	protected final int width, height;
 	protected int x, y;
 	protected boolean enabled = true;
@@ -52,6 +59,49 @@ public abstract class WElement
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.foregroundCheck = wInteraction -> wInteraction.isHovering(this);
+		this.tooltipSupplier = DEFAULT_WELEMENT_TOOLTIP_SUPPLIER;
+	}
+
+	@Nonnull
+	public Predicate<WInteraction> getForegroundCheck()
+	{
+		return foregroundCheck;
+	}
+
+	public final WElement setForegroundCheck(@Nonnull final Predicate<WInteraction> foregroundCheck)
+	{
+		this.foregroundCheck = foregroundCheck;
+		return this;
+	}
+
+	public final WElement setDefaultForegroundCheck()
+	{
+		this.foregroundCheck = wInteraction -> wInteraction.isHovering(this);
+		return this;
+	}
+
+	public final ITooltipSupplier getTooltipSupplier()
+	{
+		return tooltipSupplier;
+	}
+
+	@Nonnull
+	public final WElement setTooltipSupplier(@Nonnull final ITooltipSupplier tooltipSupplier)
+	{
+		this.tooltipSupplier = tooltipSupplier;
+		return this;
+	}
+
+	public final WElement setDefaultWelementTooltipSupplier()
+	{
+		this.tooltipSupplier = DEFAULT_WELEMENT_TOOLTIP_SUPPLIER;
+		return this;
+	}
+
+	public List<String> getTooltip(@Nonnull final WInteraction interaction)
+	{
+		return tooltipSupplier.getTooltip(interaction);
 	}
 
 	public int getX()
@@ -140,7 +190,12 @@ public abstract class WElement
 
 	public abstract void draw(@Nonnull final WInteraction wInteraction);
 
-	public void drawForeground(@Nonnull final WInteraction wInteraction) {}
+	public final void drawForeground(@Nonnull final WInteraction interaction)
+	{
+		List<String> tooltip;
+		if (foregroundCheck.test(interaction) && !(tooltip = getTooltip(interaction)).isEmpty())
+			wGuiContainer.drawHoveringText(tooltip, getTooltipX(interaction), getTooltipY(interaction));
+	}
 
 	public int getTooltipX(@Nonnull final WInteraction wInteraction)
 	{
@@ -152,27 +207,27 @@ public abstract class WElement
 		return wInteraction.getMouseY() - wGuiContainer.getGuiTop();
 	}
 
-	public SoundHandler getSoundHandler()
+	public final SoundHandler getSoundHandler()
 	{
 		return Minecraft.getMinecraft().getSoundHandler();
 	}
 
-	public TextureManager getTextureManager()
+	public final TextureManager getTextureManager()
 	{
 		return Minecraft.getMinecraft().getTextureManager();
 	}
 
-	public FontRenderer getFontRenderer()
+	public final FontRenderer getFontRenderer()
 	{
 		return Minecraft.getMinecraft().fontRenderer;
 	}
 
-	public void playPressSound()
+	public final void playPressSound()
 	{
 		getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 	}
 
-	public void playPressSound(@Nonnull final ISound sound)
+	public final void playPressSound(@Nonnull final ISound sound)
 	{
 		getSoundHandler().playSound(sound);
 	}

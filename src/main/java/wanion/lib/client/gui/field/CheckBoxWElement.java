@@ -8,6 +8,7 @@ package wanion.lib.client.gui.field;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,23 +28,7 @@ public class CheckBoxWElement extends WField<CheckBox>
 	public CheckBoxWElement(@Nonnull final CheckBox field, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
 	{
 		super(field, wGuiContainer, x, y, 18, 18);
-	}
-
-	@Override
-	public void drawForeground(@Nonnull final WInteraction interaction)
-	{
-		if (interaction.isHovering(this)) {
-			wGuiContainer.drawHoveringText(field.getHoveringText(interaction), getTooltipX(interaction), getTooltipY(interaction));
-		}
-	}
-
-	@Override
-	public void interaction(@Nonnull WMouseInteraction wMouseInteraction)
-	{
-		if (WanionLib.proxy.isServer())
-			return;
-		INBTMessage.sendNBT(getWindowID(), field.toggle().writeNBT());
-		playPressSound();
+		setTooltipSupplier((interaction, stackSupplier) -> Lists.newArrayList(field.getHoveringText(interaction)));
 	}
 
 	@Override
@@ -53,5 +38,12 @@ public class CheckBoxWElement extends WField<CheckBox>
 		getTextureManager().bindTexture(DEFAULT_RESOURCE_LOCATION);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), !isHovering ? 36 : 54, !field.isChecked() ? 72 : 90, width, height, 128, 128);
+	}
+
+	@Override
+	public void interaction(@Nonnull final WMouseInteraction wMouseInteraction)
+	{
+		INBTMessage.sendNBT(getWindowID(), field.toggle().writeNBT());
+		playPressSound();
 	}
 }

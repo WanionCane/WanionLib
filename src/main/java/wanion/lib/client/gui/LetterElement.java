@@ -10,6 +10,7 @@ package wanion.lib.client.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,13 +36,14 @@ public class LetterElement extends WElement
 		this.letter = TextFormatting.BOLD + Character.toString(letter);
 		this.fontRenderer = getFontRenderer();
 		this.letterX = () -> getUsableX() + 9 -(fontRenderer.getStringWidth(Character.toString(letter)) / 2);
-		this.letterY = () -> getUsableY() + 9 -(fontRenderer.FONT_HEIGHT / 2);
+		this.letterY = () -> getUsableY() + 10 -(fontRenderer.FONT_HEIGHT / 2);
 	}
 
 	@Override
 	public void draw(@Nonnull final WInteraction wInteraction)
 	{
 		getTextureManager().bindTexture(DEFAULT_RESOURCE_LOCATION);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), !wInteraction.isHovering(this) ? 36 : 54, 72, width, height, 128, 128);
 		fontRenderer.drawStringWithShadow(letter, letterX.get(), letterY.get(), 0xFFFFFF);
 	}

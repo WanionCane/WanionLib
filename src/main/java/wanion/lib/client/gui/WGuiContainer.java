@@ -55,9 +55,15 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		addElement(new TextElement(() -> I18n.format("container.inventory"), this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11));
 	}
 
-	public void addElement(@Nonnull final WElement element)
+	public final void addElement(@Nonnull final WElement element)
 	{
 		wElements.add(element);
+	}
+
+	@Nonnull
+	public final WElement getElement(final int index)
+	{
+		return wElements.get(index);
 	}
 
 	@Nonnull

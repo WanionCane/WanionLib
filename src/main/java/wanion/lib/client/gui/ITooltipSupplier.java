@@ -18,7 +18,12 @@ import java.util.function.Supplier;
 @FunctionalInterface
 public interface ITooltipSupplier
 {
-	ITooltipSupplier DEFAULT_TOOLTIP_SUPPLIER = ((interaction, stackSupplier) -> interaction.getContainer().getItemToolTip(stackSupplier.get()));
+	Supplier<ItemStack> EMPTY_STACK_SUPPLIER = () -> ItemStack.EMPTY;
+
+	default List<String> getTooltip(@Nonnull final  WInteraction interaction)
+	{
+		return getTooltip(interaction, EMPTY_STACK_SUPPLIER);
+	}
 
 	List<String> getTooltip(@Nonnull final WInteraction interaction, @Nonnull final Supplier<ItemStack> stackSupplier);
 }

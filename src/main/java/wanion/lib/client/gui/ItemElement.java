@@ -23,8 +23,8 @@ import java.util.function.Supplier;
 @SideOnly(Side.CLIENT)
 public class ItemElement extends WElement
 {
+	public static final ITooltipSupplier DEFAULT_ITEMSTACK_TOOLTIP_SUPPLIER = ((interaction, stackSupplier) -> interaction.getWGuiContainer().getItemToolTip(stackSupplier.get()));
 	protected final Supplier<ItemStack> stackSupplier;
-	private ITooltipSupplier tooltipSupplier;
 
 	public ItemElement(@Nonnull final Supplier<ItemStack> stackSupplier, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
 	{
@@ -35,18 +35,14 @@ public class ItemElement extends WElement
 	{
 		super(wGuiContainer, x, y, width, height);
 		this.stackSupplier = getStack;
-		this.tooltipSupplier = ITooltipSupplier.DEFAULT_TOOLTIP_SUPPLIER;
+		setTooltipSupplier(DEFAULT_ITEMSTACK_TOOLTIP_SUPPLIER);
+		setForegroundCheck(interaction -> interaction.isHovering(this) && !stackSupplier.get().isEmpty());
 	}
 
-	public ItemElement setTooltipSupplier(@Nonnull final ITooltipSupplier tooltipSupplier)
-	{
-		this.tooltipSupplier = tooltipSupplier;
-		return this;
-	}
-
+	@Override
 	public List<String> getTooltip(@Nonnull final WInteraction interaction)
 	{
-		return tooltipSupplier.getTooltip(interaction, stackSupplier);
+		return getTooltipSupplier().getTooltip(interaction, stackSupplier);
 	}
 
 	@Override
@@ -65,19 +61,5 @@ public class ItemElement extends WElement
 			wGuiContainer.mc.getRenderItem().renderItemIntoGUI(stack, getUsableX(), getUsableY());
 			GlStateManager.popMatrix();
 		} catch (Exception ignored) {}
-	}
-
-	@Override
-	public void drawForeground(@Nonnull final WInteraction interaction)
-	{
-		if (interaction.isHovering(this) && !stackSupplier.get().isEmpty())
-			wGuiContainer.drawHoveringText(getTooltip(interaction), getTooltipX(interaction), getTooltipY(interaction));
-	}
-
-	// to make this WElement non-interactable
-	@Override
-	public boolean canInteractWith(@Nonnull final WInteraction wInteraction)
-	{
-		return false;
 	}
 }
