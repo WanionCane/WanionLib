@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
-public class LetterElement extends WElement
+public class LetterElement extends WElement<LetterElement>
 {
 	protected static final ResourceLocation DEFAULT_RESOURCE_LOCATION = Reference.GUI_TEXTURES;
 

@@ -17,12 +17,14 @@ import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
-public class TextElement extends WElement
+public class TextElement extends WElement<TextElement>
 {
-	public int DEFAULT_COLOR = 0x404040;
+	public final static int DEFAULT_COLOR = 0x404040;
+	public final static Supplier<Integer> DEFAULT_COLOR_SUPPLIER = () -> DEFAULT_COLOR;
 	private final Supplier<String> textSupplier;
-	private final TextAnchor textAnchor;
 	private final FontRenderer fontRenderer;
+	private final TextAnchor textAnchor;
+	private Supplier<Integer> colorSupplier;
 
 	public TextElement(@Nonnull final Supplier<String> textSupplier, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
 	{
@@ -33,14 +35,29 @@ public class TextElement extends WElement
 	{
 		super(wGuiContainer, x, y);
 		this.textSupplier = textSupplier;
-		this.textAnchor = textAnchor;
 		this.fontRenderer = getFontRenderer();
+		this.textAnchor = textAnchor;
+		this.colorSupplier = DEFAULT_COLOR_SUPPLIER;
 		setForegroundCheck((interaction) -> false);
 	}
 
-	public int getColor()
+	public final int getColor()
 	{
-		return DEFAULT_COLOR;
+		return colorSupplier.get();
+	}
+
+	@Nonnull
+	public TextElement setColorSupplier(@Nonnull final Supplier<Integer> colorSupplier)
+	{
+		this.colorSupplier = colorSupplier;
+		return this;
+	}
+
+	@Nonnull
+	public TextElement setDefaultColorSupplier()
+	{
+		this.colorSupplier = DEFAULT_COLOR_SUPPLIER;
+		return this;
 	}
 
 	@Override
@@ -68,9 +85,9 @@ public class TextElement extends WElement
 
 	public enum TextAnchor
 	{
-		RIGHT,
+		LEFT,
 		MIDDLE,
-		LEFT;
+		RIGHT;
 
 		public int getX(@Nonnull final TextElement textElement, @Nonnull final String text)
 		{

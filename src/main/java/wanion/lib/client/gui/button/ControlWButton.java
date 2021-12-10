@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
-public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>> extends WButton
+public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>> extends WButton<ControlWButton<C, S>>
 {
 	protected final C stateProvider;
 	protected int lineWidth = 0;

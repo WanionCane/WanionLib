@@ -19,9 +19,17 @@ import javax.annotation.Nonnull;
 @SideOnly(Side.CLIENT)
 public final class RedstoneControlWButton extends ControlWButton<RedstoneControl, RedstoneControl.RedstoneState>
 {
+	private final boolean hoverBelow;
+
 	public RedstoneControlWButton(@Nonnull final RedstoneControl redStoneControl, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
 	{
+		this(redStoneControl, wGuiContainer, x, y, false);
+	}
+
+	public RedstoneControlWButton(@Nonnull final RedstoneControl redStoneControl, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final boolean hoverBelow)
+	{
 		super(redStoneControl, wGuiContainer, x, y);
+		this.hoverBelow = hoverBelow;
 	}
 
 	@Override
@@ -33,6 +41,6 @@ public final class RedstoneControlWButton extends ControlWButton<RedstoneControl
 	@Override
 	public int getTooltipY(@Nonnull final WInteraction wInteraction)
 	{
-		return wInteraction.getMouseY() - 20 - wGuiContainer.getGuiTop();
+		return wInteraction.getMouseY() - (hoverBelow ? -30 : 20) - wGuiContainer.getGuiTop();
 	}
 }

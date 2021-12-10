@@ -16,10 +16,8 @@ import wanion.lib.client.gui.WElement;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public abstract class WButton extends WElement
+public abstract class WButton<B extends WButton<B>> extends WElement<B>
 {
-	protected final WGuiContainer<?> wGuiContainer;
-
 	public WButton(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
 	{
 		this(wGuiContainer, x, y, width, height, true);
@@ -28,7 +26,6 @@ public abstract class WButton extends WElement
 	public WButton(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height, final boolean enabled)
 	{
 		super(wGuiContainer, x, y, width, height);
-		this.wGuiContainer = wGuiContainer;
 		this.enabled = enabled;
 	}
 }

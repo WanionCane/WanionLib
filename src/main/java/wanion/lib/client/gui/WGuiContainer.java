@@ -43,27 +43,24 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 {
 	private final ResourceLocation guiTextureLocation;
 	private final WContainer<T> wContainer;
-	private final List<WElement> wElements = new ArrayList<>();
+	private final List<WElement<?>> wElements = new ArrayList<>();
 	protected final Slot firstPlayerSlot = inventorySlots.getSlot(inventorySlots.inventorySlots.size() - 36);
+	protected final TextElement tileName = new TextElement(() -> I18n.format(getContainer().getTileName()), this, 7, 7);
+	protected final TextElement inventory = new TextElement(() -> I18n.format("container.inventory"), this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11);
+
 
 	public WGuiContainer(@Nonnull final WContainer<T> wContainer, @Nonnull final ResourceLocation guiTextureLocation)
 	{
 		super(wContainer);
 		this.wContainer = wContainer;
 		this.guiTextureLocation = guiTextureLocation;
-		addElement(new TextElement(() -> I18n.format(wContainer.getTileName()), this, 7, 7));
-		addElement(new TextElement(() -> I18n.format("container.inventory"), this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11));
+		addElement(tileName);
+		addElement(inventory);
 	}
 
-	public final void addElement(@Nonnull final WElement element)
+	public final void addElement(@Nonnull final WElement<?> element)
 	{
 		wElements.add(element);
-	}
-
-	@Nonnull
-	public final WElement getElement(final int index)
-	{
-		return wElements.get(index);
 	}
 
 	@Nonnull
@@ -156,19 +153,19 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 
 	private boolean interact(@Nonnull final WInteraction wInteraction)
 	{
-		for (final WElement element : getInteractableElements(wInteraction)) {
+		for (final WElement<?> element : getInteractableElements(wInteraction)) {
 			if (wInteraction.shouldProceed())
 				element.interaction(wInteraction);
 		}
 		return wInteraction.shouldProceed();
 	}
 
-	private Collection<WElement> getEnabledElements()
+	private Collection<WElement<?>> getEnabledElements()
 	{
 		return wElements.stream().filter(WElement::isEnabled).collect(Collectors.toList());
 	}
 
-	private Collection<WElement> getInteractableElements(@Nonnull final WInteraction wInteraction)
+	private Collection<WElement<?>> getInteractableElements(@Nonnull final WInteraction wInteraction)
 	{
 		return wElements.stream().filter(element -> element.isEnabled() && element.canInteractWith(wInteraction)).collect(Collectors.toList());
 	}

@@ -47,6 +47,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     public TextFieldWElement(@Nonnull final TextField textField, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
     {
         this(textField, wGuiContainer, x, y, width, height, true);
+        setInteractionCheck((interaction) -> (isFocused || interaction.isHovering(this)) && field.canInteractWith(interaction.getEntityPlayer()));
     }
 
     public TextFieldWElement(@Nonnull final TextField textField, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height, final boolean enableBackgroundDrawing)
@@ -55,12 +56,6 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
         this.enableBackgroundDrawing = enableBackgroundDrawing;
         setForegroundCheck(interaction -> interaction.isHovering(this) && !canInteractWith(interaction));
         setTooltipSupplier((interaction, stackSupplier) -> Lists.newArrayList(field.getHoveringText(interaction)));
-    }
-
-    @Override
-    public boolean canInteractWith(@Nonnull final WInteraction wInteraction)
-    {
-        return (isFocused || wInteraction.isHovering(this)) && field.canInteractWith(wInteraction.getEntityPlayer());
     }
 
     /**

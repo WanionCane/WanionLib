@@ -23,7 +23,7 @@ import wanion.lib.common.control.energy.EnergyControl;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class EnergyElement extends WElement
+public class EnergyElement extends WElement<EnergyElement>
 {
     protected final EnergyControl energyControl;
 
@@ -31,6 +31,7 @@ public class EnergyElement extends WElement
     {
         super(wGuiContainer, x, y, 18, 54);
         this.energyControl = energyControl;
+        setInteractionCheck(interaction -> false);
         setTooltipSupplier((interaction, stackSupplier) -> Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", energyControl.getEnergyUsage()), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")));
     }
 
@@ -43,13 +44,6 @@ public class EnergyElement extends WElement
         final int size = scalePowerCentage();
         if (size != 0)
             Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY() + height - size, 18, height - size, 18, size, 128, 128);
-    }
-
-    // to make this WElement non-interactable
-    @Override
-    public boolean canInteractWith(@Nonnull final WInteraction wInteraction)
-    {
-        return false;
     }
 
     private int scalePowerCentage()

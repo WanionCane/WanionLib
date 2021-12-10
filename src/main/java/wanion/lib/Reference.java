@@ -14,7 +14,7 @@ public final class Reference
 {
 	public static final String MOD_ID = "wanionlib";
 	public static final String MOD_NAME = "WanionLib";
-	public static final String MOD_VERSION = "1.12.2-2.6";
+	public static final String MOD_VERSION = "1.12.2-2.7";
 	public static final String ACCEPTED_MINECRAFT = "[1.12,]";
 	public static final String CLIENT_PROXY = "wanion.lib.proxy.ClientProxy";
 	public static final String SERVER_PROXY = "wanion.lib.proxy.CommonProxy";

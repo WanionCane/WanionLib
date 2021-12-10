@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
-public class ItemElement extends WElement
+public class ItemElement extends WElement<ItemElement>
 {
 	public static final ITooltipSupplier DEFAULT_ITEMSTACK_TOOLTIP_SUPPLIER = ((interaction, stackSupplier) -> interaction.getWGuiContainer().getItemToolTip(stackSupplier.get()));
 	protected final Supplier<ItemStack> stackSupplier;
@@ -37,12 +37,7 @@ public class ItemElement extends WElement
 		this.stackSupplier = getStack;
 		setTooltipSupplier(DEFAULT_ITEMSTACK_TOOLTIP_SUPPLIER);
 		setForegroundCheck(interaction -> interaction.isHovering(this) && !stackSupplier.get().isEmpty());
-	}
-
-	@Override
-	public List<String> getTooltip(@Nonnull final WInteraction interaction)
-	{
-		return getTooltipSupplier().getTooltip(interaction, stackSupplier);
+		setItemStackSupplier(stackSupplier);
 	}
 
 	@Override

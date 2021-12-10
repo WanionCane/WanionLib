@@ -19,7 +19,7 @@ import wanion.lib.common.field.IField;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public abstract class WField<F extends IField<F>> extends WElement
+public abstract class WField<F extends IField<F>> extends WElement<WField<F>>
 {
 	protected static final ResourceLocation DEFAULT_RESOURCE_LOCATION = Reference.GUI_TEXTURES;
 

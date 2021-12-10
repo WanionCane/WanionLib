@@ -16,25 +16,33 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.lib.client.gui.interaction.WInteraction;
 import wanion.lib.client.gui.interaction.WKeyInteraction;
 import wanion.lib.client.gui.interaction.WMouseInteraction;
+import wanion.lib.common.WContainer;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 // W = Wanion
 @SideOnly(Side.CLIENT)
-public abstract class WElement
+public abstract class WElement<E extends WElement<E>>
 {
 	public final static ITooltipSupplier DEFAULT_WELEMENT_TOOLTIP_SUPPLIER = ((interaction, stackSupplier) -> Collections.emptyList());
+	public final static Supplier<ItemStack> DEFAULT_ITEMSTACK_SUPPLIER = () -> ItemStack.EMPTY;
+	private final Predicate<WInteraction> default_check = wInteraction -> wInteraction.isHovering(this);
 	protected final WGuiContainer<?> wGuiContainer;
 	private Predicate<WInteraction> foregroundCheck;
+	private Predicate<WInteraction> interactionCheck;
+	private Supplier<ItemStack> stackSupplier;
 	private ITooltipSupplier tooltipSupplier;
+	private final Class<E> elementClass;
 
 	protected final int width, height;
 	protected int x, y;
@@ -52,6 +60,7 @@ public abstract class WElement
 		this(wGuiContainer, x, y, 0, 0);
 	}
 
+	@SuppressWarnings("unchecked")
 	public WElement(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
 	{
 		this.wGuiContainer = wGuiContainer;
@@ -59,8 +68,11 @@ public abstract class WElement
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.foregroundCheck = wInteraction -> wInteraction.isHovering(this);
+		this.foregroundCheck = default_check;
+		this.interactionCheck = default_check;
+		this.stackSupplier = DEFAULT_ITEMSTACK_SUPPLIER;
 		this.tooltipSupplier = DEFAULT_WELEMENT_TOOLTIP_SUPPLIER;
+		this.elementClass = (Class<E>) getClass();
 	}
 
 	@Nonnull
@@ -69,39 +81,60 @@ public abstract class WElement
 		return foregroundCheck;
 	}
 
-	public final WElement setForegroundCheck(@Nonnull final Predicate<WInteraction> foregroundCheck)
+	public final E setForegroundCheck(@Nonnull final Predicate<WInteraction> foregroundCheck)
 	{
 		this.foregroundCheck = foregroundCheck;
-		return this;
+		return elementClass.cast(this);
 	}
 
-	public final WElement setDefaultForegroundCheck()
+	public final E setDefaultForegroundCheck()
 	{
-		this.foregroundCheck = wInteraction -> wInteraction.isHovering(this);
-		return this;
+		this.foregroundCheck = default_check;
+		return elementClass.cast(this);
 	}
 
-	public final ITooltipSupplier getTooltipSupplier()
+	public ITooltipSupplier getTooltipSupplier()
 	{
 		return tooltipSupplier;
 	}
 
 	@Nonnull
-	public final WElement setTooltipSupplier(@Nonnull final ITooltipSupplier tooltipSupplier)
+	public final E setTooltipSupplier(@Nonnull final ITooltipSupplier tooltipSupplier)
 	{
 		this.tooltipSupplier = tooltipSupplier;
-		return this;
+		return elementClass.cast(this);
 	}
 
-	public final WElement setDefaultWelementTooltipSupplier()
+	public final E setDefaultTooltipSupplier()
 	{
 		this.tooltipSupplier = DEFAULT_WELEMENT_TOOLTIP_SUPPLIER;
-		return this;
+		return elementClass.cast(this);
 	}
 
-	public List<String> getTooltip(@Nonnull final WInteraction interaction)
+	@Nonnull
+	public Supplier<ItemStack> getItemStackSupplier()
 	{
-		return tooltipSupplier.getTooltip(interaction);
+		return stackSupplier;
+	}
+
+	@Nonnull
+	public final E setItemStackSupplier(@Nonnull final Supplier<ItemStack> stackSupplier)
+	{
+		this.stackSupplier = stackSupplier;
+		return elementClass.cast(this);
+	}
+
+	@Nonnull
+	public final E setDefaultItemStackSupplier()
+	{
+		this.stackSupplier = DEFAULT_ITEMSTACK_SUPPLIER;
+		return elementClass.cast(this);
+	}
+
+	@Nonnull
+	public final List<String> getTooltip(@Nonnull final WInteraction interaction)
+	{
+		return getTooltipSupplier().getTooltip(interaction, getItemStackSupplier());
 	}
 
 	public int getX()
@@ -145,13 +178,19 @@ public abstract class WElement
 
 	public final int getWindowID()
 	{
-		return wGuiContainer.inventorySlots.windowId;
+		return getWContainer().windowId;
 	}
 
 	@Nonnull
 	public final WGuiContainer<?> getWGuiContainer()
 	{
 		return wGuiContainer;
+	}
+
+	@Nonnull
+	public final WContainer<?> getWContainer()
+	{
+		return wGuiContainer.getContainer();
 	}
 
 	@Nonnull
@@ -171,9 +210,29 @@ public abstract class WElement
 		this.enabled = enabled;
 	}
 
-	public boolean canInteractWith(@Nonnull final WInteraction wInteraction)
+	@Nonnull
+	public final Predicate<WInteraction> getInteractionCheck()
 	{
-		return wInteraction.isHovering(this);
+		return this.interactionCheck;
+	}
+
+	@Nonnull
+	public final E setInteractionCheck(@Nonnull final Predicate<WInteraction> wInteractionPredicate)
+	{
+		this.interactionCheck = wInteractionPredicate;
+		return elementClass.cast(this);
+	}
+
+	@Nonnull
+	public final E setDefaultInteractionCheck()
+	{
+		this.interactionCheck = default_check;
+		return elementClass.cast(this);
+	}
+
+	public final boolean canInteractWith(@Nonnull final WInteraction wInteraction)
+	{
+		return interactionCheck.test(wInteraction);
 	}
 
 	public void interaction(@Nonnull final WInteraction wInteraction)

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 import wanion.lib.client.gui.WGuiContainer;
 import wanion.lib.client.gui.WElement;
+import wanion.lib.common.WContainer;
 
 import javax.annotation.Nonnull;
 
@@ -39,9 +40,15 @@ public class WInteraction
 	}
 
 	@Nonnull
-	public WGuiContainer<?> getWGuiContainer()
+	public final WGuiContainer<?> getWGuiContainer()
 	{
 		return wGuiContainer;
+	}
+
+	@Nonnull
+	public final WContainer<?> getWContainer()
+	{
+		return wGuiContainer.getContainer();
 	}
 
 	@Nonnull
@@ -60,17 +67,10 @@ public class WInteraction
 		return mouseY;
 	}
 
-	public boolean isHovering(@Nonnull final WElement wElement)
+	public boolean isHovering(@Nonnull final WElement<?> wElement)
 	{
 		return mouseX >= wElement.getUsableX() && mouseY >= wElement.getUsableY() && mouseX < wElement.getUsableX() + wElement.getWidth() && mouseY < wElement.getUsableY() + wElement.getHeight();
 	}
-
-	/*
-	public boolean isHovering(final int x, final int y, final int width, final int height)
-	{
-		return mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-	}
-	 */
 
 	public final void proceed()
 	{
