@@ -10,6 +10,7 @@ package wanion.lib.common.matching.matcher;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import wanion.lib.common.Util;
 import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.Matching;
 
@@ -33,16 +34,7 @@ public final class AnyDamageMatcher extends AbstractMatcher<AnyDamageMatcher>
 	@Override
 	public AbstractMatcher<?> validate()
 	{
-		final ItemStack itemStack = getStack();
-		return itemStack.getHasSubtypes() || itemStack.isItemStackDamageable() ? this : matching.getDefaultMatcher();
-	}
-
-	@Nonnull
-	@Override
-	public AbstractMatcher<?> next()
-	{
-		final ItemStack itemStack = getStack();
-		return matching instanceof Matching && ((Matching) matching).shouldUseNbt() && itemStack.hasTagCompound() ? new NbtMatcher(matching) : OreDictionary.getOreIDs(itemStack).length > 0 ? new OreDictMatcher(matching) : new ItemStackMatcher(matching);
+		return Util.isDamageable(getStack()) ? this : matching.getDefaultMatcher();
 	}
 
 	@Override

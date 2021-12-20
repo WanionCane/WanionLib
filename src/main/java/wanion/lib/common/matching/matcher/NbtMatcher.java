@@ -34,13 +34,6 @@ public final class NbtMatcher extends AbstractMatcher<NbtMatcher>
 		return getStack().hasTagCompound() ? this : matching.getDefaultMatcher();
 	}
 
-	@Nonnull
-	@Override
-	public AbstractMatcher<?> next()
-	{
-		return new OreDictMatcher(matching);
-	}
-
 	@Override
 	public boolean matches(@Nonnull final ItemStack otherItemStack)
 	{

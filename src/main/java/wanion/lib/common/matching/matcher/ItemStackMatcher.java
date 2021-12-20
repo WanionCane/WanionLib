@@ -35,19 +35,6 @@ public final class ItemStackMatcher extends AbstractMatcher<ItemStackMatcher>
 		return !getStack().isEmpty() ? this : new EmptyMatcher(matching);
 	}
 
-	@Nonnull
-	@Override
-	public AbstractMatcher<?> next()
-	{
-		final ItemStack itemStack = getStack();
-		if (itemStack.getHasSubtypes() || itemStack.isItemStackDamageable())
-			return new AnyDamageMatcher(matching);
-		else if (matching instanceof Matching && ((Matching) matching).shouldUseNbt() && itemStack.hasTagCompound())
-			return new NbtMatcher(matching);
-		else
-			return new OreDictMatcher(matching);
-	}
-
 	@Override
 	public boolean matches(@Nonnull final ItemStack otherItemStack)
 	{

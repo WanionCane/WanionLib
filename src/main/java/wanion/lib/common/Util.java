@@ -134,4 +134,9 @@ public final class Util
 	{
 		return Util.getField(OreDictionary.class, "stackToId", null, Map.class).containsKey(MetaItem.get(itemStack));
 	}
+
+	public static boolean isDamageable(@Nonnull final ItemStack stack)
+	{
+		return stack.getHasSubtypes() || stack.isItemStackDamageable();
+	}
 }

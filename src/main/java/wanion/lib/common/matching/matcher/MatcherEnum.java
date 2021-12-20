@@ -26,13 +26,13 @@ public enum MatcherEnum
 	DISABLED(DisabledMatcher.class),
 	ENUM(EnumMatcher.class),
 	EMPTY(EmptyMatcher.class, ItemStack::isEmpty),
-	ITEM_STACK(ItemStackMatcher.class, not(ItemStack::isEmpty)),
+	ORE_DICT(OreDictMatcher.class, Util::itemStackHasOres),
+	NBT(NbtMatcher.class, ItemStack::hasTagCompound, ORE_DICT),
+	ANY_DAMAGE(AnyDamageMatcher.class, Util::isDamageable, NBT),
+	ITEM_STACK(ItemStackMatcher.class, not(ItemStack::isEmpty), ANY_DAMAGE),
 	DAMAGED(DamagedMatcher.class, ItemStack::isItemDamaged),
-	ANY_DAMAGE(AnyDamageMatcher.class, not(ItemStack::isEmpty)),
-	NBT(NbtMatcher.class, ItemStack::hasTagCompound),
 	VANILLA(VanillaMatcher.class, Util::isFromVanilla),
-	MOD(ModMatcher.class, not(Util::isFromVanilla)),
-	ORE_DICT(OreDictMatcher.class, Util::itemStackHasOres);
+	MOD(ModMatcher.class, not(Util::isFromVanilla));
 
 	private final static Map<String, MatcherEnum> nameToMatcherEnum = new HashMap<>();
 
@@ -43,23 +43,37 @@ public enum MatcherEnum
 
 	final Class<? extends AbstractMatcher<? extends AbstractMatcher<?>>> matcherClass;
 	private final Predicate<ItemStack> accepts;
+	private final MatcherEnum nextMatcherEnum;
 	final String lowerCaseName;
 
 	MatcherEnum(@Nonnull final Class<? extends AbstractMatcher<?>> matcherClass)
 	{
-		this(matcherClass, i -> false);
+		this(matcherClass, i -> false, null);
 	}
 
 	MatcherEnum(@Nonnull final Class<? extends AbstractMatcher<?>> matcherClass, @Nonnull final Predicate<ItemStack> accepts)
 	{
+		this(matcherClass, accepts, null);
+	}
+
+	MatcherEnum(@Nonnull final Class<? extends AbstractMatcher<?>> matcherClass, @Nonnull final Predicate<ItemStack> accepts, final MatcherEnum matcherEnum)
+	{
 		this.matcherClass = matcherClass;
 		this.accepts = accepts;
 		this.lowerCaseName = name().toLowerCase();
+		this.nextMatcherEnum = matcherEnum;
 	}
 
 	public boolean accepts(@Nonnull final ItemStack itemStack)
 	{
 		return accepts.test(itemStack);
+	}
+
+	@Nonnull
+	public MatcherEnum getNextMatcherEnum(@Nonnull final AbstractMatcher<?> abstractMatcher)
+	{
+		final AbstractMatcher<?> nextMatcher = abstractMatcher.next();
+		return nextMatcher == abstractMatcher ? this : nextMatcherEnum == null ? ITEM_STACK : nextMatcherEnum;
 	}
 
 	@Nonnull
@@ -72,6 +86,9 @@ public enum MatcherEnum
 	@Nonnull
 	public AbstractMatcher<?> getMatcher(@Nonnull final AbstractMatching<?> matching)
 	{
+		final AbstractMatcher<?> matcher = matching.getMatcher();
+		if (matcherClass.isInstance(matcher))
+			return matcher;
 		try {
 			final Constructor<? extends AbstractMatcher<?>> constructor = matcherClass.getDeclaredConstructor(AbstractMatching.class);
 			return constructor.newInstance(matching);

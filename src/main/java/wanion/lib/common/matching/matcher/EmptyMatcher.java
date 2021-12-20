@@ -41,13 +41,6 @@ public final class EmptyMatcher extends AbstractMatcher<EmptyMatcher>
 		return getStack().isEmpty() ? this : matching.getDefaultMatcher();
 	}
 
-	@Nonnull
-	@Override
-	public AbstractMatcher<?> next()
-	{
-		return new ItemStackMatcher(matching);
-	}
-
 	@Override
 	public boolean matches(@Nonnull final ItemStack otherItemStack)
 	{

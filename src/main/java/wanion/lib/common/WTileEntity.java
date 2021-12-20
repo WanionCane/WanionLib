@@ -84,16 +84,14 @@ public abstract class WTileEntity extends TileEntity implements ISidedInventory
         final NBTTagCompound displayTag = nbtTagCompound.getCompoundTag("display");
         if (displayTag.hasKey("Name"))
             this.customName = displayTag.getString("Name");
-        controllers.forEach(controller -> controller.readNBT(nbtTagCompound));
         final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
-        if (nbtTagList.hasNoTags())
-            return;
         for (int i = 0; i < nbtTagList.tagCount(); i++) {
             final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
             final int slot = slotCompound.getShort("Slot");
             if (slot >= 0 && slot < getSizeInventory())
                 setInventorySlotContents(slot, new ItemStack(slotCompound));
         }
+        controllers.forEach(controller -> controller.readNBT(nbtTagCompound));
     }
 
     @Nonnull

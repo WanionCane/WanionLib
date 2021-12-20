@@ -80,13 +80,12 @@ public final class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 		return matching.getDefaultMatcher();
 	}
 
-	@Nonnull
 	@Override
 	public AbstractMatcher<?> next()
 	{
 		if (++actualOre >= ores.length)
 			return new ItemStackMatcher(matching);
-		this.oreName = OreDictionary.getOreName(actualOre);
+		this.oreName = OreDictionary.getOreName(ores[actualOre]);
 		return this;
 	}
 

@@ -20,7 +20,7 @@ public class MatchingSlot extends ShapeSlot
 	public MatchingSlot(@Nonnull final IMatchingInventory matchingInventory, final int id, final int x, final int y)
 	{
 		super(matchingInventory, id, x, y);
-			this.matching = matchingInventory.getMatchingController().getMatching(id);
+		this.matching = matchingInventory.getMatchingController().getMatching(id);
 	}
 
 	public AbstractMatching<?> getMatching()

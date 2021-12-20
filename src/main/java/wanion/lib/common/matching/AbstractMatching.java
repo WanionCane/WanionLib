@@ -19,21 +19,22 @@ import wanion.lib.common.matching.matcher.MatcherEnum;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class AbstractMatching<M extends AbstractMatching<M>> implements ISmartNBT, ICopyable<M>, IControlNameable
 {
-	protected final List<ItemStack> itemStacks;
+	protected final Supplier<ItemStack> stackSupplier;
 	protected final int number;
 	protected AbstractMatcher<?> matcher = new ItemStackMatcher(this);
 
-	public AbstractMatching(@Nonnull final List<ItemStack> itemStacks, final int number)
+	public AbstractMatching(@Nonnull final Supplier<ItemStack> stackSupplier, final int number)
 	{
-		this(itemStacks, number, null);
+		this(stackSupplier, number, null);
 	}
 
-	public AbstractMatching(@Nonnull final List<ItemStack> itemStacks, final int number, final NBTTagCompound tagToRead)
+	public AbstractMatching(@Nonnull final Supplier<ItemStack> stackSupplier, final int number, final NBTTagCompound tagToRead)
 	{
-		this.itemStacks = itemStacks;
+		this.stackSupplier = stackSupplier;
 		this.number = number;
 		if (tagToRead != null)
 			readNBT(tagToRead);
@@ -45,9 +46,12 @@ public abstract class AbstractMatching<M extends AbstractMatching<M>> implements
 	}
 
 	@Nonnull
-	public abstract AbstractMatcher<?> getDefaultMatcher();
+	public AbstractMatcher<?> getDefaultMatcher()
+	{
+		return new ItemStackMatcher(this).validate();
+	}
 
-	public abstract void nextMatcher();
+	public void nextMatcher() {}
 
 	public final AbstractMatcher<?> getMatcher()
 	{
@@ -64,14 +68,14 @@ public abstract class AbstractMatching<M extends AbstractMatching<M>> implements
 		return matcher.matches(otherItemStack);
 	}
 
-	public final void validate()
+	public void validate()
 	{
 		this.matcher = matcher.validate();
 	}
 
 	public final ItemStack getStack()
 	{
-		return itemStacks.get(number);
+		return stackSupplier.get();
 	}
 
 	@Override
@@ -91,8 +95,8 @@ public abstract class AbstractMatching<M extends AbstractMatching<M>> implements
 	{
 		final AbstractMatcher<?> matcher = MatcherEnum.getMatcherEnumByName(nbtTagCompound.getString("matcherType")).getMatcher(this);
 		matcher.readNBT(nbtTagCompound.getCompoundTag("matcher"));
-		setMatcher(matcher);
 		customReadNBT(nbtTagCompound);
+		setMatcher(matcher);
 	}
 
 	public void customWriteNBT(@Nonnull final NBTTagCompound nbtTagCompound) {}

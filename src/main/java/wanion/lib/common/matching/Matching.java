@@ -12,9 +12,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import wanion.lib.common.matching.matcher.AbstractMatcher;
 import wanion.lib.common.matching.matcher.ItemStackMatcher;
+import wanion.lib.common.matching.matcher.MatcherEnum;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class Matching extends AbstractMatching<Matching>
 {
@@ -22,13 +24,22 @@ public class Matching extends AbstractMatching<Matching>
 
 	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number)
 	{
-		super(itemStacks, number);
-		this.shouldUseNbt = false;
+		this(itemStacks, number, false);
 	}
 
-	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final NBTTagCompound tagToRead, final boolean shouldUseNbt)
+	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final boolean shouldUseNbt)
 	{
-		super(itemStacks, number, tagToRead);
+		this(itemStacks, number, shouldUseNbt, null);
+	}
+
+	public Matching(@Nonnull final List<ItemStack> itemStacks, final int number, final boolean shouldUseNbt, final NBTTagCompound tagToRead)
+	{
+		this(() -> itemStacks.get(number), number, shouldUseNbt, tagToRead);
+	}
+
+	public Matching(@Nonnull final Supplier<ItemStack> stackSupplier, final int number, final boolean shouldUseNbt, final NBTTagCompound tagToRead)
+	{
+		super(stackSupplier, number, tagToRead);
 		this.shouldUseNbt = shouldUseNbt;
 	}
 
@@ -38,23 +49,25 @@ public class Matching extends AbstractMatching<Matching>
 	}
 
 	@Override
-	@Nonnull
-	public AbstractMatcher<?> getDefaultMatcher()
-	{
-		return new ItemStackMatcher(this).validate();
-	}
-
-	@Override
 	public void nextMatcher()
 	{
-		this.matcher = matcher.next().validate();
+		final ItemStack stack = getStack();
+		MatcherEnum matcherEnum = matcher.getMatcherEnum();
+		do {
+			matcherEnum = matcherEnum.getNextMatcherEnum(matcher);
+			if (!shouldUseNbt && matcherEnum == MatcherEnum.NBT)
+				continue;
+			if (matcherEnum.accepts(stack))
+				break;
+		} while (matcherEnum != MatcherEnum.ITEM_STACK);
+		this.matcher = matcherEnum.getMatcher(this).validate();
 	}
 
 	@Override
 	@Nonnull
 	public Matching copy()
 	{
-		return new Matching(itemStacks, number, writeNBT(), shouldUseNbt);
+		return new Matching(stackSupplier, number, shouldUseNbt, writeNBT());
 	}
 
 	@Override
