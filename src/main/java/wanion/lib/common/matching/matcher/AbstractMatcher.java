@@ -48,10 +48,14 @@ public abstract class AbstractMatcher<M extends AbstractMatcher<M>> implements I
 	@Nonnull
 	public abstract AbstractMatcher<?> validate();
 
-	// returns null if there is nothing else to do in this matcher.
-	public AbstractMatcher<?> next()
+	public boolean canMoveOn()
 	{
-		return null;
+		return true;
+	}
+
+	public final boolean accepts(@Nonnull final ItemStack itemStack)
+	{
+		return getMatcherEnum().accepts(itemStack);
 	}
 
 	public abstract boolean matches(@Nonnull ItemStack otherItemStack);

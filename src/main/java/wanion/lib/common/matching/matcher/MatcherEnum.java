@@ -15,6 +15,7 @@ import wanion.lib.common.matching.AbstractMatching;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -35,10 +36,14 @@ public enum MatcherEnum
 	MOD(ModMatcher.class, not(Util::isFromVanilla));
 
 	private final static Map<String, MatcherEnum> nameToMatcherEnum = new HashMap<>();
+	private final static Map<MatcherEnum, MatcherEnum> matcherToNextMatcher = new EnumMap<>(MatcherEnum.class);
 
 	static {
-		for (final MatcherEnum matcherEnum : values())
+		for (final MatcherEnum matcherEnum : values()) {
 			nameToMatcherEnum.put(matcherEnum.lowerCaseName, matcherEnum);
+			final MatcherEnum nextMatcherEnum = matcherEnum.nextMatcherEnum;
+			matcherToNextMatcher.put(matcherEnum, nextMatcherEnum != null ? nextMatcherEnum : ITEM_STACK);
+		}
 	}
 
 	final Class<? extends AbstractMatcher<? extends AbstractMatcher<?>>> matcherClass;
@@ -72,8 +77,7 @@ public enum MatcherEnum
 	@Nonnull
 	public MatcherEnum getNextMatcherEnum(@Nonnull final AbstractMatcher<?> abstractMatcher)
 	{
-		final AbstractMatcher<?> nextMatcher = abstractMatcher.next();
-		return nextMatcher == abstractMatcher ? this : nextMatcherEnum == null ? ITEM_STACK : nextMatcherEnum;
+		return !abstractMatcher.canMoveOn() ? this : matcherToNextMatcher.get(this);
 	}
 
 	@Nonnull

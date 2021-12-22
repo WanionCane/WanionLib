@@ -31,7 +31,7 @@ public final class MetaItem
 {
 	private static final RegistryNamespaced<ResourceLocation, Item> itemRegistry = Item.REGISTRY;
 
-	private MetaItem() { }
+	private MetaItem() {}
 
 	public static int get(final ItemStack itemStack)
 	{

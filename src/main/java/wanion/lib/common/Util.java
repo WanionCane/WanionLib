@@ -12,6 +12,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
@@ -138,5 +141,23 @@ public final class Util
 	public static boolean isDamageable(@Nonnull final ItemStack stack)
 	{
 		return stack.getHasSubtypes() || stack.isItemStackDamageable();
+	}
+
+	public static String getModNameFromModId(@Nonnull final String modId)
+	{
+		final ModContainer modContainer = getModContainerFromModId(modId);
+		return modContainer != null ? modContainer.getName() : null;
+	}
+
+	public static ModContainer getModContainerFromModId(@Nonnull final String modId)
+	{
+		final Map<String, ModContainer> namedMods = getField(Loader.class, "namedMods", Loader.instance(), Map.class);
+		return namedMods != null ? namedMods.get(modId) : null;
+	}
+
+	public static ModContainer getModContainerFromStack(@Nonnull final ItemStack itemStack)
+	{
+		final ResourceLocation resourceLocation = itemStack.getItem().getRegistryName();
+		return resourceLocation != null ? getModContainerFromModId(resourceLocation.getResourceDomain()) : null;
 	}
 }

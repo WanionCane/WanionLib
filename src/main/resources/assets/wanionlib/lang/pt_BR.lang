@@ -23,6 +23,7 @@ wanionlib.found.singular=Encontrado
 wanionlib.found.plural=Encontrados
 wanionlib.success=Sucesso!
 wanionlib.failure=Falhou
+wanionlib.amount=Quantidade:
 
 // Energy
 wanionlib.consumes=Consome %1$s FE

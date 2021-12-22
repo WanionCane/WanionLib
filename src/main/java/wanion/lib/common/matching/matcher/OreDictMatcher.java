@@ -10,7 +10,6 @@ package wanion.lib.common.matching.matcher;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.oredict.OreDictionary;
 import wanion.lib.common.matching.AbstractMatching;
@@ -19,9 +18,9 @@ import javax.annotation.Nonnull;
 
 public final class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 {
+	private String oreName;
 	private int[] ores;
 	private int actualOre;
-	private String oreName;
 
 	public OreDictMatcher(@Nonnull final AbstractMatching<?> matching)
 	{
@@ -81,12 +80,12 @@ public final class OreDictMatcher extends AbstractMatcher<OreDictMatcher>
 	}
 
 	@Override
-	public AbstractMatcher<?> next()
+	public boolean canMoveOn()
 	{
 		if (++actualOre >= ores.length)
-			return new ItemStackMatcher(matching);
+			return true;
 		this.oreName = OreDictionary.getOreName(ores[actualOre]);
-		return this;
+		return false;
 	}
 
 	@Override

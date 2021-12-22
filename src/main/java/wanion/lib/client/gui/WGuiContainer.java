@@ -28,7 +28,6 @@ import wanion.lib.common.control.IControl;
 import wanion.lib.common.field.FieldController;
 import wanion.lib.common.field.IField;
 import wanion.lib.common.matching.AbstractMatching;
-import wanion.lib.common.matching.Matching;
 import wanion.lib.common.matching.MatchingController;
 
 import javax.annotation.Nonnull;
@@ -47,13 +46,21 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	protected final Slot firstPlayerSlot = inventorySlots.getSlot(inventorySlots.inventorySlots.size() - 36);
 	protected final TextElement tileName = new TextElement(() -> I18n.format(getContainer().getTileName()), this, 7, 7);
 	protected final TextElement inventory = new TextElement(() -> I18n.format("container.inventory"), this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11);
-
+	private WInteraction latestInteraction;
 
 	public WGuiContainer(@Nonnull final WContainer<T> wContainer, @Nonnull final ResourceLocation guiTextureLocation)
+	{
+		this(wContainer, guiTextureLocation, 0, 0);
+	}
+
+	public WGuiContainer(@Nonnull final WContainer<T> wContainer, @Nonnull final ResourceLocation guiTextureLocation, final int width, final int height)
 	{
 		super(wContainer);
 		this.wContainer = wContainer;
 		this.guiTextureLocation = guiTextureLocation;
+		xSize = width;
+		ySize = height;
+		this.latestInteraction = new WInteraction(this, 0 ,0);
 		addElement(tileName);
 		addElement(inventory);
 	}
@@ -112,6 +119,12 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		this.renderHoveredToolTip(mouseX, mouseY);
 	}
 
+	@Nonnull
+	public WInteraction getLatestInteraction()
+	{
+		return latestInteraction;
+	}
+
 	@Override
 	protected final void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
 	{
@@ -119,17 +132,17 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		mc.getTextureManager().bindTexture(guiTextureLocation);
 		final boolean smallGui = xSize < 256 && ySize < 256;
 		drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, smallGui ? 256 : Math.max(xSize, ySize), smallGui ? 256 : Math.max(xSize, ySize));
+		this.latestInteraction = new WInteraction(this, mouseX, mouseY);
+		getEnabledElements().forEach(element -> element.draw(this.latestInteraction));
 		// I couldn't find a better place for the line below =(
 		getUpdatableElements().forEach(IUpdatable::update);
-		final WInteraction interaction = new WInteraction(this, mouseX, mouseY);
-		getEnabledElements().forEach(element -> element.draw(interaction));
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
 	{
-		final WInteraction interaction = new WInteraction(this, mouseX, mouseY);
-		getEnabledElements().forEach(element -> element.drawForeground(interaction));
+		this.latestInteraction = new WInteraction(this, mouseX, mouseY);
+		getEnabledElements().forEach(element -> element.drawForeground(this.latestInteraction));
 		for (final GuiButton guibutton : this.buttonList)
 			if (guibutton.isMouseOver())
 				guibutton.drawButtonForegroundLayer(mouseX, mouseY);

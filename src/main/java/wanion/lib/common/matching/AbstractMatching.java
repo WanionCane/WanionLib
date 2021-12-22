@@ -32,7 +32,8 @@ public abstract class AbstractMatching<M extends AbstractMatching<M>> implements
 		this(stackSupplier, number, null);
 	}
 
-	public AbstractMatching(@Nonnull final Supplier<ItemStack> stackSupplier, final int number, final NBTTagCompound tagToRead)
+	// if the stack supplier is null, getStack() will have to be overridden.
+	public AbstractMatching(final Supplier<ItemStack> stackSupplier, final int number, final NBTTagCompound tagToRead)
 	{
 		this.stackSupplier = stackSupplier;
 		this.number = number;
@@ -63,6 +64,11 @@ public abstract class AbstractMatching<M extends AbstractMatching<M>> implements
 		this.matcher = matcher.validate();
 	}
 
+	public final boolean accepts(@Nonnull final ItemStack itemStack)
+	{
+		return matcher.accepts(itemStack);
+	}
+
 	public final boolean matches(@Nonnull final ItemStack otherItemStack)
 	{
 		return matcher.matches(otherItemStack);
@@ -73,9 +79,14 @@ public abstract class AbstractMatching<M extends AbstractMatching<M>> implements
 		this.matcher = matcher.validate();
 	}
 
-	public final ItemStack getStack()
+	public ItemStack getStack()
 	{
 		return stackSupplier.get();
+	}
+
+	public final boolean isEmpty()
+	{
+		return getStack().isEmpty();
 	}
 
 	@Override

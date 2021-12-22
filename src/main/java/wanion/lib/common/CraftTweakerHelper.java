@@ -12,7 +12,6 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.oredict.IOreDictEntry;
-import joptsimple.internal.Strings;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
@@ -72,7 +71,7 @@ public final class CraftTweakerHelper
 		if (item == null)
 			return null;
 		final Object internal = item.getInternal();
-		if (internal == null || !(internal instanceof ItemStack))
+		if (!(internal instanceof ItemStack))
 			CraftTweakerAPI.getLogger().logError("Not a valid item stack: " + item);
 		return internal instanceof ItemStack ? (ItemStack) internal : null;
 	}

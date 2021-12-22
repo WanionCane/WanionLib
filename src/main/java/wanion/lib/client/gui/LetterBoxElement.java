@@ -22,13 +22,15 @@ import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
-public class LetterElement extends WElement<LetterElement>
+public class LetterBoxElement extends WElement<LetterBoxElement>
 {
+	protected static final ResourceLocation DEFAULT_RESOURCE_LOCATION = Reference.GUI_TEXTURES;
+
 	private final String letter;
 	private final FontRenderer fontRenderer;
 	private final Supplier<Integer> letterX, letterY;
 
-	public LetterElement(final char letter, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
+	public LetterBoxElement(final char letter, @Nonnull final WGuiContainer<?> wGuiContainer, int x, int y)
 	{
 		super(wGuiContainer, x, y, 18, 18);
 		this.letter = TextFormatting.BOLD + Character.toString(letter);
@@ -40,7 +42,9 @@ public class LetterElement extends WElement<LetterElement>
 	@Override
 	public void draw(@Nonnull final WInteraction wInteraction)
 	{
+		getTextureManager().bindTexture(DEFAULT_RESOURCE_LOCATION);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), !wInteraction.isHovering(this) ? 36 : 54, 72, width, height, 128, 128);
 		fontRenderer.drawStringWithShadow(letter, letterX.get(), letterY.get(), 0xFFFFFF);
 	}
 }
