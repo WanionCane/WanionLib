@@ -40,7 +40,7 @@ public class LetterElement extends WElement<LetterElement>
 	@Override
 	public void draw(@Nonnull final WInteraction wInteraction)
 	{
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		fontRenderer.drawStringWithShadow(letter, letterX.get(), letterY.get(), 0xFFFFFF);
 	}
 }

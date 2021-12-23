@@ -11,6 +11,7 @@ package wanion.lib.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -40,12 +41,14 @@ import java.util.stream.Collectors;
 @SideOnly(Side.CLIENT)
 public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer implements INBTMessage
 {
-	private final ResourceLocation guiTextureLocation;
 	private final WContainer<T> wContainer;
+	private final ResourceLocation guiTextureLocation;
 	private final List<WElement<?>> wElements = new ArrayList<>();
+	protected final String tileName;
+	protected final String inventory;
 	protected final Slot firstPlayerSlot = inventorySlots.getSlot(inventorySlots.inventorySlots.size() - 36);
-	protected final TextElement tileName = new TextElement(() -> I18n.format(getContainer().getTileName()), this, 7, 7);
-	protected final TextElement inventory = new TextElement(() -> I18n.format("container.inventory"), this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11);
+	protected final TextElement tileNameTextElement;
+	protected final TextElement inventoryTextElement;
 	private WInteraction latestInteraction;
 
 	public WGuiContainer(@Nonnull final WContainer<T> wContainer, @Nonnull final ResourceLocation guiTextureLocation)
@@ -58,16 +61,28 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 		super(wContainer);
 		this.wContainer = wContainer;
 		this.guiTextureLocation = guiTextureLocation;
+		this.tileName = I18n.format(getContainer().getTileName());
+		this.inventory = I18n.format("container.inventory");
 		xSize = width;
 		ySize = height;
 		this.latestInteraction = new WInteraction(this, 0 ,0);
-		addElement(tileName);
-		addElement(inventory);
+		addElement((tileNameTextElement = getTileNameTextElement()));
+		addElement((inventoryTextElement = getInventoryTextElement()));
 	}
 
 	public final void addElement(@Nonnull final WElement<?> element)
 	{
 		wElements.add(element);
+	}
+
+	protected TextElement getTileNameTextElement()
+	{
+		return new TextElement(() -> tileName, this, 7, 7);
+	}
+
+	protected TextElement getInventoryTextElement()
+	{
+		return new TextElement(() -> inventory, this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11);
 	}
 
 	@Nonnull
@@ -128,7 +143,7 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 	@Override
 	protected final void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
 	{
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(guiTextureLocation);
 		final boolean smallGui = xSize < 256 && ySize < 256;
 		drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, smallGui ? 256 : Math.max(xSize, ySize), smallGui ? 256 : Math.max(xSize, ySize));

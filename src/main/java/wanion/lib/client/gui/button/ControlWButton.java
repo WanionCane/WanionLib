@@ -62,7 +62,7 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 		if (textureResourceLocation == null || texturePos == null)
 			return;
 		getTextureManager().bindTexture(textureResourceLocation);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), texturePos.getLeft(), texturePos.getRight(), width, height, 128, 128);
 	}
 

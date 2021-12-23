@@ -43,7 +43,7 @@ public class LetterBoxElement extends WElement<LetterBoxElement>
 	public void draw(@Nonnull final WInteraction wInteraction)
 	{
 		getTextureManager().bindTexture(DEFAULT_RESOURCE_LOCATION);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), !wInteraction.isHovering(this) ? 36 : 54, 72, width, height, 128, 128);
 		fontRenderer.drawStringWithShadow(letter, letterX.get(), letterY.get(), 0xFFFFFF);
 	}

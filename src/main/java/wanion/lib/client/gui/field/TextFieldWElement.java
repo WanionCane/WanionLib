@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.math.MathHelper;
@@ -360,6 +361,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     @Override
     public void draw(@Nonnull final WInteraction interaction)
     {
+        GlStateManager.color(1.0F, 1.0F, 1.0F);
         if (enableBackgroundDrawing) {
             Gui.drawRect(this.getUsableX() - 1, this.getUsableY() - 1, this.getUsableX() + this.width + 1, this.getUsableY() + this.height + 1, -7631989);
             Gui.drawRect(this.getUsableX(), this.getUsableY(), this.getUsableX() + this.width + 1, this.getUsableY() + this.height + 1, -1);

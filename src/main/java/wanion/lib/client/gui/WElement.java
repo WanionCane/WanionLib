@@ -13,6 +13,7 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -252,8 +253,10 @@ public abstract class WElement<E extends WElement<E>>
 	public final void drawForeground(@Nonnull final WInteraction interaction)
 	{
 		List<String> tooltip;
-		if (foregroundCheck.test(interaction) && !(tooltip = getTooltip(interaction)).isEmpty())
+		if (foregroundCheck.test(interaction) && !(tooltip = getTooltip(interaction)).isEmpty()) {
+			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			wGuiContainer.drawHoveringText(tooltip, getTooltipX(interaction), getTooltipY(interaction));
+		}
 	}
 
 	public int getTooltipX(@Nonnull final WInteraction wInteraction)

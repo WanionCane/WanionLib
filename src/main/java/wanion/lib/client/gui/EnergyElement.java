@@ -39,7 +39,7 @@ public class EnergyElement extends WElement<EnergyElement>
     public void draw(@Nonnull final WInteraction wInteraction)
     {
         wGuiContainer.mc.getTextureManager().bindTexture(Reference.GUI_TEXTURES);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F);
         Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), 0, 0, width, height, 128, 128);
         final int size = scalePowerCentage();
         if (size != 0)

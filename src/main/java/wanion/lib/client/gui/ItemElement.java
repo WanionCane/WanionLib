@@ -49,10 +49,9 @@ public class ItemElement extends WElement<ItemElement>
 		try {
 			RenderHelper.enableGUIStandardItemLighting();
 			GlStateManager.pushMatrix();
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			GlStateManager.enableRescaleNormal();
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			wGuiContainer.mc.getRenderItem().renderItemIntoGUI(stack, getUsableX(), getUsableY());
 			GlStateManager.popMatrix();
 		} catch (Exception ignored) {}
