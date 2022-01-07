@@ -18,24 +18,24 @@ import wanion.lib.common.matching.matcher.ItemStackMatcher;
 import wanion.lib.common.matching.matcher.MatcherEnum;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class AbstractMatching<M extends AbstractMatching<M>> implements ISmartNBT, ICopyable<M>, IControlNameable
 {
+	private static final Supplier<ItemStack> EMPTY_SUPPLIER = () -> ItemStack.EMPTY;
 	protected final Supplier<ItemStack> stackSupplier;
 	protected final int number;
 	protected AbstractMatcher<?> matcher = new ItemStackMatcher(this);
 
-	public AbstractMatching(@Nonnull final Supplier<ItemStack> stackSupplier, final int number)
+	// if the stack supplier is null, getStack() will have to be overridden.
+	public AbstractMatching(final Supplier<ItemStack> stackSupplier, final int number)
 	{
 		this(stackSupplier, number, null);
 	}
 
-	// if the stack supplier is null, getStack() will have to be overridden.
 	public AbstractMatching(final Supplier<ItemStack> stackSupplier, final int number, final NBTTagCompound tagToRead)
 	{
-		this.stackSupplier = stackSupplier;
+		this.stackSupplier = stackSupplier != null ? stackSupplier : EMPTY_SUPPLIER;
 		this.number = number;
 		if (tagToRead != null)
 			readNBT(tagToRead);
@@ -84,7 +84,7 @@ public abstract class AbstractMatching<M extends AbstractMatching<M>> implements
 		return stackSupplier.get();
 	}
 
-	public final boolean isEmpty()
+	public boolean isEmpty()
 	{
 		return getStack().isEmpty();
 	}

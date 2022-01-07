@@ -48,6 +48,12 @@ public class TextElement extends WElement<TextElement>
 		setForegroundCheck((interaction) -> false);
 	}
 
+	public final TextElement setColor(final int color)
+	{
+		this.colorSupplier = () -> color;
+		return this;
+	}
+
 	public final int getColor()
 	{
 		return colorSupplier.get();
