@@ -8,18 +8,17 @@ package wanion.lib.client.animation;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public final class ComplexHalfAnimation extends ComplexAnimation
+public final class ComplexHalfAnimation<R> extends ComplexAnimation<R>
 {
 	private boolean half;
 
-	public ComplexHalfAnimation(@Nonnull final ResourceLocation[] frames, final int[] stages)
+	public ComplexHalfAnimation(@Nonnull final R[] frames, final int[] stages)
 	{
 		super(frames, stages);
 	}

@@ -23,14 +23,14 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public final class ClientTickHandler implements WanionLib.IDependency
 {
-	private final List<Animation> registeredAnimations = new ArrayList<>();
+	private final List<Animation<?>> registeredAnimations = new ArrayList<>();
 
 	private ClientTickHandler()
 	{
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	public void registerAnimation(@Nonnull final Animation animation)
+	public void registerAnimation(@Nonnull final Animation<?> animation)
 	{
 		registeredAnimations.add(animation);
 	}

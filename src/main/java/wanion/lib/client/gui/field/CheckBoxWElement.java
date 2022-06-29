@@ -29,21 +29,18 @@ public class CheckBoxWElement extends WField<CheckBox>
 	{
 		super(field, wGuiContainer, x, y, 18, 18);
 		setTooltipSupplier((interaction, stackSupplier) -> Lists.newArrayList(field.getHoveringText(interaction)));
+		setMouseInteraction(wMouseInteraction -> {
+			INBTMessage.sendNBT(getWindowID(), field.toggle().writeNBT());
+			playPressSound();
+		});
 	}
 
 	@Override
 	public void draw(@Nonnull final WInteraction wInteraction)
 	{
 		final boolean isHovering = wInteraction.isHovering(this);
-		getTextureManager().bindTexture(DEFAULT_RESOURCE_LOCATION);
+		bindTexture(DEFAULT_RESOURCE_LOCATION);
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), !isHovering ? 36 : 54, !field.isChecked() ? 72 : 90, width, height, 128, 128);
-	}
-
-	@Override
-	public void interaction(@Nonnull final WMouseInteraction wMouseInteraction)
-	{
-		INBTMessage.sendNBT(getWindowID(), field.toggle().writeNBT());
-		playPressSound();
 	}
 }

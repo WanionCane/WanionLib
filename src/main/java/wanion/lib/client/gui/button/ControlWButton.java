@@ -61,13 +61,13 @@ public class ControlWButton<C extends IStateProvider<C, S>, S extends IState<S>>
 		final Pair<Integer, Integer> texturePos = state.getTexturePos(wInteraction.isHovering(this));
 		if (textureResourceLocation == null || texturePos == null)
 			return;
-		getTextureManager().bindTexture(textureResourceLocation);
+		bindTexture(textureResourceLocation);
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), texturePos.getLeft(), texturePos.getRight(), width, height, 128, 128);
 	}
 
 	@Override
-	public void interaction(@Nonnull final WMouseInteraction mouseInteraction)
+	public void interact(@Nonnull final WMouseInteraction mouseInteraction)
 	{
 		final S state = stateProvider.getState();
 		final NBTTagCompound nbtTagCompound = new NBTTagCompound();

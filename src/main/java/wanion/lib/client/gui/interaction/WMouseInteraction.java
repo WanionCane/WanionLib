@@ -36,4 +36,10 @@ public class WMouseInteraction extends WInteraction
 	{
 		return mouseButton;
 	}
+
+	@FunctionalInterface
+	public interface IWMouseInteraction
+	{
+		void interact(@Nonnull final WMouseInteraction wMouseInteraction);
+	}
 }

@@ -18,11 +18,10 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.lib.client.gui.interaction.WInteraction;
-import wanion.lib.client.gui.interaction.WKeyInteraction;
-import wanion.lib.client.gui.interaction.WMouseInteraction;
+import wanion.lib.client.gui.interaction.*;
 import wanion.lib.common.WContainer;
 
 import javax.annotation.Nonnull;
@@ -37,13 +36,15 @@ public abstract class WElement<E extends WElement<E>>
 {
 	public final static ITooltipSupplier DEFAULT_WELEMENT_TOOLTIP_SUPPLIER = ((interaction, stackSupplier) -> Collections.emptyList());
 	public final static Supplier<ItemStack> DEFAULT_ITEMSTACK_SUPPLIER = () -> ItemStack.EMPTY;
-	private final Predicate<WInteraction> default_check = wInteraction -> wInteraction.isHovering(this);
-	protected final WGuiContainer<?> wGuiContainer;
-	private Predicate<WInteraction> foregroundCheck;
-	private Predicate<WInteraction> interactionCheck;
-	private Supplier<ItemStack> stackSupplier;
-	private ITooltipSupplier tooltipSupplier;
+	private final Predicate<WInteraction> defaultCheck = wInteraction -> wInteraction.isHovering(this);
 	private final Class<E> elementClass;
+	private Predicate<WInteraction> foregroundCheck = defaultCheck;
+	private Predicate<WInteraction> interactionCheck = defaultCheck;
+	private Supplier<ItemStack> stackSupplier = DEFAULT_ITEMSTACK_SUPPLIER;
+	private ITooltipSupplier tooltipSupplier = DEFAULT_WELEMENT_TOOLTIP_SUPPLIER;
+	private WKeyInteraction.IWKeyInteraction keyInteraction = this::interact;
+	private WMouseInteraction.IWMouseInteraction mouseInteraction = this::interact;;
+	protected final WGuiContainer<?> wGuiContainer;
 
 	protected final int width, height;
 	protected int x, y;
@@ -64,15 +65,11 @@ public abstract class WElement<E extends WElement<E>>
 	@SuppressWarnings("unchecked")
 	public WElement(@Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final int width, final int height)
 	{
-		this.wGuiContainer = wGuiContainer;
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.foregroundCheck = default_check;
-		this.interactionCheck = default_check;
-		this.stackSupplier = DEFAULT_ITEMSTACK_SUPPLIER;
-		this.tooltipSupplier = DEFAULT_WELEMENT_TOOLTIP_SUPPLIER;
+		this.wGuiContainer = wGuiContainer;
 		this.elementClass = (Class<E>) getClass();
 	}
 
@@ -82,18 +79,27 @@ public abstract class WElement<E extends WElement<E>>
 		return foregroundCheck;
 	}
 
+	@Nonnull
 	public final E setForegroundCheck(@Nonnull final Predicate<WInteraction> foregroundCheck)
 	{
 		this.foregroundCheck = foregroundCheck;
 		return elementClass.cast(this);
 	}
 
+	@Nonnull
+	public final E setDefaultChecks()
+	{
+		return setDefaultForegroundCheck().setDefaultInteractionCheck();
+	}
+
+	@Nonnull
 	public final E setDefaultForegroundCheck()
 	{
-		this.foregroundCheck = default_check;
+		this.foregroundCheck = defaultCheck;
 		return elementClass.cast(this);
 	}
 
+	@Nonnull
 	public ITooltipSupplier getTooltipSupplier()
 	{
 		return tooltipSupplier;
@@ -106,6 +112,7 @@ public abstract class WElement<E extends WElement<E>>
 		return elementClass.cast(this);
 	}
 
+	@Nonnull
 	public final E setDefaultTooltipSupplier()
 	{
 		this.tooltipSupplier = DEFAULT_WELEMENT_TOOLTIP_SUPPLIER;
@@ -227,7 +234,21 @@ public abstract class WElement<E extends WElement<E>>
 	@Nonnull
 	public final E setDefaultInteractionCheck()
 	{
-		this.interactionCheck = default_check;
+		this.interactionCheck = defaultCheck;
+		return elementClass.cast(this);
+	}
+
+	@Nonnull
+	public final E setKeyInteraction(@Nonnull final WKeyInteraction.IWKeyInteraction IWKeyInteraction)
+	{
+		this.keyInteraction = IWKeyInteraction;
+		return elementClass.cast(this);
+	}
+
+	@Nonnull
+	public final E setMouseInteraction(@Nonnull final WMouseInteraction.IWMouseInteraction IWMouseInteraction)
+	{
+		this.mouseInteraction = IWMouseInteraction;
 		return elementClass.cast(this);
 	}
 
@@ -236,17 +257,17 @@ public abstract class WElement<E extends WElement<E>>
 		return interactionCheck.test(wInteraction);
 	}
 
-	public void interaction(@Nonnull final WInteraction wInteraction)
+	public final void interaction(@Nonnull final WInteraction wInteraction)
 	{
 		if (wInteraction instanceof WKeyInteraction)
-			interaction((WKeyInteraction) wInteraction);
+			keyInteraction.interact((WKeyInteraction) wInteraction);
 		else if (wInteraction instanceof WMouseInteraction)
-			interaction((WMouseInteraction) wInteraction);
+			mouseInteraction.interact((WMouseInteraction) wInteraction);
 	}
 
-	public void interaction(@Nonnull final WKeyInteraction wKeyInteraction) {}
+	public void interact(@Nonnull final WKeyInteraction wKeyInteraction) {}
 
-	public void interaction(@Nonnull final WMouseInteraction wMouseInteraction) {}
+	public void interact(@Nonnull final WMouseInteraction wMouseInteraction) {}
 
 	public abstract void draw(@Nonnull final WInteraction wInteraction);
 
@@ -292,5 +313,10 @@ public abstract class WElement<E extends WElement<E>>
 	public final void playPressSound(@Nonnull final ISound sound)
 	{
 		getSoundHandler().playSound(sound);
+	}
+
+	protected final void bindTexture(@Nonnull final ResourceLocation resourceLocation)
+	{
+		getTextureManager().bindTexture(resourceLocation);
 	}
 }

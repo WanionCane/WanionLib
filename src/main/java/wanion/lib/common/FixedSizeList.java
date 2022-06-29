@@ -24,13 +24,13 @@ public class FixedSizeList<E> extends AbstractList<E>
 	@SuppressWarnings("unchecked")
 	public FixedSizeList()
 	{
-		allTheData = (E[]) new Object[capacity = DEFAULT_CAPACITY];
+		this(DEFAULT_CAPACITY);
 	}
 
 	@SuppressWarnings("unchecked")
 	public FixedSizeList(int capacity)
 	{
-		if (capacity <= 0)
+		if (capacity < 1)
 			capacity = DEFAULT_CAPACITY;
 		allTheData = (E[]) new Object[this.capacity = capacity];
 	}

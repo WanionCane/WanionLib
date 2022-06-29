@@ -77,12 +77,12 @@ public abstract class WGuiContainer<T extends WTileEntity> extends GuiContainer 
 
 	protected TextElement getTileNameTextElement()
 	{
-		return new TextElement(() -> tileName, this, 7, 7);
+		return new TextElement(tileName, this, 7, 7);
 	}
 
 	protected TextElement getInventoryTextElement()
 	{
-		return new TextElement(() -> inventory, this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11);
+		return new TextElement(inventory, this, firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11);
 	}
 
 	@Nonnull

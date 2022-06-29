@@ -51,4 +51,10 @@ public final class WKeyInteraction extends WInteraction
 	{
 		return keyCode;
 	}
+
+	@FunctionalInterface
+	public interface IWKeyInteraction
+	{
+		void interact(@Nonnull final WKeyInteraction wKeyInteraction);
+	}
 }

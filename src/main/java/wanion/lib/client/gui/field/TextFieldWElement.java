@@ -242,7 +242,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
     /**
      * Call this method from your GuiScreen to process the keys into the textbox
      */
-    public void interaction(@Nonnull final WKeyInteraction keyInteraction)
+    public void interact(@Nonnull final WKeyInteraction keyInteraction)
     {
         char typedChar = keyInteraction.getKey();
         int keyCode = keyInteraction.getKeyCode();
@@ -342,7 +342,7 @@ public class TextFieldWElement extends WField<TextField> implements INBTMessage,
      * Called when mouse is clicked, regardless as to whether it is over this button or not.
      */
     @Override
-    public void interaction(@Nonnull final WMouseInteraction mouseInteraction)
+    public void interact(@Nonnull final WMouseInteraction mouseInteraction)
     {
         final boolean hovering = mouseInteraction.isHovering(this);
         this.setFocused(mouseInteraction, hovering);

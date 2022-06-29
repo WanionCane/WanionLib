@@ -8,20 +8,19 @@ package wanion.lib.client.animation;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class ComplexAnimation extends Animation
+public class ComplexAnimation<R> extends Animation<R>
 {
 	private final int[] animationStages;
 	private final int lastStageIndex;
 	private int currentStage = 0;
 
-	public ComplexAnimation(@Nonnull final ResourceLocation[] frames, final int[] animationStages)
+	public ComplexAnimation(@Nonnull final R[] frames, final int[] animationStages)
 	{
 		super(frames);
 		lastStageIndex = (this.animationStages = animationStages).length - 1;

@@ -24,30 +24,62 @@ public class TextElement extends WElement<TextElement>
 	public final static Supplier<Integer> DEFAULT_COLOR_SUPPLIER = () -> DEFAULT_COLOR;
 	private final Supplier<String> textSupplier;
 	private final FontRenderer fontRenderer;
-	private final boolean drawShadow;
-	private final TextAnchor textAnchor;
+	private boolean drawShadow;
+	private TextAnchor textAnchor;
 	private Supplier<Integer> colorSupplier;
+
+	public TextElement(@Nonnull final String text, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
+	{
+		this(() -> text, wGuiContainer, x, y, false);
+	}
+
+	public TextElement(@Nonnull final String text, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final boolean drawShadow)
+	{
+		this(() -> text, wGuiContainer, x, y, drawShadow);
+	}
 
 	public TextElement(@Nonnull final Supplier<String> textSupplier, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y)
 	{
 		this(textSupplier, wGuiContainer, x, y, false);
 	}
-	public TextElement(@Nonnull final Supplier<String> textSupplier, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final boolean drawShadow)
-	{
-		this(textSupplier, wGuiContainer, x, y, drawShadow, TextAnchor.LEFT);
-	}
 
-	public TextElement(@Nonnull final Supplier<String> textSupplier, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final boolean drawShadow, @Nonnull final TextAnchor textAnchor)
+	public TextElement(@Nonnull final Supplier<String> textSupplier, @Nonnull final WGuiContainer<?> wGuiContainer, final int x, final int y, final boolean drawShadow)
 	{
 		super(wGuiContainer, x, y);
 		this.textSupplier = textSupplier;
 		this.fontRenderer = getFontRenderer();
 		this.drawShadow = drawShadow;
-		this.textAnchor = textAnchor;
+		this.textAnchor = TextAnchor.LEFT;
 		this.colorSupplier = DEFAULT_COLOR_SUPPLIER;
 		setForegroundCheck((interaction) -> false);
 	}
 
+	public final boolean getDrawShadow()
+	{
+		return drawShadow;
+	}
+
+	@Nonnull
+	public final TextElement setDrawShadow(final boolean drawShadow)
+	{
+		this.drawShadow = drawShadow;
+		return this;
+	}
+
+	@Nonnull
+	public final TextAnchor getTextAnchor()
+	{
+		return textAnchor;
+	}
+
+	@Nonnull
+	public final TextElement setTextAnchor(@Nonnull final TextAnchor textAnchor)
+	{
+		this.textAnchor = textAnchor;
+		return this;
+	}
+
+	@Nonnull
 	public final TextElement setColor(final int color)
 	{
 		this.colorSupplier = () -> color;
@@ -82,7 +114,7 @@ public class TextElement extends WElement<TextElement>
 	@Override
 	public int getX()
 	{
-		return super.getX() + textAnchor.getX(this, getText());
+		return textAnchor.getX(this);
 	}
 
 	public int getWidth()
@@ -105,21 +137,25 @@ public class TextElement extends WElement<TextElement>
 
 	public enum TextAnchor
 	{
-		LEFT,
-		MIDDLE,
-		RIGHT;
+		LEFT(textElement -> textElement.x),
+		MIDDLE(textElement -> textElement.x - (textElement.fontRenderer.getStringWidth(textElement.getText()) / 2)),
+		RIGHT(textElement -> textElement.x - textElement.fontRenderer.getStringWidth(textElement.getText()));
 
-		public int getX(@Nonnull final TextElement textElement, @Nonnull final String text)
+		private final ITextAnchor iTextAnchor;
+
+		TextAnchor(@Nonnull final ITextAnchor iTextAnchor)
 		{
-			switch (textElement.textAnchor)
-			{
-				case MIDDLE:
-					return -(textElement.fontRenderer.getStringWidth(text) / 2);
-				case RIGHT:
-					return -textElement.fontRenderer.getStringWidth(text);
-				default:
-					return 0;
-			}
+			this.iTextAnchor = iTextAnchor;
+		}
+
+		public int getX(@Nonnull final TextElement textElement)
+		{
+			return iTextAnchor.getX(textElement);
+		}
+
+		private interface ITextAnchor
+		{
+			int getX(@Nonnull final TextElement textElement);
 		}
 	}
 }

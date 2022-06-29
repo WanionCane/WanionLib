@@ -37,8 +37,8 @@ public class ItemBoxElement extends ItemElement
 	public void draw(@Nonnull final WInteraction wInteraction)
 	{
 		final ItemStack stack = this.stackSupplier.get();
-		getTextureManager().bindTexture(DEFAULT_RESOURCE_LOCATION);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		bindTexture(DEFAULT_RESOURCE_LOCATION);
+		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		Gui.drawModalRectWithCustomSizedTexture(getUsableX(), getUsableY(), 90, 0, width, height, 128, 128);
 		if (!stack.isEmpty()) {
 			try {
@@ -55,7 +55,7 @@ public class ItemBoxElement extends ItemElement
 		if (wInteraction.isHovering(this)) {
 			GlStateManager.disableDepth();
 			GlStateManager.colorMask(true, true, true, false);
-			GuiContainer.drawRect(getUsableX() + 1, getUsableY() + 1, getUsableX() + 17, getUsableY() + 17, -2130706433);
+			GuiContainer.drawRect(getUsableX() + 1, getUsableY() + 1, getUsableX() + 17, getUsableY() + 17, 0x80FFFFFF);
 			GlStateManager.colorMask(true, true, true, true);
 			GlStateManager.enableDepth();
 		}

@@ -8,16 +8,15 @@ package wanion.lib.client.animation;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class SimpleAnimation extends Animation
+public class SimpleAnimation<R> extends Animation<R>
 {
-	public SimpleAnimation(@Nonnull final ResourceLocation[] frames)
+	public SimpleAnimation(@Nonnull final R[] frames)
 	{
 		super(frames);
 	}

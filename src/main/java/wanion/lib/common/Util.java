@@ -32,7 +32,7 @@ public final class Util
 	private Util() {}
 
 	@SuppressWarnings("unchecked")
-	public static <T, E extends T> E getField(Class clas, String name, Object instance, Class<T> expectedClass)
+	public static <T, E extends T> E getField(Class<?> clas, String name, Object instance, Class<T> expectedClass)
 	{
 		try {
 			final Field field = clas.getDeclaredField(name);
